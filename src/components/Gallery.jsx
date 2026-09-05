@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import SectionHeader from './SectionHeader.jsx';
 import Reveal from './Reveal.jsx';
 
-// 使用 Unsplash 图片作为替代（免费、稳定、可访问）
+// 使用 picsum.photos 占位图 + Unsplash 真实图片
 const images = [
   {
     id: 1,
     src: 'https://images.unsplash.com/photo-1537531383496-f4749bfa8068?w=1200&q=80',
-    thumb: 'https://images.unsplash.com/photo-1537531383496-f4749bfa8068?w=600&q=75',
+    thumb: 'https://images.unsplash.com/photo-1537531383496-f4749bfa8068?w=800&q=75',
     title: 'Wuzhen Waterways',
     num: '01',
     descCn: '水道贯穿乌镇，两岸白墙黛瓦构成典型的江南水乡景观。',
@@ -18,7 +18,7 @@ const images = [
   {
     id: 2,
     src: 'https://images.unsplash.com/photo-1545569341-7eb009a77f3c?w=1200&q=80',
-    thumb: 'https://images.unsplash.com/photo-1545569341-7eb009a77f3c?w=600&q=75',
+    thumb: 'https://images.unsplash.com/photo-1545569341-7eb009a77f3c?w=800&q=75',
     title: 'Ancient Bridge',
     num: '02',
     descCn: '古桥连接水道两岸，是乌镇传统空间与水乡生活的重要节点。',
@@ -29,7 +29,7 @@ const images = [
   {
     id: 3,
     src: 'https://images.unsplash.com/photo-1528164344705-47542687000d?w=1200&q=80',
-    thumb: 'https://images.unsplash.com/photo-1528164344705-47542687000d?w=600&q=75',
+    thumb: 'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=75',
     title: 'Boat & Walking',
     num: '03',
     descCn: '乘船看水、沿河步行，是感受乌镇街巷与水乡生活的两种方式。',
@@ -40,19 +40,8 @@ const images = [
 ];
 
 function Lightbox({ img, onClose }) {
-  useEffect(() => {
-    if (!img) return;
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    document.body.style.overflow = 'hidden';
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
-    };
-  }, [img, onClose]);
-
   if (!img) return null;
-
+  
   return (
     <div className="lightbox" onClick={onClose} role="dialog" aria-modal="true" aria-label={`Image: ${img.title}`}>
       <button className="lightbox__close" onClick={onClose} aria-label="Close lightbox">
@@ -77,10 +66,10 @@ function Lightbox({ img, onClose }) {
 
 export default function Gallery() {
   const [selected, setSelected] = useState(null);
-  const [imageErrors, setImageErrors] = useState({});
+  const [loadedIds, setLoadedIds] = useState({});
 
-  const handleImageError = (id) => {
-    setImageErrors(prev => ({ ...prev, [id]: true }));
+  const handleImageLoad = (id) => {
+    setLoadedIds(prev => ({ ...prev, [id]: true }));
   };
 
   return (
@@ -97,19 +86,19 @@ export default function Gallery() {
                 aria-label={`View ${img.title}`}
               >
                 <div className="gallery-card__img-wrap">
-                  {imageErrors[img.id] ? (
+                  {!loadedIds[img.id] && (
                     <div className="gallery-card__placeholder gallery-card__placeholder--visible">
-                      <span>图片加载失败</span>
+                      <span>加载中...</span>
                     </div>
-                  ) : (
-                    <img 
-                      src={img.thumb} 
-                      alt={img.alt} 
-                      className="gallery-card__img" 
-                      loading="lazy"
-                      onError={() => handleImageError(img.id)}
-                    />
                   )}
+                  <img 
+                    src={img.thumb} 
+                    alt={img.alt} 
+                    className={`gallery-card__img ${loadedIds[img.id] ? 'gallery-card__img--loaded' : ''}`}
+                    loading="lazy"
+                    onLoad={() => handleImageLoad(img.id)}
+                    onError={() => handleImageLoad(img.id)}
+                  />
                 </div>
                 <div className="gallery-card__body">
                   <div className="gallery-card__num">{img.num}</div>

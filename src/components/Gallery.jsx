@@ -2,39 +2,39 @@ import { useState } from 'react';
 import SectionHeader from './SectionHeader.jsx';
 import Reveal from './Reveal.jsx';
 
-// 使用 picsum.photos 占位图 + Unsplash 真实图片
+// 使用 picsum.photos 作为可靠的占位图服务
 const images = [
   {
     id: 1,
-    src: 'https://images.unsplash.com/photo-1537531383496-f4749bfa8068?w=1200&q=80',
-    thumb: 'https://images.unsplash.com/photo-1537531383496-f4749bfa8068?w=800&q=75',
+    src: 'https://picsum.photos/seed/wuzhen1/1200/800',
+    thumb: 'https://picsum.photos/seed/wuzhen1/800/533',
     title: 'Wuzhen Waterways',
     num: '01',
     descCn: '水道贯穿乌镇，两岸白墙黛瓦构成典型的江南水乡景观。',
-    source: 'Unsplash',
-    sourceUrl: 'https://unsplash.com',
+    source: 'Picsum Photos',
+    sourceUrl: 'https://picsum.photos',
     alt: '乌镇水道与沿岸传统建筑',
   },
   {
     id: 2,
-    src: 'https://images.unsplash.com/photo-1545569341-7eb009a77f3c?w=1200&q=80',
-    thumb: 'https://images.unsplash.com/photo-1545569341-7eb009a77f3c?w=800&q=75',
+    src: 'https://picsum.photos/seed/wuzhen2/1200/800',
+    thumb: 'https://picsum.photos/seed/wuzhen2/800/533',
     title: 'Ancient Bridge',
     num: '02',
     descCn: '古桥连接水道两岸，是乌镇传统空间与水乡生活的重要节点。',
-    source: 'Unsplash',
-    sourceUrl: 'https://unsplash.com',
+    source: 'Picsum Photos',
+    sourceUrl: 'https://picsum.photos',
     alt: '乌镇西栅古桥夜景',
   },
   {
     id: 3,
-    src: 'https://images.unsplash.com/photo-1528164344705-47542687000d?w=1200&q=80',
-    thumb: 'https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&q=75',
+    src: 'https://picsum.photos/seed/wuzhen3/1200/800',
+    thumb: 'https://picsum.photos/seed/wuzhen3/800/533',
     title: 'Boat & Walking',
     num: '03',
     descCn: '乘船看水、沿河步行，是感受乌镇街巷与水乡生活的两种方式。',
-    source: 'Unsplash',
-    sourceUrl: 'https://unsplash.com',
+    source: 'Picsum Photos',
+    sourceUrl: 'https://picsum.photos',
     alt: '乌镇运河与传统游船',
   },
 ];

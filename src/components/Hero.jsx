@@ -1,11 +1,16 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ThreeScene from './ThreeScene.jsx';
 
 export default function Hero() {
   const heroRef = useRef(null);
   const imgRef = useRef(null);
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
+    // Loading animation
+    const timer = setTimeout(() => setShowContent(true), 800);
+    
+    // Parallax effect
     const handleScroll = () => {
       if (!heroRef.current || !imgRef.current) return;
       const scrolled = window.scrollY;
@@ -14,7 +19,10 @@ export default function Hero() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
@@ -34,7 +42,12 @@ export default function Hero() {
 
       <ThreeScene className="hero__three" variant="hero" scrollAffected opacity={0.7} />
 
-      <div className="hero__content">
+      {/* Brand icon floating animation */}
+      <div className={`hero__brand-icon ${showContent ? 'hero__brand-icon--visible' : ''}`}>
+        <img src="/assets/wuzhen-icon.png" alt="Wuzhen" />
+      </div>
+
+      <div className={`hero__content ${showContent ? 'hero__content--visible' : ''}`}>
         <div className="hero__badge">
           Grade 9 · English Project · Week One
         </div>

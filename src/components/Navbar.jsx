@@ -23,7 +23,7 @@ export default function Navbar() {
     <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
       <div className="navbar__container">
         <a href="#" className="navbar__brand">
-          <span className="navbar__brand-icon">W</span>
+          <img src="/assets/wuzhen-icon.png" alt="Wuzhen" className="navbar__brand-icon" />
           <span className="navbar__brand-text">WUZHEN</span>
         </a>
 

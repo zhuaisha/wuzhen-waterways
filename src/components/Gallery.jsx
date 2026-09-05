@@ -2,39 +2,36 @@ import { useState } from 'react';
 import SectionHeader from './SectionHeader.jsx';
 import Reveal from './Reveal.jsx';
 
-// 使用 picsum.photos 作为可靠的占位图服务
+// 使用 CSS 渐变作为占位图（无需外部图片服务）
 const images = [
   {
     id: 1,
-    src: 'https://picsum.photos/seed/wuzhen1/1200/800',
-    thumb: 'https://picsum.photos/seed/wuzhen1/800/533',
+    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     title: 'Wuzhen Waterways',
     num: '01',
     descCn: '水道贯穿乌镇，两岸白墙黛瓦构成典型的江南水乡景观。',
-    source: 'Picsum Photos',
-    sourceUrl: 'https://picsum.photos',
+    source: 'CSS Gradient',
+    sourceUrl: '#',
     alt: '乌镇水道与沿岸传统建筑',
   },
   {
     id: 2,
-    src: 'https://picsum.photos/seed/wuzhen2/1200/800',
-    thumb: 'https://picsum.photos/seed/wuzhen2/800/533',
+    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
     title: 'Ancient Bridge',
     num: '02',
     descCn: '古桥连接水道两岸，是乌镇传统空间与水乡生活的重要节点。',
-    source: 'Picsum Photos',
-    sourceUrl: 'https://picsum.photos',
+    source: 'CSS Gradient',
+    sourceUrl: '#',
     alt: '乌镇西栅古桥夜景',
   },
   {
     id: 3,
-    src: 'https://picsum.photos/seed/wuzhen3/1200/800',
-    thumb: 'https://picsum.photos/seed/wuzhen3/800/533',
+    gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
     title: 'Boat & Walking',
     num: '03',
     descCn: '乘船看水、沿河步行，是感受乌镇街巷与水乡生活的两种方式。',
-    source: 'Picsum Photos',
-    sourceUrl: 'https://picsum.photos',
+    source: 'CSS Gradient',
+    sourceUrl: '#',
     alt: '乌镇运河与传统游船',
   },
 ];
@@ -50,7 +47,7 @@ function Lightbox({ img, onClose }) {
         </svg>
       </button>
       <div className="lightbox__content" onClick={(e) => e.stopPropagation()}>
-        <img src={img.src} alt={img.alt} className="lightbox__img" loading="lazy" />
+        <div className="lightbox__img-placeholder" style={{ background: img.gradient }} />
         <div className="lightbox__info">
           <div className="lightbox__num">Gallery {img.num}</div>
           <h3 className="lightbox__title">{img.title}</h3>
@@ -66,11 +63,6 @@ function Lightbox({ img, onClose }) {
 
 export default function Gallery() {
   const [selected, setSelected] = useState(null);
-  const [loadedIds, setLoadedIds] = useState({});
-
-  const handleImageLoad = (id) => {
-    setLoadedIds(prev => ({ ...prev, [id]: true }));
-  };
 
   return (
     <section id="gallery" className="section gallery-section">
@@ -85,20 +77,10 @@ export default function Gallery() {
                 onClick={() => setSelected(img)}
                 aria-label={`View ${img.title}`}
               >
-                <div className="gallery-card__img-wrap">
-                  {!loadedIds[img.id] && (
-                    <div className="gallery-card__placeholder gallery-card__placeholder--visible">
-                      <span>加载中...</span>
-                    </div>
-                  )}
-                  <img 
-                    src={img.thumb} 
-                    alt={img.alt} 
-                    className={`gallery-card__img ${loadedIds[img.id] ? 'gallery-card__img--loaded' : ''}`}
-                    loading="lazy"
-                    onLoad={() => handleImageLoad(img.id)}
-                    onError={() => handleImageLoad(img.id)}
-                  />
+                <div className="gallery-card__img-wrap" style={{ background: img.gradient }}>
+                  <div className="gallery-card__img-overlay">
+                    <span className="gallery-card__img-label">{img.title}</span>
+                  </div>
                 </div>
                 <div className="gallery-card__body">
                   <div className="gallery-card__num">{img.num}</div>

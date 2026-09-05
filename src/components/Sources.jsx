@@ -1,13 +1,12 @@
 import SectionHeader from './SectionHeader.jsx';
 import Reveal from './Reveal.jsx';
-import { SOURCE_URLS } from '../config/assets.js';
 
 const sources = [
   {
     index: '01',
     name: 'Wikimedia Commons — Aerial panorama of Wuzhen',
     cn: 'Hero 背景图片来源',
-    url: SOURCE_URLS.hero,
+    url: 'https://commons.wikimedia.org/wiki/File:Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg',
     author: 'Wanderingchina',
     license: 'CC BY 4.0',
     uses: ['Hero 背景图', '航拍乌镇全景', '展示水道与古镇整体布局'],
@@ -16,7 +15,7 @@ const sources = [
     index: '02',
     name: 'Wikimedia Commons — WuzhenWaterway.jpg',
     cn: '乌镇水道图片来源',
-    url: SOURCE_URLS.waterway,
+    url: 'https://commons.wikimedia.org/wiki/File:WuzhenWaterway.jpg',
     author: 'Evilbish',
     license: 'CC BY-SA 3.0',
     uses: ['Wikimedia Commons 图片', '页面标注 Creative Commons 授权', '用于 Gallery 01：乌镇水道'],
@@ -25,7 +24,7 @@ const sources = [
     index: '03',
     name: 'Wikimedia Commons — Wuzhen Xizha 2009-13.jpg',
     cn: '乌镇西栅古桥图片来源',
-    url: SOURCE_URLS.bridge,
+    url: 'https://commons.wikimedia.org/wiki/File:Wuzhen_Xizha_2009-13.jpg',
     author: 'Gerbil',
     license: 'CC BY-SA 3.0',
     uses: ['Wikimedia Commons 图片', '页面标注 Creative Commons 授权', '用于 Gallery 02：古桥'],
@@ -34,7 +33,7 @@ const sources = [
     index: '04',
     name: 'Wikimedia Commons — Canal in Wuzhen.JPG',
     cn: '乌镇运河与游船图片来源',
-    url: SOURCE_URLS.boat,
+    url: 'https://commons.wikimedia.org/wiki/File:Canal_in_Wuzhen.JPG',
     author: 'Unknown',
     license: 'CC BY-SA',
     uses: ['Wikimedia Commons 图片', '页面标注 Creative Commons 授权', '用于 Gallery 03：乘船与徒步'],

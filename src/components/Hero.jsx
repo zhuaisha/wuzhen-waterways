@@ -1,17 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import ThreeScene from './ThreeScene.jsx';
-import { HERO_IMAGES, imageUrl } from '../config/assets.js';
 
 export default function Hero() {
   const heroRef = useRef(null);
   const imgRef = useRef(null);
   const [showContent, setShowContent] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
-    // Loading animation
     const timer = setTimeout(() => setShowContent(true), 800);
     
-    // Parallax effect
     const handleScroll = () => {
       if (!heroRef.current || !imgRef.current) return;
       const scrolled = window.scrollY;
@@ -26,27 +24,20 @@ export default function Hero() {
     };
   }, []);
 
-  // Hero 背景图片 URL（优先 AVIF，备选 WebP，最后 JPG）
-  const heroSrc = imageUrl(HERO_IMAGES.jpg);
-
   return (
     <section className="hero" ref={heroRef}>
-      {/* Wuzhen aerial panorama background */}
       <div className="hero__bg">
         <img
           ref={imgRef}
           className="hero__img"
-          src={heroSrc}
+          src={imgError 
+            ? 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg'
+            : 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg'
+          }
           alt="Aerial panorama of Wuzhen Water Town"
           loading="eager"
           fetchPriority="high"
-          onError={(e) => {
-            // Fallback: 如果本地图片加载失败，使用 Wikimedia 备用
-            if (e.currentTarget.dataset.fallback !== 'true') {
-              e.currentTarget.dataset.fallback = 'true';
-              e.currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg';
-            }
-          }}
+          onError={() => setImgError(true)}
         />
         <div className="hero__overlay" />
       </div>

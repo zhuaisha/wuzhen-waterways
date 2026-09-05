@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import SectionHeader from './SectionHeader.jsx';
 import Reveal from './Reveal.jsx';
 
-// Wikimedia Commons images with explicit author + license attribution.
+// Use thumbnail URLs to avoid rate limiting and large file sizes
 const images = [
   {
     id: 1,
-    src: 'https://upload.wikimedia.org/wikipedia/commons/a/af/WuzhenWaterway.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/WuzhenWaterway.jpg/800px-WuzhenWaterway.jpg',
+    // Thumbnail version - smaller and faster
+    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/WuzhenWaterway.jpg/1200px-WuzhenWaterway.jpg',
+    thumb: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/WuzhenWaterway.jpg/400px-WuzhenWaterway.jpg',
     title: 'Wuzhen Waterways',
     num: '01',
     descCn: '水道贯穿乌镇，两岸白墙黛瓦构成典型的江南水乡景观。',
@@ -17,8 +18,8 @@ const images = [
   },
   {
     id: 2,
-    src: 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Wuzhen_Xizha_2009-13.jpg',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Wuzhen_Xizha_2009-13.jpg/800px-Wuzhen_Xizha_2009-13.jpg',
+    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Wuzhen_Xizha_2009-13.jpg/1200px-Wuzhen_Xizha_2009-13.jpg',
+    thumb: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Wuzhen_Xizha_2009-13.jpg/400px-Wuzhen_Xizha_2009-13.jpg',
     title: 'Ancient Bridge',
     num: '02',
     descCn: '古桥连接水道两岸，是乌镇传统空间与水乡生活的重要节点。',
@@ -28,8 +29,8 @@ const images = [
   },
   {
     id: 3,
-    src: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Canal_in_Wuzhen.JPG',
-    fallback: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Canal_in_Wuzhen.JPG/800px-Canal_in_Wuzhen.JPG',
+    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Canal_in_Wuzhen.JPG/1200px-Canal_in_Wuzhen.JPG',
+    thumb: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Canal_in_Wuzhen.JPG/400px-Canal_in_Wuzhen.JPG',
     title: 'Boat & Walking',
     num: '03',
     descCn: '乘船看水、沿河步行，是感受乌镇街巷与水乡生活的两种方式。',
@@ -77,6 +78,11 @@ function Lightbox({ img, onClose }) {
 
 export default function Gallery() {
   const [selected, setSelected] = useState(null);
+  const [imageErrors, setImageErrors] = useState({});
+
+  const handleImageError = (id) => {
+    setImageErrors(prev => ({ ...prev, [id]: true }));
+  };
 
   return (
     <section id="gallery" className="section gallery-section">
@@ -92,22 +98,19 @@ export default function Gallery() {
                 aria-label={`View ${img.title}`}
               >
                 <div className="gallery-card__img-wrap">
-                  <img 
-                    src={img.src} 
-                    alt={img.alt} 
-                    className="gallery-card__img" 
-                    loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.src = img.fallback;
-                      e.currentTarget.onerror = () => {
-                        e.currentTarget.style.display = 'none';
-                        e.currentTarget.nextElementSibling?.classList.add('gallery-card__placeholder--visible');
-                      };
-                    }}
-                  />
-                  <div className="gallery-card__placeholder">
-                    <span>加载中...</span>
-                  </div>
+                  {imageErrors[img.id] ? (
+                    <div className="gallery-card__placeholder gallery-card__placeholder--visible">
+                      <span>图片加载失败</span>
+                    </div>
+                  ) : (
+                    <img 
+                      src={img.thumb} 
+                      alt={img.alt} 
+                      className="gallery-card__img" 
+                      loading="lazy"
+                      onError={() => handleImageError(img.id)}
+                    />
+                  )}
                 </div>
                 <div className="gallery-card__body">
                   <div className="gallery-card__num">{img.num}</div>

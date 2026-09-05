@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import ThreeScene from './ThreeScene.jsx';
+import { HERO_IMAGES, imageUrl } from '../config/assets.js';
 
 export default function Hero() {
   const heroRef = useRef(null);
@@ -25,6 +26,9 @@ export default function Hero() {
     };
   }, []);
 
+  // Hero 背景图片 URL（优先 AVIF，备选 WebP，最后 JPG）
+  const heroSrc = imageUrl(HERO_IMAGES.jpg);
+
   return (
     <section className="hero" ref={heroRef}>
       {/* Wuzhen aerial panorama background */}
@@ -32,10 +36,17 @@ export default function Hero() {
         <img
           ref={imgRef}
           className="hero__img"
-          src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg"
+          src={heroSrc}
           alt="Aerial panorama of Wuzhen Water Town"
           loading="eager"
           fetchPriority="high"
+          onError={(e) => {
+            // Fallback: 如果本地图片加载失败，使用 Wikimedia 备用
+            if (e.currentTarget.dataset.fallback !== 'true') {
+              e.currentTarget.dataset.fallback = 'true';
+              e.currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg';
+            }
+          }}
         />
         <div className="hero__overlay" />
       </div>

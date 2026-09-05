@@ -1,58 +1,73 @@
 import SectionHeader from './SectionHeader.jsx';
 import Reveal from './Reveal.jsx';
+import { SOURCE_URLS } from '../config/assets.js';
 
 const sources = [
   {
     index: '01',
     name: 'Wikimedia Commons — Aerial panorama of Wuzhen',
     cn: 'Hero 背景图片来源',
-    uses: ['图片作者：Wanderingchina', '许可证：CC BY 4.0', '用于 Hero 首屏背景'],
-    url: 'https://commons.wikimedia.org/wiki/File:Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg',
+    url: SOURCE_URLS.hero,
+    author: 'Wanderingchina',
+    license: 'CC BY 4.0',
+    uses: ['Hero 背景图', '航拍乌镇全景', '展示水道与古镇整体布局'],
   },
   {
     index: '02',
     name: 'Wikimedia Commons — WuzhenWaterway.jpg',
     cn: '乌镇水道图片来源',
-    uses: ['图片作者：Evilbish', '许可证：CC BY-SA 3.0', '用于 Gallery 01：乌镇水道'],
-    url: 'https://commons.wikimedia.org/wiki/File:WuzhenWaterway.jpg',
+    url: SOURCE_URLS.waterway,
+    author: 'Evilbish',
+    license: 'CC BY-SA 3.0',
+    uses: ['Wikimedia Commons 图片', '页面标注 Creative Commons 授权', '用于 Gallery 01：乌镇水道'],
   },
   {
     index: '03',
     name: 'Wikimedia Commons — Wuzhen Xizha 2009-13.jpg',
     cn: '乌镇西栅古桥图片来源',
-    uses: ['图片作者：Gerbil', '许可证：CC BY-SA 3.0', '用于 Gallery 02：乌镇古桥'],
-    url: 'https://commons.wikimedia.org/wiki/File:Wuzhen_Xizha_2009-13.jpg',
+    url: SOURCE_URLS.bridge,
+    author: 'Gerbil',
+    license: 'CC BY-SA 3.0',
+    uses: ['Wikimedia Commons 图片', '页面标注 Creative Commons 授权', '用于 Gallery 02：古桥'],
   },
   {
     index: '04',
     name: 'Wikimedia Commons — Canal in Wuzhen.JPG',
     cn: '乌镇运河与游船图片来源',
-    uses: ['Wikimedia Commons 图片', '页面标注 Creative Commons 授权', '用于 Gallery 03：乘船与步行'],
-    url: 'https://commons.wikimedia.org/wiki/File:Canal_in_Wuzhen.JPG',
+    url: SOURCE_URLS.boat,
+    author: 'Unknown',
+    license: 'CC BY-SA',
+    uses: ['Wikimedia Commons 图片', '页面标注 Creative Commons 授权', '用于 Gallery 03：乘船与徒步'],
   },
 ];
 
 export default function Sources() {
   return (
-    <section id="sources" className="section sources-section">
+    <section id="sources" className="section">
       <div className="container">
-        <SectionHeader number="08" en="SOURCES" cn="Sources & References" />
+        <SectionHeader number="08" en="SOURCES" cn="资料来源" />
         <div className="sources-list">
-          {sources.map((s, i) => (
-            <Reveal key={s.index} className="source-card" delay={i * 100}>
-              <div className="source-card__index">{s.index}</div>
-              <div className="source-card__body">
-                <h3 className="source-card__name">
-                  <a href={s.url} target="_blank" rel="noreferrer">{s.name}</a>
-                </h3>
-                <p className="source-card__cn">{s.cn}</p>
-                <div className="source-card__uses">
-                  <p className="source-card__uses-label">图片授权 / 资料用途</p>
-                  <ul>
-                    {s.uses.map((u) => (
-                      <li key={u}>{u}</li>
+          {sources.map((source, i) => (
+            <Reveal key={source.index} delay={i * 80}>
+              <div className="source-card">
+                <span className="source-card__num">{source.index}</span>
+                <div className="source-card__content">
+                  <h3 className="source-card__title">
+                    <a href={source.url} target="_blank" rel="noreferrer">
+                      {source.name}
+                    </a>
+                  </h3>
+                  <p className="source-card__cn">{source.cn}</p>
+                  <p className="source-card__meta">
+                    <span>Photo: {source.author}</span>
+                    <span>·</span>
+                    <span>{source.license}</span>
+                  </p>
+                  <p className="source-card__uses">
+                    {source.uses.map((u, j) => (
+                      <span key={j} className="source-card__tag">{u}</span>
                     ))}
-                  </ul>
+                  </p>
                 </div>
               </div>
             </Reveal>

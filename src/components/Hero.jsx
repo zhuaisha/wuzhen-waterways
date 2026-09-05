@@ -42,11 +42,6 @@ export default function Hero() {
 
       <ThreeScene className="hero__three" variant="hero" scrollAffected opacity={0.7} />
 
-      {/* Brand icon floating animation */}
-      <div className={`hero__brand-icon ${showContent ? 'hero__brand-icon--visible' : ''}`}>
-        <img src="/assets/wuzhen-icon.png" alt="Wuzhen" />
-      </div>
-
       <div className={`hero__content ${showContent ? 'hero__content--visible' : ''}`}>
         <div className="hero__badge">
           Grade 9 · English Project · Week One

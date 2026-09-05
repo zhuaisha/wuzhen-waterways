@@ -2,39 +2,39 @@ import { useState } from 'react';
 import SectionHeader from './SectionHeader.jsx';
 import Reveal from './Reveal.jsx';
 
-// 使用 picsum.photos 提供高质量占位图
+// 使用本地高质量图片
 const images = [
   {
     id: 1,
-    src: 'https://picsum.photos/seed/wuzhen1/1200/800',
-    thumb: 'https://picsum.photos/seed/wuzhen1/800/533',
+    src: './images/photo1_day.jpg',
+    thumb: './images/photo1_day.jpg',
     title: 'Wuzhen Waterways',
     num: '01',
     descCn: '水道贯穿乌镇，两岸白墙黛瓦构成典型的江南水乡景观。',
-    source: 'Picsum Photos',
-    sourceUrl: 'https://picsum.photos',
+    source: 'Project Assets',
+    sourceUrl: '#',
     alt: '乌镇水道与沿岸传统建筑',
   },
   {
     id: 2,
-    src: 'https://picsum.photos/seed/wuzhen2/1200/800',
-    thumb: 'https://picsum.photos/seed/wuzhen2/800/533',
+    src: './images/photo2_night.jpg',
+    thumb: './images/photo2_night.jpg',
     title: 'Ancient Bridge',
     num: '02',
     descCn: '古桥连接水道两岸，是乌镇传统空间与水乡生活的重要节点。',
-    source: 'Picsum Photos',
-    sourceUrl: 'https://picsum.photos',
+    source: 'Project Assets',
+    sourceUrl: '#',
     alt: '乌镇西栅古桥夜景',
   },
   {
     id: 3,
-    src: 'https://picsum.photos/seed/wuzhen3/1200/800',
-    thumb: 'https://picsum.photos/seed/wuzhen3/800/533',
+    src: './images/photo3_rowboat.jpg',
+    thumb: './images/photo3_rowboat.jpg',
     title: 'Boat & Walking',
     num: '03',
     descCn: '乘船看水、沿河步行，是感受乌镇街巷与水乡生活的两种方式。',
-    source: 'Picsum Photos',
-    sourceUrl: 'https://picsum.photos',
+    source: 'Project Assets',
+    sourceUrl: '#',
     alt: '乌镇运河与传统游船',
   },
 ];

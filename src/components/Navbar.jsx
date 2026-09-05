@@ -13,44 +13,32 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
-  const [clickedBtn, setClickedBtn] = useState(null);
+  const [activeSection, setActiveSection] = useState('focus');
   const lenisRef = useRef(null);
 
   // 获取 Lenis 实例
   useEffect(() => {
-    // 从 window 获取 Lenis 实例（由 main.jsx 创建）
     if (window.__lenis) {
       lenisRef.current = window.__lenis;
     }
   }, []);
 
-  // 检测当前活动 Section
+  // 滚动监听用于玻璃效果和 Active 状态
   useEffect(() => {
-    const sections = navLinks.map(link => document.querySelector(link.href));
-    
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const id = entry.target.getAttribute('id');
-          setActiveSection(id);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+      
+      // 检测当前活动 Section
+      const scrollPos = window.scrollY + 100;
+      for (let i = navLinks.length - 1; i >= 0; i--) {
+        const section = document.querySelector(navLinks[i].href);
+        if (section && section.offsetTop <= scrollPos) {
+          setActiveSection(navLinks[i].section);
+          break;
         }
-      });
-    }, {
-      rootMargin: '-40% 0px -55% 0px',
-      threshold: 0
-    });
+      }
+    };
 
-    sections.forEach(section => {
-      if (section) observer.observe(section);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  // 滚动监听用于玻璃效果
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -92,10 +80,9 @@ export default function Navbar() {
       lenisRef.current.scrollTo(target, {
         duration: 1.0,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        offset: -80 // 导航栏高度补偿
+        offset: -80
       });
     } else {
-      // 降级方案
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -112,10 +99,7 @@ export default function Navbar() {
     setOpen(false);
   };
 
-  // 导出 Lenis 实例给其他组件使用
-  useEffect(() => {
-    window.__lenis = lenisRef.current;
-  }, []);
+  const [clickedBtn, setClickedBtn] = useState(null);
 
   return (
     <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>

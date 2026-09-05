@@ -184,15 +184,16 @@ ul, ol { list-style: none; }
 
 .navbar__link-indicator {
   position: absolute;
-  bottom: -2px;
+  bottom: -4px;
   left: 50%;
   transform: translateX(-50%) scaleX(0);
   width: 24px;
   height: 2px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 1px;
   opacity: 0;
   transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
 .navbar__link--active .navbar__link-indicator {

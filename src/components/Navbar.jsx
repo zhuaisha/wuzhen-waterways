@@ -23,31 +23,35 @@ export default function Navbar() {
     }
   }, []);
 
-  // 滚动监听用于玻璃效果和 Active 状态
+  // 滚动监听
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 40);
       
-      // 检测当前活动 Section
-      const scrollPos = window.scrollY + 100;
-      let currentSection = 'focus';
+      // 使用 IntersectionObserver 检测活动 Section
+      const scrollPos = window.scrollY;
+      let current = 'focus';
       
-      for (let i = navLinks.length - 1; i >= 0; i--) {
-        const section = document.querySelector(navLinks[i].href);
-        if (section && section.offsetTop <= scrollPos + 200) {
-          currentSection = navLinks[i].section;
-          break;
+      // 从下往上检查，确保找到最接近视口中心的 section
+      for (const link of navLinks) {
+        const el = document.querySelector(link.href);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          // 如果 section 的顶部已经进入视口，或者当前在 section 范围内
+          if (rect.top <= window.innerHeight * 0.5) {
+            current = link.section;
+          }
         }
       }
       
-      setActiveSection(currentSection);
+      setActiveSection(current);
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // 平滑滚动到目标
+  // 平滑滚动
   const smoothScrollTo = (targetId, event) => {
     const target = document.querySelector(targetId);
     if (!target) return;
@@ -70,7 +74,7 @@ export default function Navbar() {
       });
     }
 
-    // 页面内容轻微转场
+    // 页面内容转场
     gsap.to('main', {
       opacity: 0.7,
       y: 8,
@@ -89,7 +93,7 @@ export default function Navbar() {
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // 滚动完成后恢复
+    // 恢复
     setTimeout(() => {
       gsap.to('main', {
         opacity: 1,

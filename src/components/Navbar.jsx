@@ -30,13 +30,17 @@ export default function Navbar() {
       
       // 检测当前活动 Section
       const scrollPos = window.scrollY + 100;
+      let currentSection = 'focus';
+      
       for (let i = navLinks.length - 1; i >= 0; i--) {
         const section = document.querySelector(navLinks[i].href);
-        if (section && section.offsetTop <= scrollPos) {
-          setActiveSection(navLinks[i].section);
+        if (section && section.offsetTop <= scrollPos + 200) {
+          currentSection = navLinks[i].section;
           break;
         }
       }
+      
+      setActiveSection(currentSection);
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -50,7 +54,6 @@ export default function Navbar() {
 
     // 按钮点击反馈
     if (event) {
-      setClickedBtn(targetId);
       gsap.to(event.currentTarget, {
         scale: 0.96,
         opacity: 0.75,
@@ -98,8 +101,6 @@ export default function Navbar() {
 
     setOpen(false);
   };
-
-  const [clickedBtn, setClickedBtn] = useState(null);
 
   return (
     <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>

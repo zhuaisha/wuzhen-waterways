@@ -200,35 +200,23 @@ ul, ol { list-style: none; }
 .hero__bg {
   position: absolute;
   inset: 0;
-}
-
-/* CSS gradient background as image fallback */
-.hero__gradient {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-}
-
-.hero__pattern {
-  position: absolute;
-  inset: 0;
-  background-image: 
-    radial-gradient(circle at 20% 50%, rgba(111, 146, 149, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(48, 78, 82, 0.2) 0%, transparent 40%),
-    radial-gradient(circle at 40% 80%, rgba(168, 204, 199, 0.1) 0%, transparent 45%);
-  animation: heroFloat 20s ease-in-out infinite;
-}
-
-@keyframes heroFloat {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(-10px, -10px); }
+  overflow: hidden;
 }
 
 .hero__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.45) saturate(0.9);
+  object-position: center center;
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+  transition: transform 0.1s linear;
+}
+
+/* Parallax effect on scroll */
+.hero__img--parallax {
+  transform: translateY(10%);
 }
 
 .hero__overlay {
@@ -236,10 +224,10 @@ ul, ol { list-style: none; }
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.3) 0%,
-    rgba(0, 0, 0, 0.5) 50%,
-    rgba(0, 0, 0, 0.7) 100%
+    rgba(7, 15, 35, 0.55) 0%,
+    rgba(10, 27, 50, 0.72) 100%
   );
+  z-index: 1;
 }
 
 .hero__three {

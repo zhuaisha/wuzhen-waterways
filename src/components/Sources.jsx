@@ -4,20 +4,27 @@ import Reveal from './Reveal.jsx';
 const sources = [
   {
     index: '01',
+    name: 'Wikimedia Commons — Aerial panorama of Wuzhen',
+    cn: 'Hero 背景图片来源',
+    uses: ['图片作者：Wanderingchina', '许可证：CC BY 4.0', '用于 Hero 首屏背景'],
+    url: 'https://commons.wikimedia.org/wiki/File:Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg',
+  },
+  {
+    index: '02',
     name: 'Wikimedia Commons — WuzhenWaterway.jpg',
     cn: '乌镇水道图片来源',
     uses: ['图片作者：Evilbish', '许可证：CC BY-SA 3.0', '用于 Gallery 01：乌镇水道'],
     url: 'https://commons.wikimedia.org/wiki/File:WuzhenWaterway.jpg',
   },
   {
-    index: '02',
+    index: '03',
     name: 'Wikimedia Commons — Wuzhen Xizha 2009-13.jpg',
     cn: '乌镇西栅古桥图片来源',
     uses: ['图片作者：Gerbil', '许可证：CC BY-SA 3.0', '用于 Gallery 02：乌镇古桥'],
     url: 'https://commons.wikimedia.org/wiki/File:Wuzhen_Xizha_2009-13.jpg',
   },
   {
-    index: '03',
+    index: '04',
     name: 'Wikimedia Commons — Canal in Wuzhen.JPG',
     cn: '乌镇运河与游船图片来源',
     uses: ['Wikimedia Commons 图片', '页面标注 Creative Commons 授权', '用于 Gallery 03：乘船与步行'],

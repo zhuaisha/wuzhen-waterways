@@ -1,12 +1,35 @@
+import { useEffect, useRef } from 'react';
 import ThreeScene from './ThreeScene.jsx';
 
 export default function Hero() {
+  const heroRef = useRef(null);
+  const imgRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!heroRef.current || !imgRef.current) return;
+      const scrolled = window.scrollY;
+      const parallaxOffset = scrolled * 0.15;
+      imgRef.current.style.transform = `translateY(${parallaxOffset}px) scale(1.05)`;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <section className="hero">
-      {/* CSS gradient background as image fallback */}
+    <section className="hero" ref={heroRef}>
+      {/* Wuzhen aerial panorama background */}
       <div className="hero__bg">
-        <div className="hero__gradient" />
-        <div className="hero__pattern" />
+        <img
+          ref={imgRef}
+          className="hero__img"
+          src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg"
+          alt="Aerial panorama of Wuzhen Water Town"
+          loading="eager"
+          fetchPriority="high"
+        />
+        <div className="hero__overlay" />
       </div>
 
       <ThreeScene className="hero__three" variant="hero" scrollAffected opacity={0.7} />

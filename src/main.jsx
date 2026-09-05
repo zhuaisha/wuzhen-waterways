@@ -20,6 +20,9 @@ const lenis = new Lenis({
   gestureOrientation: 'vertical',
 });
 
+// 导出给 Navbar 使用
+window.__lenis = lenis;
+
 // Sync Lenis with GSAP ticker
 gsap.ticker.add((time) => {
   lenis.raf(time * 1000);

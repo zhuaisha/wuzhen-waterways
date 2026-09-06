@@ -145,8 +145,8 @@ const waterFragmentShader = `
     color += vec3(0.7, 0.75, 0.8) * highlight * 0.1;
     
     // Fresnel adds sky color at grazing angles
-    vec3 skyColor = vec3(0.2, 0.25, 0.3);
-    color = mix(color, skyColor, fresnel * 0.3);
+    vec3 skyColor = vec3(0.3, 0.4, 0.5);
+    color = mix(color, skyColor, fresnel * 0.5);
     
     // Fog
     float fogFactor = smoothstep(uFogNear, uFogFar, length(vWorldPos - cameraPosition));
@@ -156,7 +156,7 @@ const waterFragmentShader = `
     float edgeFade = smoothstep(0.0, 0.3, vUv.x) * smoothstep(1.0, 0.7, vUv.x);
     edgeFade *= smoothstep(0.0, 0.3, vUv.y) * smoothstep(1.0, 0.7, vUv.y);
     
-    gl_FragColor = vec4(color, uOpacity * edgeFade);
+    gl_FragColor = vec4(color, edgeFade);
   }
 `;
 
@@ -253,9 +253,9 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
 
     const waterUniforms = {
       uTime: { value: 0 },
-      uWaveHeight: { value: prefersReducedMotion ? 0.02 : 0.12 },
+      uWaveHeight: { value: prefersReducedMotion ? 0.02 : 0.25 },
       uWaveFreq: { value: 1.0 },
-      uWaterColor: { value: new THREE.Color(0x1a3a4a) },
+      uWaterColor: { value: new THREE.Color(0x2a5a6a) },
       uFogColor: { value: new THREE.Color(0x0a1520) },
       uFogNear: { value: 8.0 },
       uFogFar: { value: 25.0 },

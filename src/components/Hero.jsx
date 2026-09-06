@@ -30,7 +30,7 @@ export default function Hero() {
         <img
           ref={imgRef}
           className="hero__img"
-          src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg"
+          src="/images/hero_wuzhen.jpg"
           alt="Aerial panorama of Wuzhen Water Town"
           loading="eager"
           fetchPriority="high"

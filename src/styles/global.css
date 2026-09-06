@@ -266,8 +266,8 @@ ul, ol { list-style: none; }
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(7, 15, 35, 0.15) 0%,
-    rgba(10, 27, 50, 0.25) 100%
+    rgba(7, 15, 35, 0.08) 0%,
+    rgba(10, 27, 50, 0.15) 100%
   );
   z-index: 2;
 }

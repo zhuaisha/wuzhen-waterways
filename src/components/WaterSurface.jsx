@@ -164,6 +164,8 @@ const waterFragmentShader = `
 const particleVertexShader = `
   uniform float uTime;
   uniform float uPixelRatio;
+  uniform vec2 uMouse;
+  uniform float uMouseInfluence;
   
   attribute float aSize;
   attribute float aSpeed;
@@ -181,13 +183,17 @@ const particleVertexShader = `
     pos.y += cos(t * 0.5 + aOffset) * 0.3;
     pos.z += cos(t * 0.7 + aOffset) * 0.5;
     
+    // Mouse influence - particles follow cursor
+    pos.x += uMouse.x * uMouseInfluence * 2.0;
+    pos.y += uMouse.y * uMouseInfluence * 1.0;
+    
     mvPos = modelViewMatrix * vec4(pos, 1.0);
     
     gl_Position = projectionMatrix * mvPos;
     gl_PointSize = aSize * uPixelRatio * (100.0 / -mvPos.z);
     
     // Fade based on height
-    vAlpha = smoothstep(-2.0, 2.0, position.y) * 0.6;
+    vAlpha = smoothstep(-2.0, 2.0, position.y) * 0.7;
   }
 `;
 
@@ -261,7 +267,7 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
       uFogFar: { value: 30.0 },
       uOpacity: { value: opacity },
       uMouse: { value: new THREE.Vector2(0, 0) },
-      uMouseInfluence: { value: prefersReducedMotion ? 0.0 : 0.2 },
+      uMouseInfluence: { value: prefersReducedMotion ? 0.0 : 0.5 },
     };
 
     const waterMat = new THREE.ShaderMaterial({
@@ -304,6 +310,8 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
       uniforms: {
         uTime: { value: 0 },
         uPixelRatio: { value: renderer.getPixelRatio() },
+        uMouse: { value: new THREE.Vector2(0, 0) },
+        uMouseInfluence: { value: prefersReducedMotion ? 0.0 : 0.5 },
       },
       transparent: true,
       depthWrite: false,
@@ -373,6 +381,7 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
       waterUniforms.uTime.value = time;
       waterUniforms.uMouse.value.set(stateRef.current.mouse.x, stateRef.current.mouse.y);
       particleMat.uniforms.uTime.value = time;
+      particleMat.uniforms.uMouse.value.set(stateRef.current.mouse.x, stateRef.current.mouse.y);
 
       // Camera parallax
       if (!prefersReducedMotion) {

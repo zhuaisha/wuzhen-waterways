@@ -6,6 +6,7 @@ export default function Hero() {
   const imgRef = useRef(null);
   const [showContent, setShowContent] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [useFallback, setUseFallback] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowContent(true), 800);
@@ -13,8 +14,8 @@ export default function Hero() {
     const handleScroll = () => {
       if (!heroRef.current || !imgRef.current) return;
       const scrolled = window.scrollY;
-      const parallaxOffset = scrolled * 0.15;
-      imgRef.current.style.transform = `translateY(${parallaxOffset}px) scale(1.05)`;
+      const parallaxOffset = scrolled * 0.1;
+      imgRef.current.style.transform = `translateY(${parallaxOffset}px) scale(1.02)`;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -24,22 +25,34 @@ export default function Hero() {
     };
   }, []);
 
+  const handleImgError = () => {
+    console.warn('Hero image failed to load, using fallback');
+    setImgError(true);
+    setUseFallback(true);
+  };
+
+  const getHeroImageSrc = () => {
+    if (useFallback) return `${import.meta.env.BASE_URL}images/photo1_day.jpg`;
+    return `${import.meta.env.BASE_URL}images/hero_wuzhen.jpg`;
+  };
+
   return (
     <section className="hero" ref={heroRef}>
       <div className="hero__bg">
         <img
           ref={imgRef}
           className="hero__img"
-          src="/images/hero_wuzhen.jpg"
-          alt="Aerial panorama of Wuzhen Water Town"
+          src={getHeroImageSrc()}
+          alt=""
+          aria-hidden="true"
           loading="eager"
           fetchPriority="high"
-          onError={() => setImgError(true)}
+          onError={handleImgError}
         />
         <div className="hero__overlay" />
       </div>
 
-      <WaterSurface className="hero__three hero__water" opacity={0.5} scrollAffected />
+      <WaterSurface className="hero__water" opacity={0.35} scrollAffected />
 
       <div className={`hero__content ${showContent ? 'hero__content--visible' : ''}`}>
         <div className="hero__badge">

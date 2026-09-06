@@ -2,37 +2,37 @@ import { useState } from 'react';
 import SectionHeader from './SectionHeader.jsx';
 import Reveal from './Reveal.jsx';
 
-// 使用本地高质量图片
+// 使用本地高清图片
 const images = [
   {
     id: 1,
-    src: './images/photo1_day.jpg',
-    thumb: './images/photo1_day.jpg',
+    src: '/images/wuzhen-waterways.jpg',
+    thumb: '/images/wuzhen-waterways.jpg',
     title: 'Wuzhen Waterways',
     num: '01',
-    descCn: '水道贯穿乌镇，两岸白墙黛瓦构成典型的江南水乡景观。',
+    descCn: '水道贯穿乌镇，两岸白墙黛瓦与倒映在水面的建筑构成典型的江南水乡景观。',
     source: 'Project Assets',
     sourceUrl: '#',
     alt: '乌镇水道与沿岸传统建筑',
   },
   {
     id: 2,
-    src: './images/photo2_night.jpg',
-    thumb: './images/photo2_night.jpg',
-    title: 'Ancient Bridge',
+    src: '/images/wuzhen-bridge.jpg',
+    thumb: '/images/wuzhen-bridge.jpg',
+    title: 'Ancient Bridges',
     num: '02',
-    descCn: '古桥连接水道两岸，是乌镇传统空间与水乡生活的重要节点。',
+    descCn: '古桥连接水道两岸，是乌镇传统空间结构和水乡生活的重要组成部分。',
     source: 'Project Assets',
     sourceUrl: '#',
-    alt: '乌镇西栅古桥夜景',
+    alt: '乌镇西栅古桥',
   },
   {
     id: 3,
-    src: './images/photo3_rowboat.jpg',
-    thumb: './images/photo3_rowboat.jpg',
-    title: 'Boat & Walking',
+    src: '/images/wuzhen-boat.jpg',
+    thumb: '/images/wuzhen-boat.jpg',
+    title: 'Boat Ride in Wuzhen',
     num: '03',
-    descCn: '乘船看水、沿河步行，是感受乌镇街巷与水乡生活的两种方式。',
+    descCn: '乘坐传统游船沿着水道前行，可以从水上感受乌镇的街巷、桥梁和传统生活。',
     source: 'Project Assets',
     sourceUrl: '#',
     alt: '乌镇运河与传统游船',
@@ -42,6 +42,15 @@ const images = [
 function Lightbox({ img, onClose }) {
   if (!img) return null;
   
+  // 监听 ESC 键关闭
+  useState(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  });
+  
   return (
     <div className="lightbox" onClick={onClose} role="dialog" aria-modal="true" aria-label={`Image: ${img.title}`}>
       <button className="lightbox__close" onClick={onClose} aria-label="Close lightbox">
@@ -50,7 +59,7 @@ function Lightbox({ img, onClose }) {
         </svg>
       </button>
       <div className="lightbox__content" onClick={(e) => e.stopPropagation()}>
-        <img src={img.src} alt={img.alt} className="lightbox__img" loading="lazy" />
+        <img src={img.src} alt={img.alt} className="lightbox__img" loading="eager" />
         <div className="lightbox__info">
           <div className="lightbox__num">Gallery {img.num}</div>
           <h3 className="lightbox__title">{img.title}</h3>
@@ -66,10 +75,14 @@ function Lightbox({ img, onClose }) {
 
 export default function Gallery() {
   const [selected, setSelected] = useState(null);
-  const [loadedIds, setLoadedIds] = useState({});
+  const [imageStates, setImageStates] = useState({});
 
   const handleImageLoad = (id) => {
-    setLoadedIds(prev => ({ ...prev, [id]: true }));
+    setImageStates(prev => ({ ...prev, [id]: 'loaded' }));
+  };
+
+  const handleImageError = (id) => {
+    setImageStates(prev => ({ ...prev, [id]: 'error' }));
   };
 
   return (
@@ -86,19 +99,28 @@ export default function Gallery() {
                 aria-label={`View ${img.title}`}
               >
                 <div className="gallery-card__img-wrap">
-                  {!loadedIds[img.id] && (
+                  {imageStates[img.id] === undefined && (
                     <div className="gallery-card__placeholder gallery-card__placeholder--visible">
-                      <span>加载中...</span>
+                      <span className="shimmer" />
                     </div>
                   )}
-                  <img 
-                    src={img.thumb} 
-                    alt={img.alt} 
-                    className={`gallery-card__img ${loadedIds[img.id] ? 'gallery-card__img--loaded' : ''}`}
-                    loading="lazy"
-                    onLoad={() => handleImageLoad(img.id)}
-                    onError={() => handleImageLoad(img.id)}
-                  />
+                  {imageStates[img.id] === 'error' ? (
+                    <div className="gallery-card__fallback">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Image unavailable</span>
+                    </div>
+                  ) : (
+                    <img 
+                      src={img.thumb} 
+                      alt={img.alt} 
+                      className={`gallery-card__img ${imageStates[img.id] === 'loaded' ? 'gallery-card__img--loaded' : ''}`}
+                      loading="lazy"
+                      onLoad={() => handleImageLoad(img.id)}
+                      onError={() => handleImageError(img.id)}
+                    />
+                  )}
                 </div>
                 <div className="gallery-card__body">
                   <div className="gallery-card__num">{img.num}</div>

@@ -33,10 +33,6 @@ gsap.ticker.lagSmoothing(0);
 // Update ScrollTrigger on Lenis scroll
 lenis.on('scroll', ScrollTrigger.update);
 
-gsap.ticker.add(() => {
-  ScrollTrigger.update();
-});
-
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />

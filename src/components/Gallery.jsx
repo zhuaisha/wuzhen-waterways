@@ -2,12 +2,12 @@ import { useState } from 'react';
 import SectionHeader from './SectionHeader.jsx';
 import Reveal from './Reveal.jsx';
 
-// 使用本地高清图片
+// 使用本地高质量图片
 const images = [
   {
     id: 1,
-    src: '/images/wuzhen-waterways.jpg',
-    thumb: '/images/wuzhen-waterways.jpg',
+    src: `${import.meta.env.BASE_URL}images/wuzhen-waterways.jpg`,
+    thumb: `${import.meta.env.BASE_URL}images/wuzhen-waterways.jpg`,
     title: 'Wuzhen Waterways',
     num: '01',
     descCn: '水道贯穿乌镇，两岸白墙黛瓦与倒映在水面的建筑构成典型的江南水乡景观。',
@@ -17,8 +17,8 @@ const images = [
   },
   {
     id: 2,
-    src: '/images/wuzhen-bridge.jpg',
-    thumb: '/images/wuzhen-bridge.jpg',
+    src: `${import.meta.env.BASE_URL}images/wuzhen-bridge.jpg`,
+    thumb: `${import.meta.env.BASE_URL}images/wuzhen-bridge.jpg`,
     title: 'Ancient Bridges',
     num: '02',
     descCn: '古桥连接水道两岸，是乌镇传统空间结构和水乡生活的重要组成部分。',
@@ -28,8 +28,8 @@ const images = [
   },
   {
     id: 3,
-    src: '/images/wuzhen-boat.jpg',
-    thumb: '/images/wuzhen-boat.jpg',
+    src: `${import.meta.env.BASE_URL}images/wuzhen-boat.jpg`,
+    thumb: `${import.meta.env.BASE_URL}images/wuzhen-boat.jpg`,
     title: 'Boat Ride in Wuzhen',
     num: '03',
     descCn: '乘坐传统游船沿着水道前行，可以从水上感受乌镇的街巷、桥梁和传统生活。',

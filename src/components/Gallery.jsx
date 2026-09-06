@@ -112,10 +112,10 @@ export default function Gallery() {
                       <span>Image unavailable</span>
                     </div>
                   ) : (
-                    <img 
-                      src={img.thumb} 
-                      alt={img.alt} 
-                      className={`gallery-card__img ${imageStates[img.id] === 'loaded' ? 'gallery-card__img--loaded' : ''}`}
+                    <img
+                      src={img.thumb}
+                      alt={img.alt}
+                      className={`gallery-card__img ${imageStates[img.id] === 'loaded' ? 'gallery-card__img--loaded' : ''} ${imageStates[img.id] === 'loaded' ? 'gallery-card__placeholder--hidden' : ''}`}
                       loading="lazy"
                       onLoad={() => handleImageLoad(img.id)}
                       onError={() => handleImageError(img.id)}

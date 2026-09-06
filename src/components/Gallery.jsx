@@ -115,8 +115,7 @@ export default function Gallery() {
                     <img
                       src={img.thumb}
                       alt={img.alt}
-                      className={`gallery-card__img ${imageStates[img.id] === 'loaded' ? 'gallery-card__img--loaded' : ''} ${imageStates[img.id] === 'loaded' ? 'gallery-card__placeholder--hidden' : ''}`}
-                      loading="lazy"
+                      className={`gallery-card__img ${imageStates[img.id] === 'loaded' ? 'gallery-card__img--loaded' : ''}`}
                       onLoad={() => handleImageLoad(img.id)}
                       onError={() => handleImageError(img.id)}
                     />

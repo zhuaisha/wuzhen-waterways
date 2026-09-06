@@ -281,8 +281,8 @@ ul, ol { list-style: none; }
 
 /* Water surface specific styles */
 .hero__water {
-  mix-blend-mode: screen;
-  opacity: 0.8;
+  mix-blend-mode: soft-light;
+  opacity: 0.6;
 }
 
 /* Gallery image placeholder & loading states */

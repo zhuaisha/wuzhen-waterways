@@ -39,7 +39,7 @@ export default function Hero() {
         <div className="hero__overlay" />
       </div>
 
-      <WaterSurface className="hero__three" opacity={0.65} scrollAffected />
+      <WaterSurface className="hero__three hero__water" opacity={0.5} scrollAffected />
 
       <div className={`hero__content ${showContent ? 'hero__content--visible' : ''}`}>
         <div className="hero__badge">

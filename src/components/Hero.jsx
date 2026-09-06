@@ -6,37 +6,42 @@ export default function Hero() {
   const imgRef = useRef(null);
   const [showContent, setShowContent] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [imgError, setImgError] = useState(false);
   const [useFallback, setUseFallback] = useState(false);
 
   const heroImageSrc = `${import.meta.env.BASE_URL}images/hero_wuzhen.jpg`;
   const fallbackImageSrc = `${import.meta.env.BASE_URL}images/photo1_day.jpg`;
 
-  // Preload image before showing content
+  // Preload image immediately
   useEffect(() => {
-    const img = new Image();
-    img.src = heroImageSrc;
-    img.onload = () => {
-      console.log('Hero image preloaded successfully');
-      setImageLoaded(true);
-      setTimeout(() => setShowContent(true), 100);
+    const preloadImage = (src) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(src);
+        img.onerror = reject;
+        img.src = src;
+      });
     };
-    img.onerror = () => {
-      console.warn('Hero image failed to load, trying fallback');
-      setImgError(true);
-      const fallbackImg = new Image();
-      fallbackImg.src = fallbackImageSrc;
-      fallbackImg.onload = () => {
-        setUseFallback(true);
+
+    // Try primary image first
+    preloadImage(heroImageSrc)
+      .then(() => {
         setImageLoaded(true);
-        setTimeout(() => setShowContent(true), 100);
-      };
-      fallbackImg.onerror = () => {
-        console.error('Both images failed to load');
-        setImageLoaded(true);
-        setTimeout(() => setShowContent(true), 100);
-      };
-    };
+        setTimeout(() => setShowContent(true), 50);
+      })
+      .catch(() => {
+        // Fallback to secondary image
+        preloadImage(fallbackImageSrc)
+          .then(() => {
+            setUseFallback(true);
+            setImageLoaded(true);
+            setTimeout(() => setShowContent(true), 50);
+          })
+          .catch(() => {
+            // Both failed, show anyway
+            setImageLoaded(true);
+            setTimeout(() => setShowContent(true), 50);
+          });
+      });
   }, []);
 
   useEffect(() => {
@@ -57,10 +62,10 @@ export default function Hero() {
 
   return (
     <section className="hero" ref={heroRef}>
-      <div className="hero__bg">
+      <div className={`hero__bg ${imageLoaded ? 'hero__bg--loaded' : ''}`}>
         <img
           ref={imgRef}
-          className={`hero__img ${imageLoaded ? 'hero__img--loaded' : 'hero__img--loading'}`}
+          className="hero__img"
           src={currentImageSrc}
           alt=""
           aria-hidden="true"

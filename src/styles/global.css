@@ -269,13 +269,13 @@ ul, ol { list-style: none; }
     rgba(7, 15, 35, 0.15) 0%,
     rgba(10, 27, 50, 0.25) 100%
   );
-  z-index: 1;
+  z-index: 2;
 }
 
 .hero__three {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: 1;
   pointer-events: none;
 }
 

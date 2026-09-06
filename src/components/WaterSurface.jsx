@@ -177,17 +177,17 @@ const particleVertexShader = `
     // Gentle drift
     float t = uTime * aSpeed * 0.1;
     vec3 pos = position;
-    pos.x += sin(t + aOffset) * 0.5;
-    pos.y += mod(t * 0.3 + aOffset, 5.0) - 2.5;
-    pos.z += cos(t * 0.7 + aOffset) * 0.3;
+    pos.x += sin(t + aOffset) * 0.8;
+    pos.y += cos(t * 0.5 + aOffset) * 0.3;
+    pos.z += cos(t * 0.7 + aOffset) * 0.5;
     
     mvPos = modelViewMatrix * vec4(pos, 1.0);
     
     gl_Position = projectionMatrix * mvPos;
-    gl_PointSize = aSize * uPixelRatio * (80.0 / -mvPos.z);
+    gl_PointSize = aSize * uPixelRatio * (100.0 / -mvPos.z);
     
     // Fade based on height
-    vAlpha = smoothstep(-2.0, 0.0, position.y) * 0.4;
+    vAlpha = smoothstep(-2.0, 2.0, position.y) * 0.6;
   }
 `;
 
@@ -199,7 +199,7 @@ const particleFragmentShader = `
     if (dist > 0.5) discard;
     
     float alpha = smoothstep(0.5, 0.0, dist) * vAlpha;
-    gl_FragColor = vec4(vec3(0.7, 0.75, 0.8), alpha);
+    gl_FragColor = vec4(vec3(0.8, 0.85, 0.9), alpha);
   }
 `;
 
@@ -285,11 +285,11 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
     const offsets = new Float32Array(particleCount);
 
     for (let i = 0; i < particleCount; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 25;
-      positions[i * 3 + 1] = Math.random() * 6 + 1;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 15;
-      sizes[i] = Math.random() * 1.5 + 0.3;
-      speeds[i] = Math.random() * 0.3 + 0.1;
+      positions[i * 3] = (Math.random() - 0.5) * 20;
+      positions[i * 3 + 1] = Math.random() * 5 + 0.5;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 12;
+      sizes[i] = Math.random() * 2 + 0.8;
+      speeds[i] = Math.random() * 0.4 + 0.15;
       offsets[i] = Math.random() * Math.PI * 2;
     }
 

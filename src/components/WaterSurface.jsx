@@ -247,6 +247,8 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
     renderer.setSize(container.clientWidth || window.innerWidth, container.clientHeight || window.innerHeight);
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
+    container.style.opacity = '0';
+    container.style.transition = 'opacity 0.8s ease';
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(55, container.clientWidth / container.clientHeight, 0.1, 100);
@@ -402,6 +404,13 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
     };
 
     animate();
+
+    // Fade in water surface after first render
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        container.style.opacity = '0.35';
+      });
+    });
 
     // Cleanup
     return () => {

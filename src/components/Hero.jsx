@@ -5,12 +5,41 @@ export default function Hero() {
   const heroRef = useRef(null);
   const imgRef = useRef(null);
   const [showContent, setShowContent] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [useFallback, setUseFallback] = useState(false);
 
+  const heroImageSrc = `${import.meta.env.BASE_URL}images/hero_wuzhen.jpg`;
+  const fallbackImageSrc = `${import.meta.env.BASE_URL}images/photo1_day.jpg`;
+
+  // Preload image before showing content
   useEffect(() => {
-    const timer = setTimeout(() => setShowContent(true), 800);
-    
+    const img = new Image();
+    img.src = heroImageSrc;
+    img.onload = () => {
+      console.log('Hero image preloaded successfully');
+      setImageLoaded(true);
+      setTimeout(() => setShowContent(true), 100);
+    };
+    img.onerror = () => {
+      console.warn('Hero image failed to load, trying fallback');
+      setImgError(true);
+      const fallbackImg = new Image();
+      fallbackImg.src = fallbackImageSrc;
+      fallbackImg.onload = () => {
+        setUseFallback(true);
+        setImageLoaded(true);
+        setTimeout(() => setShowContent(true), 100);
+      };
+      fallbackImg.onerror = () => {
+        console.error('Both images failed to load');
+        setImageLoaded(true);
+        setTimeout(() => setShowContent(true), 100);
+      };
+    };
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       if (!heroRef.current || !imgRef.current) return;
       const scrolled = window.scrollY;
@@ -21,38 +50,27 @@ export default function Hero() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      clearTimeout(timer);
     };
   }, []);
 
-  const handleImgError = () => {
-    console.warn('Hero image failed to load, using fallback');
-    setImgError(true);
-    setUseFallback(true);
-  };
-
-  const getHeroImageSrc = () => {
-    if (useFallback) return `${import.meta.env.BASE_URL}images/photo1_day.jpg`;
-    return `${import.meta.env.BASE_URL}images/hero_wuzhen.jpg`;
-  };
+  const currentImageSrc = useFallback ? fallbackImageSrc : heroImageSrc;
 
   return (
     <section className="hero" ref={heroRef}>
       <div className="hero__bg">
         <img
           ref={imgRef}
-          className="hero__img"
-          src={getHeroImageSrc()}
+          className={`hero__img ${imageLoaded ? 'hero__img--loaded' : 'hero__img--loading'}`}
+          src={currentImageSrc}
           alt=""
           aria-hidden="true"
           loading="eager"
           fetchPriority="high"
-          onError={handleImgError}
         />
         <div className="hero__overlay" />
       </div>
 
-      <WaterSurface className="hero__water" opacity={0.35} scrollAffected />
+      <WaterSurface className="hero__water" opacity={0.3} scrollAffected />
 
       <div className={`hero__content ${showContent ? 'hero__content--visible' : ''}`}>
         <div className="hero__badge">

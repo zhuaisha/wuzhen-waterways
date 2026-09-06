@@ -262,7 +262,7 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
       uWaveHeight: { value: prefersReducedMotion ? 0.02 : 0.18 },
       uWaveFreq: { value: 1.0 },
       uWaterColor: { value: new THREE.Color(0x1a4a5a) },
-      uFogColor: { value: new THREE.Color(0x0a1520) },
+      uFogColor: { value: new THREE.Color(0xffffff) },
       uFogNear: { value: 10.0 },
       uFogFar: { value: 30.0 },
       uOpacity: { value: opacity },
@@ -321,8 +321,8 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
     const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
 
-    // Fog - softer
-    scene.fog = new THREE.Fog(0x0a1520, 12, 30);
+    // Fog - transparent, don't cover background
+    scene.fog = new THREE.Fog(0xffffff, 12, 30);
 
     // Mouse tracking
     let targetMouseX = 0, targetMouseY = 0;

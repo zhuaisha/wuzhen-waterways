@@ -236,7 +236,7 @@ ul, ol { list-style: none; }
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(180deg, #0a1520 0%, #1a2a3a 100%);
+  background: #0a1520;
 }
 
 .hero__bg {
@@ -284,6 +284,12 @@ ul, ol { list-style: none; }
   inset: 0;
   z-index: 2;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease 0.5s;
+}
+
+.hero__bg--loaded .hero__water {
+  opacity: 1;
 }
 
 /* Gallery image placeholder & loading states */

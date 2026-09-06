@@ -244,24 +244,24 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(55, container.clientWidth / container.clientHeight, 0.1, 100);
-    camera.position.set(0, 2.5, 6);
-    camera.lookAt(0, 0, 0);
+    camera.position.set(0, 0.5, 8);
+    camera.lookAt(0, -1.5, 0);
 
-    // Water surface
+    // Water surface - positioned at bottom of hero
     const waterGeo = new THREE.PlaneGeometry(40, 40, 128, 128);
     waterGeo.rotateX(-Math.PI / 2);
 
     const waterUniforms = {
       uTime: { value: 0 },
-      uWaveHeight: { value: prefersReducedMotion ? 0.02 : 0.25 },
+      uWaveHeight: { value: prefersReducedMotion ? 0.02 : 0.18 },
       uWaveFreq: { value: 1.0 },
-      uWaterColor: { value: new THREE.Color(0x2a5a6a) },
+      uWaterColor: { value: new THREE.Color(0x1a4a5a) },
       uFogColor: { value: new THREE.Color(0x0a1520) },
-      uFogNear: { value: 8.0 },
-      uFogFar: { value: 25.0 },
+      uFogNear: { value: 10.0 },
+      uFogFar: { value: 30.0 },
       uOpacity: { value: opacity },
       uMouse: { value: new THREE.Vector2(0, 0) },
-      uMouseInfluence: { value: prefersReducedMotion ? 0.0 : 0.3 },
+      uMouseInfluence: { value: prefersReducedMotion ? 0.0 : 0.2 },
     };
 
     const waterMat = new THREE.ShaderMaterial({
@@ -273,11 +273,11 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
     });
 
     const water = new THREE.Mesh(waterGeo, waterMat);
-    water.position.y = -1.0;
+    water.position.y = -2.5;
     scene.add(water);
 
-    // Particles (mist/atmosphere)
-    const particleCount = prefersReducedMotion ? 30 : 80;
+    // Particles (mist/atmosphere) - positioned higher
+    const particleCount = prefersReducedMotion ? 30 : 60;
     const particleGeo = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const sizes = new Float32Array(particleCount);
@@ -285,11 +285,11 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
     const offsets = new Float32Array(particleCount);
 
     for (let i = 0; i < particleCount; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 30;
-      positions[i * 3 + 1] = Math.random() * 4 - 1;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
-      sizes[i] = Math.random() * 2 + 0.5;
-      speeds[i] = Math.random() * 0.5 + 0.2;
+      positions[i * 3] = (Math.random() - 0.5) * 25;
+      positions[i * 3 + 1] = Math.random() * 6 + 1;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 15;
+      sizes[i] = Math.random() * 1.5 + 0.3;
+      speeds[i] = Math.random() * 0.3 + 0.1;
       offsets[i] = Math.random() * Math.PI * 2;
     }
 
@@ -313,8 +313,8 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
     const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
 
-    // Fog
-    scene.fog = new THREE.Fog(0x0a1520, 8, 25);
+    // Fog - softer
+    scene.fog = new THREE.Fog(0x0a1520, 12, 30);
 
     // Mouse tracking
     let targetMouseX = 0, targetMouseY = 0;
@@ -376,17 +376,16 @@ export default function WaterSurface({ opacity = 0.6, scrollAffected = true }) {
 
       // Camera parallax
       if (!prefersReducedMotion) {
-        camera.position.x += (stateRef.current.mouse.x * 0.5 - camera.position.x) * 0.015;
-        camera.position.y += (2.5 + stateRef.current.mouse.y * 0.2 - camera.position.y) * 0.015;
+        camera.position.x += (stateRef.current.mouse.x * 0.3 - camera.position.x) * 0.015;
+        camera.position.y += (0.5 + stateRef.current.mouse.y * 0.15 - camera.position.y) * 0.015;
       }
-      camera.lookAt(0, 0, 0);
+      camera.lookAt(0, -1.5, 0);
 
       // Scroll effect
       if (scrollAffected) {
         const sp = stateRef.current.scrollProgress;
-        camera.position.z = 6 + sp * 4;
-        waterUniforms.uOpacity.value = opacity * (1 - sp * 0.6);
-        particleMat.uniforms.uOpacity = { value: 0.4 * (1 - sp * 0.8) };
+        camera.position.z = 8 + sp * 3;
+        waterUniforms.uOpacity.value = opacity * (1 - sp * 0.5);
       }
 
       renderer.render(scene, camera);

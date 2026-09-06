@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import ThreeScene from './ThreeScene.jsx';
+import WaterSurface from './WaterSurface.jsx';
 
 export default function Hero() {
   const heroRef = useRef(null);
@@ -30,10 +30,7 @@ export default function Hero() {
         <img
           ref={imgRef}
           className="hero__img"
-          src={imgError 
-            ? 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg'
-            : 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg'
-          }
+          src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg"
           alt="Aerial panorama of Wuzhen Water Town"
           loading="eager"
           fetchPriority="high"
@@ -42,7 +39,7 @@ export default function Hero() {
         <div className="hero__overlay" />
       </div>
 
-      <ThreeScene className="hero__three" variant="hero" scrollAffected opacity={0.7} />
+      <WaterSurface className="hero__three" opacity={0.65} scrollAffected />
 
       <div className={`hero__content ${showContent ? 'hero__content--visible' : ''}`}>
         <div className="hero__badge">

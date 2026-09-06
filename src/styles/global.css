@@ -275,7 +275,14 @@ ul, ol { list-style: none; }
 .hero__three {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Water surface specific styles */
+.hero__water {
+  mix-blend-mode: screen;
+  opacity: 0.8;
 }
 
 /* Gallery image placeholder & loading states */

@@ -75,14 +75,14 @@ function Lightbox({ img, onClose }) {
 
 export default function Gallery() {
   const [selected, setSelected] = useState(null);
-  const [imageStates, setImageStates] = useState({});
+  const [loadedIds, setLoadedIds] = useState(new Set());
 
   const handleImageLoad = (id) => {
-    setImageStates(prev => ({ ...prev, [id]: 'loaded' }));
+    setLoadedIds(prev => new Set(prev).add(id));
   };
 
   const handleImageError = (id) => {
-    setImageStates(prev => ({ ...prev, [id]: 'error' }));
+    // Optionally handle error state
   };
 
   return (
@@ -99,27 +99,19 @@ export default function Gallery() {
                 aria-label={`View ${img.title}`}
               >
                 <div className="gallery-card__img-wrap">
-                  {imageStates[img.id] === undefined && (
+                  {loadedIds.has(img.id) === false && (
                     <div className="gallery-card__placeholder gallery-card__placeholder--visible">
                       <span className="shimmer" />
                     </div>
                   )}
-                  {imageStates[img.id] === 'error' ? (
-                    <div className="gallery-card__fallback">
-                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span>Image unavailable</span>
-                    </div>
-                  ) : (
-                    <img
-                      src={img.thumb}
-                      alt={img.alt}
-                      className={`gallery-card__img ${imageStates[img.id] === 'loaded' ? 'gallery-card__img--loaded' : ''}`}
-                      onLoad={() => handleImageLoad(img.id)}
-                      onError={() => handleImageError(img.id)}
-                    />
-                  )}
+                  <img
+                    src={img.thumb}
+                    alt={img.alt}
+                    className="gallery-card__img"
+                    style={{ opacity: loadedIds.has(img.id) ? 1 : 0 }}
+                    onLoad={() => handleImageLoad(img.id)}
+                    onError={() => handleImageError(img.id)}
+                  />
                 </div>
                 <div className="gallery-card__body">
                   <div className="gallery-card__num">{img.num}</div>

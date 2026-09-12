@@ -90,7 +90,7 @@ export default function Hero() {
         <h1 className="hero__title">WUZHEN</h1>
         <p className="hero__subtitle">Waterways &amp; Bridges</p>
         <p className="hero__question">
-          Why is water the main line of the ancient town?
+          Why is water the main line of the water town?
         </p>
         <div className="hero__actions">
           <a href="#focus" className="hero__btn">

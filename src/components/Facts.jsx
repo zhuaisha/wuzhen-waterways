@@ -5,7 +5,7 @@ export default function Facts() {
   return (
     <section id="facts" className="section facts-section">
       <div className="container">
-        <SectionHeader number="03" en="FACTS" cn="3 Facts about Wuzhen" />
+        <SectionHeader number="03" en="FACTS" cn="3 Facts about Wuzhen" week="Week 1" />
         <div className="facts-grid">
           <Reveal className="fact-card">
             <div className="fact-card__tag">Fact 01</div>
@@ -13,6 +13,7 @@ export default function Facts() {
             <p className="fact-card__cn">
               乌镇的内河水系呈十字形，把古镇划分为不同区域，水道是古镇空间布局的重要组成部分。
             </p>
+            <p className="fact-card__summary">Water divides the town into zones, and the town is also connected by water.</p>
           </Reveal>
 
           <Reveal className="fact-card fact-card--big" delay={100}>
@@ -25,6 +26,7 @@ export default function Facts() {
             <p className="fact-card__cn">
               西栅有近万米河道和72座古石桥，桥梁与水道共同构成典型的江南水乡景观。
             </p>
+            <p className="fact-card__summary">Bridges connect the banks, making water accessible to everyone.</p>
           </Reveal>
 
           <Reveal className="fact-card" delay={200}>
@@ -36,6 +38,7 @@ export default function Facts() {
             <p className="fact-card__cn">
               过去当地居民常利用船只出行、运输和进行交易，水道直接参与人们的日常生活。
             </p>
+            <p className="fact-card__summary">Water was not just scenery — it was the road of daily life.</p>
           </Reveal>
         </div>
       </div>

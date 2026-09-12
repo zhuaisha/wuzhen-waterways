@@ -5,7 +5,7 @@ export default function WhyWater() {
   return (
     <section id="whywater" className="section whywater-section">
       <div className="container">
-        <SectionHeader number="06" en="WHY WATER?" cn="Why is water the main line?" />
+        <SectionHeader number="06" en="WHY WATER?" cn="Why is water the main line?" week="Week 2" />
         <div className="whywater-diagram">
           <Reveal className="whywater-diagram__center">
             <div className="whywater-node whywater-node--top">WATER</div>

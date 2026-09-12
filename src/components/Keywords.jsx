@@ -10,13 +10,16 @@ const keywords = [
   { en: 'CONNECT', cn: '连接' },
   { en: 'TRADITIONAL LIFE', cn: '传统生活' },
   { en: 'WATER TOWN', cn: '水乡古镇' },
+  { en: 'BOAT TOUR', cn: '游船体验' },
+  { en: 'REFLECTION', cn: '倒影' },
+  { en: 'AT DUSK', cn: '黄昏时分' },
 ];
 
 export default function Keywords() {
   return (
     <section id="keywords" className="section keywords-section">
       <div className="container">
-        <SectionHeader number="05" en="KEYWORDS" cn="Key Words for Our Presentation" />
+        <SectionHeader number="05" en="KEYWORDS" cn="Key Words for Our Presentation" week="Week 2" />
         <div className="keywords-cloud">
           {keywords.map((kw, i) => (
             <Reveal key={kw.en} className="keyword-tag" delay={i * 50}>

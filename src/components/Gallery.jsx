@@ -14,6 +14,7 @@ const images = [
     title: 'Wuzhen Waterways',
     num: '01',
     descCn: '水道贯穿乌镇，两岸白墙黛瓦与倒映在水面的建筑构成典型的江南水乡景观。',
+    observation: 'We noticed that the white walls and dark tiles of the buildings along the canal create a beautiful reflection on the water surface.',
     source: 'Wikimedia Commons',
     sourceUrl: 'https://commons.wikimedia.org/wiki/File:WuzhenWaterway.jpg',
     alt: '乌镇水道与沿岸传统建筑',
@@ -26,6 +27,7 @@ const images = [
     title: 'Ancient Bridges',
     num: '02',
     descCn: '古桥连接水道两岸，是乌镇传统空间结构和水乡生活的重要组成部分。',
+    observation: 'We saw that the stone bridges connect both sides of the waterway, making them an essential part of daily life in the water town.',
     source: 'Wikimedia Commons',
     sourceUrl: 'https://commons.wikimedia.org/wiki/File:Wuzhen_Xizha_2009-13.jpg',
     alt: '乌镇西栅古桥',
@@ -38,6 +40,7 @@ const images = [
     title: 'Boat Ride in Wuzhen',
     num: '03',
     descCn: '乘坐传统游船沿着水道前行，可以从水上感受乌镇的街巷、桥梁和传统生活。',
+    observation: 'We noticed that taking a boat along the canal is the best way to experience the water town, seeing bridges, streets and daily life from the water.',
     source: 'Wikimedia Commons',
     sourceUrl: 'https://commons.wikimedia.org/wiki/File:Canal_in_Wuzhen.JPG',
     alt: '乌镇运河与传统游船',
@@ -83,6 +86,7 @@ function Lightbox({ img, onClose }) {
           <div className="lightbox__num">Gallery {img.num}</div>
           <h3 className="lightbox__title">{img.title}</h3>
           <p className="lightbox__desc">{img.descCn}</p>
+          <p className="lightbox__observation">{img.observation}</p>
           <p className="lightbox__source">
             Source: <a href={img.sourceUrl} target="_blank" rel="noreferrer">{img.source}</a>
           </p>
@@ -103,7 +107,7 @@ export default function Gallery() {
   return (
     <section id="gallery" className="section gallery-section">
       <div className="container">
-        <SectionHeader number="04" en="VISUAL RESEARCH" cn="视觉调研" />
+        <SectionHeader number="04" en="VISUAL RESEARCH" cn="视觉调研" week="Week 1" />
         <p className="gallery-intro">通过图片感受乌镇的水道、古桥与传统生活</p>
         <div className="gallery-grid">
           {images.map((img, i) => (
@@ -145,6 +149,7 @@ export default function Gallery() {
                   <div className="gallery-card__num">{img.num}</div>
                   <h3 className="gallery-card__title">{img.title}</h3>
                   <p className="gallery-card__desc">{img.descCn}</p>
+                  <p className="gallery-card__observation">{img.observation}</p>
                   <p className="gallery-card__source">
                     Source: <a href={img.sourceUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>{img.source}</a>
                   </p>

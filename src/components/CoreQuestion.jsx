@@ -19,7 +19,7 @@ export default function CoreQuestion() {
           </div>
           <div className="core-question__why">WHY?</div>
           <h2 className="core-question__en">
-            Why is water the main line<br />of the ancient town?
+            Why is water the main line<br />of the water town?
           </h2>
           <h2 className="core-question__cn">为什么水是古镇的主线？</h2>
           <div className="core-question__divider" />

@@ -7,7 +7,7 @@ export default function Focus() {
   return (
     <section id="focus" className="section">
       <div className="container">
-        <SectionHeader number="01" en="OUR FOCUS" cn="项目切口" />
+        <SectionHeader number="01" en="OUR FOCUS" cn="项目切口" week="Week 1" />
         <div className="focus-grid">
           <Reveal>
             <h2 className="focus-grid__big-en">

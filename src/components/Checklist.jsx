@@ -14,7 +14,7 @@ export default function Checklist() {
   return (
     <section id="checklist" className="section checklist-section">
       <div className="container">
-        <SectionHeader number="09" en="WEEK ONE" cn="Week One Checklist" />
+        <SectionHeader number="09" en="WEEK ONE" cn="Week One Checklist" week="Week 1" />
         <div className="checklist-grid">
           <div className="checklist-list">
             {tasks.map((task, i) => (

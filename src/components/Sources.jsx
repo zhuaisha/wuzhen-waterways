@@ -44,7 +44,7 @@ export default function Sources() {
   return (
     <section id="sources" className="section">
       <div className="container">
-        <SectionHeader number="08" en="SOURCES" cn="资料来源" />
+        <SectionHeader number="08" en="SOURCES" cn="资料来源" week="Week 1" />
         <div className="sources-list">
           {sources.map((source, i) => (
             <Reveal key={source.index} delay={i * 80}>

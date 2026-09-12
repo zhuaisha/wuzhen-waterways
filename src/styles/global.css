@@ -517,6 +517,28 @@ ul, ol { list-style: none; }
 .section-header--dark .section-header__num { color: var(--text-light); }
 .section-header--dark .section-header__cn { color: var(--text-light); }
 
+/* Week badge in section header */
+.section-header__week {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 980px;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+  text-transform: uppercase;
+  margin-left: 4px;
+}
+
+.section-header--dark .section-header__week {
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
 /* ============================================
    FOCUS — Apple-style two-column layout
    ============================================ */
@@ -802,6 +824,17 @@ ul, ol { list-style: none; }
   opacity: 0.75;
 }
 
+.q-card__answer-en {
+  font-family: var(--font-en);
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.6;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  opacity: 0.65;
+  font-style: italic;
+}
+
 /* ============================================
    FACTS — Apple-style three-card grid, big number
    ============================================ */
@@ -874,6 +907,22 @@ ul, ol { list-style: none; }
 }
 
 .fact-card--big .fact-card__cn { color: rgba(255, 255, 255, 0.4); }
+
+.fact-card__summary {
+  font-family: var(--font-en);
+  font-size: 0.74rem;
+  color: var(--water);
+  line-height: 1.6;
+  padding-top: 12px;
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+  font-style: italic;
+}
+
+.fact-card--big .fact-card__summary {
+  color: var(--water-light);
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
 
 .fact-card__big-num {
   font-family: var(--font-en);
@@ -1046,6 +1095,19 @@ ul, ol { list-style: none; }
   margin-bottom: 8px;
 }
 
+.gallery-card__observation {
+  font-family: var(--font-en);
+  font-size: 0.72rem;
+  color: var(--water);
+  line-height: 1.6;
+  margin-bottom: 8px;
+  font-style: italic;
+  padding: 8px 12px;
+  background: rgba(111, 146, 149, 0.06);
+  border-left: 2px solid var(--water);
+  border-radius: 0 6px 6px 0;
+}
+
 .gallery-card__source {
   font-family: var(--font-en);
   font-size: 0.66rem;
@@ -1110,9 +1172,22 @@ ul, ol { list-style: none; }
 .lightbox__desc {
   font-family: var(--font-cn);
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.7;
   margin-bottom: 10px;
+}
+
+.lightbox__observation {
+  font-family: var(--font-en);
+  font-size: 0.8rem;
+  color: var(--water-light);
+  line-height: 1.7;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: rgba(111, 146, 149, 0.1);
+  border-left: 2px solid var(--water);
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
 }
 
 .lightbox__source {
@@ -1642,6 +1717,30 @@ ul, ol { list-style: none; }
   padding-top: 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   text-align: center;
+}
+
+.footer__members {
+  padding: 16px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: center;
+}
+
+.footer__members-title {
+  font-family: var(--font-en);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.footer__members-text {
+  font-family: var(--font-cn);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1.8;
 }
 
 .footer__bottom p {

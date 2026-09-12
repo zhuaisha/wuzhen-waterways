@@ -16,7 +16,7 @@ export default function Footer() {
         <div className="footer__members">
           <p className="footer__members-title">小组成员与分工</p>
           <p className="footer__members-text">
-            蒋盛熠（资料收集） · 汪瀚宇（图片整理） · 沈毅程（英文写作） · 沈煜辰（网页设计） · 鲁昂（内容校对） · 朱钟乐（项目协调）
+            蒋盛熠（资料收集） · 汪瀚宇（图片整理） · 沈毅程（英文写作） · 鲁昂（网页设计） · 沈煜辰（内容校对） · 朱钟乐（项目协调）
           </p>
         </div>
         <div className="footer__bottom">

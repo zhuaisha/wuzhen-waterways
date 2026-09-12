@@ -1,64 +1,60 @@
 import { useEffect, useRef, useState } from 'react';
 import WaterSurface from './WaterSurface.jsx';
 
+const CDN_ROOT = 'https://fastly.jsdelivr.net/gh/zhuaisha/wuzhen-waterways@main/public/';
+
 export default function Hero() {
   const heroRef = useRef(null);
   const imgRef = useRef(null);
   const [showContent, setShowContent] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [useFallback, setUseFallback] = useState(false);
 
-  const heroImageSrc = `${import.meta.env.BASE_URL}images/hero_wuzhen.jpg`;
-  const fallbackImageSrc = `${import.meta.env.BASE_URL}images/photo1_day.jpg`;
+  const base = import.meta.env.BASE_URL;
+  const localHero = `${base}images/hero_wuzhen-1920.avif`;
+  const localWebp = `${base}images/hero_wuzhen-1920.webp`;
+  const localJpg = `${base}images/hero_wuzhen.jpg`;
+  const cdnHero = `${CDN_ROOT}images/hero_wuzhen-1920.avif`;
+  const cdnJpg = `${CDN_ROOT}images/hero_wuzhen.jpg`;
 
-  // Preload image immediately
-  useEffect(() => {
-    const preloadImage = (src) => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(src);
-        img.onerror = reject;
-        img.src = src;
-      });
-    };
+  const handleHeroError = (event) => {
+    const img = event.currentTarget;
+    const step = Number(img.dataset.fallbackStep || '0');
 
-    // Try primary image first
-    preloadImage(heroImageSrc)
-      .then(() => {
-        setImageLoaded(true);
-        setTimeout(() => setShowContent(true), 50);
-      })
-      .catch(() => {
-        // Fallback to secondary image
-        preloadImage(fallbackImageSrc)
-          .then(() => {
-            setUseFallback(true);
-            setImageLoaded(true);
-            setTimeout(() => setShowContent(true), 50);
-          })
-          .catch(() => {
-            // Both failed, show anyway
-            setImageLoaded(true);
-            setTimeout(() => setShowContent(true), 50);
-          });
-      });
-  }, []);
+    const candidates = [localWebp, localJpg, cdnHero, cdnJpg];
+    if (step < candidates.length) {
+      img.dataset.fallbackStep = String(step + 1);
+      img.src = candidates[step];
+    } else {
+      setImageLoaded(true);
+      setShowContent(true);
+    }
+  };
+
+  const handleHeroLoad = () => {
+    setImageLoaded(true);
+    window.setTimeout(() => setShowContent(true), 50);
+  };
 
   useEffect(() => {
+    let raf = 0;
+
     const handleScroll = () => {
-      if (!heroRef.current || !imgRef.current) return;
-      const scrolled = window.scrollY;
-      const parallaxOffset = scrolled * 0.1;
-      imgRef.current.style.transform = `translateY(${parallaxOffset}px) scale(1.02)`;
+      if (!imgRef.current) return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const offset = Math.min(window.scrollY * 0.06, 36);
+        imgRef.current.style.transform = `translate3d(0, ${offset}px, 0) scale(1.025)`;
+      });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
     return () => {
+      cancelAnimationFrame(raf);
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
-  const currentImageSrc = useFallback ? fallbackImageSrc : heroImageSrc;
 
   return (
     <section className="hero" ref={heroRef}>
@@ -66,11 +62,21 @@ export default function Hero() {
         <img
           ref={imgRef}
           className="hero__img"
-          src={currentImageSrc}
+          src={localHero}
           alt=""
           aria-hidden="true"
           loading="eager"
           fetchPriority="high"
+          decoding="async"
+          sizes="100vw"
+          srcSet={`
+            ${base}images/hero_wuzhen-768.avif 768w,
+            ${base}images/hero_wuzhen-1200.avif 1200w,
+            ${base}images/hero_wuzhen-1600.avif 1600w,
+            ${base}images/hero_wuzhen-1920.avif 1920w
+          `}
+          onLoad={handleHeroLoad}
+          onError={handleHeroError}
         />
         <div className="hero__overlay" />
       </div>

@@ -454,20 +454,6 @@ ul, ol { list-style: none; }
   text-transform: uppercase;
 }
 
-.hero__scroll {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  transition: color 0.2s var(--ease);
-}
-
-.hero__scroll:hover { color: rgba(255, 255, 255, 0.7); }
-
 /* ============================================
    SECTION HEADER — Apple-style: minimal, centered
    ============================================ */

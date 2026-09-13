@@ -1924,13 +1924,24 @@ body { background: var(--night); color: var(--warm); }
 .hero { min-height: 690px; background: var(--night); }
 .hero__overlay { background: linear-gradient(180deg, rgba(2,9,16,.36), rgba(4,15,25,.28) 45%, rgba(4,15,24,.84) 100%); }
 .hero__bg::after { content: ''; position: absolute; inset: 0; z-index: 4; background: radial-gradient(ellipse at 68% 78%, rgba(218,175,100,.18), transparent 24%), radial-gradient(ellipse at 25% 92%, rgba(79,157,185,.18), transparent 31%); mix-blend-mode: screen; pointer-events: none; }
+.hero::before { content: ''; position: absolute; z-index: 6; inset: 0; pointer-events: none; opacity: .72; background: radial-gradient(circle 280px at var(--pointer-x, 68%) var(--pointer-y, 50%), rgba(226, 191, 116, .17), transparent 58%); transition: background-position .16s linear; mix-blend-mode: screen; }
+.hero__grain { position: absolute; z-index: 6; inset: 0; pointer-events: none; opacity: .14; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.75'/%3E%3C/svg%3E"); mix-blend-mode: soft-light; }
+.hero__orb { position: absolute; z-index: 7; width: clamp(180px, 22vw, 360px); aspect-ratio: 1; border-radius: 50%; pointer-events: none; filter: blur(2px); opacity: .35; mix-blend-mode: screen; animation: orb-drift 14s ease-in-out infinite alternate; }
+.hero__orb--one { top: 15%; left: 9%; background: radial-gradient(circle, rgba(58, 150, 184, .34), transparent 67%); }
+.hero__orb--two { right: 7%; bottom: 12%; background: radial-gradient(circle, rgba(224, 171, 87, .27), transparent 63%); animation-delay: -7s; animation-duration: 19s; }
+@keyframes orb-drift { from { transform: translate3d(-12px, -8px, 0) scale(.9); } to { transform: translate3d(19px, 22px, 0) scale(1.14); } }
 .hero__ripple { position: absolute; z-index: 5; left: -15%; right: -15%; bottom: -28%; height: 55%; pointer-events: none; opacity: .48; background: repeating-radial-gradient(ellipse at 50% 100%, transparent 0 26px, rgba(227,236,230,.1) 27px 28px, transparent 30px 51px); transform: perspective(500px) rotateX(56deg); animation: water-breathe 16s ease-in-out infinite alternate; }
 @keyframes water-breathe { from { transform: perspective(500px) rotateX(56deg) translateX(-1%); } to { transform: perspective(500px) rotateX(56deg) translateX(1%); } }
 .hero__content { max-width: 900px; margin-top: -3vh; }
 .hero__title { font-size: clamp(4.8rem, 14vw, 12.5rem); letter-spacing: -.075em; font-weight: 600; line-height: .82; text-shadow: 0 10px 40px rgba(0,0,0,.25); }
 .hero__subtitle { margin: 26px 0 0; color: rgba(245,238,223,.82); font-size: clamp(.78rem, 1.4vw, 1rem); letter-spacing: .36em; text-transform: uppercase; }
 .hero__question { font-family: var(--font-cn); max-width: 380px; margin: 24px auto 0; color: rgba(245,238,223,.55); font-size: 12px; letter-spacing: .08em; }
-.hero__footer { bottom: 40px; }
+.hero__footer { bottom: 40px; justify-content: space-between; padding-inline: clamp(22px, 4vw, 62px); }
+.hero__source, .hero__coordinates { font-size: 9px; letter-spacing: .13em; color: rgba(245,238,223,.58); text-transform: uppercase; }
+.hero__source { display: inline-flex; align-items: center; gap: 8px; transition: color .25s var(--ease-water); }
+.hero__source:hover { color: var(--warm); }
+.hero__source-dot { width: 6px; height: 6px; border: 1px solid var(--lantern); border-radius: 50%; box-shadow: 0 0 12px rgba(215,173,105,.75); }
+.hero__coordinates { display: flex; gap: 12px; font-variant-numeric: tabular-nums; color: rgba(245,238,223,.44); }
 .hero__scroll { position: relative; padding-top: 21px; color: rgba(245,238,223,.7); font-size: 9px; letter-spacing: .25em; }
 .hero__scroll::before { content: ''; position: absolute; top: 0; left: 50%; width: 1px; height: 13px; background: linear-gradient(var(--lantern), transparent); animation: scroll-flow 2.8s var(--ease-water) infinite; }
 @keyframes scroll-flow { 0%, 100% { transform: scaleY(.45); transform-origin: top; opacity: .35; } 45% { transform: scaleY(1); opacity: 1; } }
@@ -2031,13 +2042,16 @@ body { background: var(--night); color: var(--warm); }
   .hero { min-height: 590px; }
   .hero__title { font-size: clamp(4.2rem, 21vw, 6.6rem); }
   .hero__subtitle { letter-spacing: .24em; }
+  .hero__footer { bottom: 26px; padding-inline: 20px; }
+  .hero__source, .hero__coordinates { font-size: 7px; letter-spacing: .09em; }
+  .hero__coordinates { display: none; }
   .section { padding: 98px 0; }
   .section::before { height: 50px; width: 62vw; }
   .section-header__cn { font-size: clamp(2.6rem, 15vw, 4.2rem); }
   .gallery-intro { margin: -36px 0 45px; }
   .keyword-tag:nth-child(3n+1), .keyword-tag:nth-child(4n) { margin-inline: 0; }
 }
-@media (prefers-reduced-motion: reduce) { .hero__ripple { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .hero__ripple, .hero__orb { animation: none; } .hero::before { display: none; } }
 
 /* ============================================
    ONE SCROLL / ONE STEP — the 3D Wuzhen prologue

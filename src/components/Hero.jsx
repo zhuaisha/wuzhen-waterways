@@ -7,6 +7,7 @@ export default function Hero() {
   const imgRef = useRef(null);
   const [showContent, setShowContent] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [pointer, setPointer] = useState({ x: 68, y: 50 });
 
   const base = import.meta.env.BASE_URL;
   const localHero = `${base}images/hero_wuzhen-1920.avif`;
@@ -55,8 +56,20 @@ export default function Hero() {
     };
   }, []);
 
+  const handlePointerMove = (event) => {
+    // The visual light follows compositor-friendly CSS variables; state only feeds the small readout.
+    const node = heroRef.current;
+    if (!node || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const rect = node.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    node.style.setProperty('--pointer-x', `${x}%`);
+    node.style.setProperty('--pointer-y', `${y}%`);
+    setPointer({ x: Math.round(x), y: Math.round(y) });
+  };
+
   return (
-    <section className="hero" ref={heroRef}>
+    <section className="hero" ref={heroRef} onPointerMove={handlePointerMove}>
       <div className={`hero__bg ${imageLoaded ? 'hero__bg--loaded' : ''}`}>
         <img
           ref={imgRef}
@@ -80,6 +93,9 @@ export default function Hero() {
         <div className="hero__overlay" />
       </div>
 
+      <div className="hero__grain" aria-hidden="true" />
+      <div className="hero__orb hero__orb--one" aria-hidden="true" />
+      <div className="hero__orb hero__orb--two" aria-hidden="true" />
       <div className="hero__ripple" aria-hidden="true" />
 
       <div className={`hero__content ${showContent ? 'hero__content--visible' : ''}`}>
@@ -89,9 +105,22 @@ export default function Hero() {
       </div>
 
       <div className="hero__footer">
+        <a
+          className="hero__source"
+          href="https://commons.wikimedia.org/wiki/File:Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span className="hero__source-dot" />
+          Aerial panorama · CC BY 4.0
+        </a>
         <a href="#focus" className="hero__scroll" aria-label="Scroll down to explore">
           Scroll to explore
         </a>
+        <div className="hero__coordinates" aria-label={`Pointer position ${pointer.x}, ${pointer.y}`}>
+          <span>LAT {pointer.y.toString().padStart(2, '0')}</span>
+          <span>LNG {pointer.x.toString().padStart(2, '0')}</span>
+        </div>
       </div>
     </section>
   );

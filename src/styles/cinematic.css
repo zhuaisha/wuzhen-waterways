@@ -19,7 +19,7 @@
   inset: -5%;
   z-index: 0;
   opacity: 0;
-  filter: blur(12px);
+  filter: blur(4px);
   transform: scale(1.04);
   will-change: transform, filter, opacity;
 }
@@ -313,8 +313,8 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  transform: scale(1.08);
-  filter: blur(14px);
+  transform: scale(1.05);
+  filter: blur(6px);
   will-change: transform, filter;
 }
 .chapter__plate img {

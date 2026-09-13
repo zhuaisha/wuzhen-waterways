@@ -81,20 +81,23 @@ function Chapter({ c, i }) {
     let ctx = null;
 
     ctx = gsap.context(() => {
-      // Image: scale 1.08 -> 1, blur in, travelling slowly through the frame.
+      // Image: scale 1.05 -> 1, blur in, travelling slowly through the frame.
+      // Scrubbed, so the visible blur is proportional to the tiny distance
+      // between start and end — keep that distance small or the picture sits
+      // smudged for most of the scroll.
       const plate = root.querySelector('.chapter__plate');
       if (plate) {
         gsap.fromTo(
           plate,
-          { scale: 1.08, filter: 'blur(14px)' },
+          { scale: 1.05, filter: 'blur(6px)' },
           {
             scale: 1,
             filter: 'blur(0px)',
             ease: 'none',
             scrollTrigger: {
               trigger: root,
-              start: 'top 72%',
-              end: 'center center',
+              start: 'top 82%',
+              end: 'center 65%',
               scrub: true,
             },
           }
@@ -114,13 +117,13 @@ function Chapter({ c, i }) {
       // Copy: rises out of the page, line by line.
       gsap.fromTo(
         root.querySelectorAll('.chapter__lede-line'),
-        { opacity: 0, y: 34, filter: 'blur(8px)' },
+        { opacity: 0, y: 34, filter: 'blur(4px)' },
         {
           opacity: 1,
           y: 0,
           filter: 'blur(0px)',
-          duration: 0.7,
-          stagger: 0.16,
+          duration: 0.5,
+          stagger: 0.1,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: root,
@@ -296,13 +299,13 @@ function Outro({ c }) {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         root.querySelectorAll('.outro__rise'),
-        { opacity: 0, y: 30, filter: 'blur(10px)' },
+        { opacity: 0, y: 30, filter: 'blur(5px)' },
         {
           opacity: 1,
           y: 0,
           filter: 'blur(0px)',
-          duration: 1.2,
-          stagger: 0.28,
+          duration: 0.75,
+          stagger: 0.16,
           ease: 'power2.out',
           scrollTrigger: {
             trigger: root,

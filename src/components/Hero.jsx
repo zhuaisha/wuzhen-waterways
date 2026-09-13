@@ -18,6 +18,15 @@ function preload(src) {
   });
 }
 
+/* Same, but never blocks the reveal past `ms` — a slow network must not leave
+   the hero sitting blurred for seconds. */
+function preloadFast(src, ms = 900) {
+  return Promise.race([
+    preload(src),
+    new Promise((res) => setTimeout(() => res(false), ms)),
+  ]);
+}
+
 const prefersReduced = () =>
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -41,37 +50,38 @@ export default function Hero() {
     let ctx = null;
 
     const finish = () => {
-      // Curtain call: the plate emerges from darkness and blur.
+      // Curtain call: the plate emerges from darkness and blur. Kept short and
+      // tightly staggered so the frame reads as sharp almost immediately.
       if (plateRef.current) {
         gsap.to(plateRef.current, {
           opacity: 1,
           filter: 'blur(0px)',
           scale: 1,
-          duration: 1.6,
-          ease: 'power2.out',
+          duration: 0.7,
+          ease: 'power3.out',
         });
       }
       gsap.fromTo(
         titleRef.current,
-        { opacity: 0, scale: 1.05, filter: 'blur(10px)' },
+        { opacity: 0, scale: 1.05, filter: 'blur(5px)' },
         {
           opacity: 1,
           scale: 1,
           filter: 'blur(0px)',
-          duration: 1.5,
-          delay: 0.55,
-          ease: 'power2.out',
+          duration: 0.7,
+          delay: 0.15,
+          ease: 'power3.out',
         }
       );
       gsap.fromTo(
         copyRef.current,
         { opacity: 0, y: 26 },
-        { opacity: 1, y: 0, duration: 1.1, delay: 1.0, ease: 'power2.out' }
+        { opacity: 1, y: 0, duration: 0.7, delay: 0.35, ease: 'power3.out' }
       );
       gsap.fromTo(
         root.querySelectorAll('.hero__chrome-in'),
         { opacity: 0, y: 12 },
-        { opacity: 1, y: 0, duration: 0.9, delay: 1.25, stagger: 0.1, ease: 'power2.out' }
+        { opacity: 1, y: 0, duration: 0.6, delay: 0.55, stagger: 0.07, ease: 'power3.out' }
       );
       setReady(true);
     };
@@ -85,8 +95,10 @@ export default function Hero() {
       return;
     }
 
-    // Wait for the plate so the reveal reads as an intentional cut, not a lag.
-    Promise.all([preload(IMG.night), preload(IMG.nightbridge)])
+    // Wait for the plate so the reveal reads as an intentional cut, not a lag —
+    // but never longer than the timeout, so a slow network can't hold the screen
+    // blurred indefinitely.
+    Promise.all([preloadFast(IMG.night), preloadFast(IMG.nightbridge)])
       .then(() => {
         if (!live) return;
         ctx = gsap.context(() => {

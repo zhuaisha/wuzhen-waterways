@@ -2003,7 +2003,7 @@ body { background: var(--night); color: var(--warm); }
 .gallery-card__btn:hover { transform: none; box-shadow: none; }
 .gallery-card__img-wrap { aspect-ratio: 4 / 3; background: #102b39; }
 .gallery-card--1 .gallery-card__img-wrap { aspect-ratio: 3 / 4; }
-.gallery-card__img { transition: opacity .65s var(--ease-water), transform .8s var(--ease-water), filter .65s var(--ease-water); filter: blur(5px); }
+.gallery-card__img { transition: opacity .35s var(--ease-water), transform .6s var(--ease-water), filter .35s var(--ease-water); filter: blur(3px); }
 .gallery-card__img.--loaded { filter: blur(0); }
 .gallery-card__btn:hover .gallery-card__img.--loaded { transform: scale(1.035) translate3d(3px,-3px,0); }
 .gallery-card__body { padding: 18px 0 0; }

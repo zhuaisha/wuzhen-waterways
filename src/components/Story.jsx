@@ -77,6 +77,29 @@ function Chapter({ c, i }) {
 
   useEffect(() => {
     const root = rootRef.current;
+    if (!root) return;
+    // The clip-path reveals resolve to their final state via `.in-view`.
+    // Nothing applied that class before, so every chapter image stayed
+    // permanently clipped (invisible, or with its lower half cut off).
+    // Threshold kept low: chapters are ~1900px tall against a ~980px viewport,
+    // so a high threshold can be impossible to reach.
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add('in-view');
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.12 }
+    );
+    io.observe(root);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const root = rootRef.current;
     if (!root || prefersReduced()) return;
     let ctx = null;
 

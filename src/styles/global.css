@@ -2033,18 +2033,12 @@ body { background: var(--night); color: var(--warm); }
 .checklist-item:hover { transform: translateX(4px); box-shadow: none; background: rgba(215,173,105,.08); border-color: rgba(215,173,105,.4); }
 .checklist-item__icon { color: var(--lantern); }
 .checklist-item__text { color: rgba(245,238,223,.86); }
-.checklist-badge { background: var(--lantern); color: var(--night); box-shadow: 0 14px 40px rgba(215,173,105,.28); }
+.checklist-badge { background: var(--lantern); color: var(--night); box-shadow: 0 14px 40px rgba(215,173,105,.28); border-radius: 0; }
 .checklist-badge__week { color: rgba(7,19,31,.5); }
 
-/* every card ends in a full pill.
-   Each selector is written twice (0,2,0) so it beats the equal-specificity
-   rules earlier in this file that zero the corners, no matter the order. */
-.q-card.q-card { border-radius: 999px; }
-.fact-card.fact-card, .fact-card--big.fact-card--big { border-radius: 999px; }
-.gallery-card__btn.gallery-card__btn { border-radius: 999px; }
-.timeline-side.timeline-side { border-radius: 999px; }
-.checklist-item.checklist-item { border-radius: 999px; }
-.checklist-badge.checklist-badge { border-radius: 999px; }
+/* every card stays a hard rectangle - no rounding */
+.q-card, .fact-card, .fact-card--big, .gallery-card__btn,
+.timeline-side, .checklist-item, .checklist-badge { border-radius: 0; }
 
 @media (max-width: 900px) {
   .questions-grid, .facts-grid { grid-template-columns: 1fr; }

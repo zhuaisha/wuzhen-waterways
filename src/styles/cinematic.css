@@ -46,8 +46,21 @@
   filter: blur(30px) saturate(0.5) brightness(0.5);
   transform: scale(1.12);
 }
+/* the original opening plate - pulled larger and brighter so it reads
+   as the photograph it is, not a faint backdrop behind the night shot */
+.hero__img--original {
+  inset: -8%;
+  width: 116%;
+  height: 116%;
+  object-position: 50% 42%;
+  filter: saturate(0.92) contrast(1.02) brightness(0.94);
+  transform: scale(1.06);
+  opacity: 0.96;
+}
 .hero__img--front {
   filter: saturate(0.74) contrast(1.06) brightness(0.82);
+  opacity: 0.62;
+  mix-blend-mode: multiply;
 }
 
 .hero__frame { position: absolute; inset: 0; z-index: 1; pointer-events: none; }

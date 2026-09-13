@@ -4,8 +4,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const BASE = import.meta.env.BASE_URL;
 const IMG = {
+  // The original opening plate - bright, large, and unmistakably Wuzhen.
+  hero: `${BASE}images/hero_wuzhen-1920.webp`,
   night: `${BASE}images/night-webp.webp`,
-  nightbridge: `${BASE}images/nightbridge-webp.webp`,
 };
 
 /* Preload the hero frame before the curtain rises so nothing pops in. */
@@ -98,7 +99,7 @@ export default function Hero() {
     // Wait for the plate so the reveal reads as an intentional cut, not a lag —
     // but never longer than the timeout, so a slow network can't hold the screen
     // blurred indefinitely.
-    Promise.all([preloadFast(IMG.night), preloadFast(IMG.nightbridge)])
+    Promise.all([preloadFast(IMG.night), preloadFast(IMG.hero)])
       .then(() => {
         if (!live) return;
         ctx = gsap.context(() => {
@@ -164,8 +165,8 @@ export default function Hero() {
       {/* layer 2 — the photographic plate */}
       <div className="hero__plate" ref={plateRef} aria-hidden="true">
         <img
-          className="hero__img hero__img--back"
-          src={IMG.nightbridge}
+          className="hero__img hero__img--original"
+          src={IMG.hero}
           alt=""
           fetchPriority="high"
         />

@@ -2006,6 +2006,27 @@ body { background: var(--night); color: var(--warm); }
 .summary-title, .summary-cn { color: var(--warm); }
 .summary-divider { background: var(--lantern); }
 
+/* why water — the diagram reads as a lantern-lit thread of water */
+.whywater-section { background: radial-gradient(ellipse at 50% 108%, #163f52 0%, var(--night) 74%); }
+.whywater-node { background: rgba(232,229,220,.05); border: 1px solid var(--hairline); color: rgba(245,238,223,.82); }
+.whywater-node:hover { box-shadow: 0 0 24px rgba(215,173,105,.22); }
+.whywater-node--top { background: rgba(215,173,105,.14); border-color: rgba(215,173,105,.45); color: var(--lantern); }
+.whywater-node--bottom { background: var(--lantern); border-color: var(--lantern); color: var(--night); }
+.whywater-arrow { color: rgba(215,173,105,.55); }
+
+/* past → present — editorial split, water as the connecting line */
+.timeline-section { background: linear-gradient(180deg, transparent, rgba(43,99,115,.18) 50%, transparent); }
+.timeline-subtitle { color: rgba(245,238,223,.56); }
+.timeline-side { background: rgba(232,229,220,.04); border: 1px solid var(--hairline); border-radius: 0; box-shadow: none; }
+.timeline-side:hover { transform: none; box-shadow: none; border-color: rgba(215,173,105,.4); }
+.timeline-side__label { color: var(--lantern); }
+.timeline-side__title { color: var(--warm); font-weight: 500; }
+.timeline-side__list li { color: rgba(245,238,223,.72); opacity: 1; }
+.timeline-side__cn { color: rgba(245,238,223,.5); border-top-color: var(--hairline); }
+.timeline-connector { color: var(--lantern); }
+.timeline-connector__water { color: var(--lantern); }
+.timeline-connector__arrow { color: var(--lantern); }
+
 @media (max-width: 900px) {
   .questions-grid, .facts-grid { grid-template-columns: 1fr; }
   .q-card:nth-child(even) { padding-left: 0; border-left: 0; }

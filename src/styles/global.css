@@ -104,16 +104,20 @@ ul, ol { list-style: none; }
   right: 0;
   z-index: 100;
   height: 44px;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: transparent;
+  backdrop-filter: blur(0px) saturate(180%);
+  -webkit-backdrop-filter: blur(0px) saturate(180%);
   border-bottom: 1px solid transparent;
-  transition: background 0.4s var(--ease), border-color 0.4s var(--ease);
+  transition: background 0.5s var(--ease), border-color 0.5s var(--ease),
+    backdrop-filter 0.5s var(--ease), box-shadow 0.5s var(--ease);
 }
 
 .navbar--scrolled {
-  background: rgba(0, 0, 0, 0.5);
-  border-bottom-color: rgba(255, 255, 255, 0.1);
+  background: rgba(6, 15, 26, 0.58);
+  backdrop-filter: blur(18px) saturate(170%);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  border-bottom-color: rgba(245, 238, 223, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.28);
 }
 
 .navbar__container {

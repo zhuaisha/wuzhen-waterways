@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import App from './App.jsx';
 import './styles/global.css';
+import './styles/cinematic.css';
 
 gsap.registerPlugin(ScrollTrigger);
 

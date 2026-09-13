@@ -1,127 +1,219 @@
 import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const CDN_ROOT = 'https://fastly.jsdelivr.net/gh/zhuaisha/wuzhen-waterways@main/public/';
+const BASE = import.meta.env.BASE_URL;
+const IMG = {
+  night: `${BASE}images/night-webp.webp`,
+  nightbridge: `${BASE}images/nightbridge-webp.webp`,
+};
+
+/* Preload the hero frame before the curtain rises so nothing pops in. */
+function preload(src) {
+  return new Promise((res) => {
+    const img = new Image();
+    img.onload = () => res(true);
+    img.onerror = () => res(false);
+    img.src = src;
+  });
+}
+
+const prefersReduced = () =>
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
-  const heroRef = useRef(null);
-  const imgRef = useRef(null);
-  const [showContent, setShowContent] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [pointer, setPointer] = useState({ x: 68, y: 50 });
-
-  const base = import.meta.env.BASE_URL;
-  const localHero = `${base}images/hero_wuzhen-1920.avif`;
-  const localWebp = `${base}images/hero_wuzhen-1920.webp`;
-  const localJpg = `${base}images/hero_wuzhen.jpg`;
-  const cdnHero = `${CDN_ROOT}images/hero_wuzhen-1920.avif`;
-  const cdnJpg = `${CDN_ROOT}images/hero_wuzhen.jpg`;
-
-  const handleHeroError = (event) => {
-    const img = event.currentTarget;
-    const step = Number(img.dataset.fallbackStep || '0');
-
-    const candidates = [localWebp, localJpg, cdnHero, cdnJpg];
-    if (step < candidates.length) {
-      img.dataset.fallbackStep = String(step + 1);
-      img.src = candidates[step];
-    } else {
-      setImageLoaded(true);
-      setShowContent(true);
-    }
-  };
-
-  const handleHeroLoad = () => {
-    setImageLoaded(true);
-    window.setTimeout(() => setShowContent(true), 50);
-  };
+  const rootRef = useRef(null);
+  const bgRef = useRef(null);      // layer 1 — deep blue background
+  const plateRef = useRef(null);    // layer 2 — the photographic plate
+  const frameRef = useRef(null);    // layer 3 — scrim / grain / edge
+  const copyRef = useRef(null);     // layer 3 — the type
+  const titleRef = useRef(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    let raf = 0;
+    const root = rootRef.current;
+    if (!root) return;
 
-    const handleScroll = () => {
-      if (!imgRef.current) return;
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const offset = Math.min(window.scrollY * 0.06, 36);
-        imgRef.current.style.transform = `translate3d(0, ${offset}px, 0) scale(1.025)`;
-      });
+    let live = true;
+    let ctx = null;
+
+    const finish = () => {
+      // Curtain call: the plate emerges from darkness and blur.
+      if (plateRef.current) {
+        gsap.to(plateRef.current, {
+          opacity: 1,
+          filter: 'blur(0px)',
+          scale: 1,
+          duration: 1.6,
+          ease: 'power2.out',
+        });
+      }
+      gsap.fromTo(
+        titleRef.current,
+        { opacity: 0, scale: 1.05, filter: 'blur(10px)' },
+        {
+          opacity: 1,
+          scale: 1,
+          filter: 'blur(0px)',
+          duration: 1.5,
+          delay: 0.55,
+          ease: 'power2.out',
+        }
+      );
+      gsap.fromTo(
+        copyRef.current,
+        { opacity: 0, y: 26 },
+        { opacity: 1, y: 0, duration: 1.1, delay: 1.0, ease: 'power2.out' }
+      );
+      gsap.fromTo(
+        root.querySelectorAll('.hero__chrome-in'),
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.9, delay: 1.25, stagger: 0.1, ease: 'power2.out' }
+      );
+      setReady(true);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    if (prefersReduced()) {
+      if (plateRef.current) gsap.set(plateRef.current, { opacity: 1, filter: 'blur(0px)', scale: 1 });
+      gsap.set(titleRef.current, { opacity: 1, scale: 1, filter: 'blur(0px)' });
+      gsap.set(copyRef.current, { opacity: 1, y: 0 });
+      gsap.set(root.querySelectorAll('.hero__chrome-in'), { opacity: 1, y: 0 });
+      setReady(true);
+      return;
+    }
+
+    // Wait for the plate so the reveal reads as an intentional cut, not a lag.
+    Promise.all([preload(IMG.night), preload(IMG.nightbridge)])
+      .then(() => {
+        if (!live) return;
+        ctx = gsap.context(() => {
+          // Three-layer parallax, moving in the SAME direction at different speeds
+          // so the eye reads depth: background fastest, image mid, type slowest.
+          gsap.to(bgRef.current, {
+            yPercent: -22,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: root,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: true,
+            },
+          });
+          gsap.to(plateRef.current, {
+            yPercent: -13,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: root,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: true,
+            },
+          });
+          gsap.to(frameRef.current, {
+            yPercent: -7,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: root,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: true,
+            },
+          });
+          gsap.to(copyRef.current, {
+            yPercent: 9,
+            opacity: 0.35,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: root,
+              start: 'top top',
+              end: '55% top',
+              scrub: true,
+            },
+          });
+        }, root);
+        finish();
+      })
+      .catch(() => live && finish());
 
     return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener('scroll', handleScroll);
+      live = false;
+      if (ctx) ctx.revert();
     };
   }, []);
 
-  const handlePointerMove = (event) => {
-    // The visual light follows compositor-friendly CSS variables; state only feeds the small readout.
-    const node = heroRef.current;
-    if (!node || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const rect = node.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 100;
-    const y = ((event.clientY - rect.top) / rect.height) * 100;
-    node.style.setProperty('--pointer-x', `${x}%`);
-    node.style.setProperty('--pointer-y', `${y}%`);
-    setPointer({ x: Math.round(x), y: Math.round(y) });
-  };
-
   return (
-    <section className="hero" ref={heroRef} onPointerMove={handlePointerMove}>
-      <div className={`hero__bg ${imageLoaded ? 'hero__bg--loaded' : ''}`}>
+    <header className="hero" ref={rootRef} id="top">
+      {/* layer 1 — the deep blue ground */}
+      <div className="hero__bg" ref={bgRef} aria-hidden="true" />
+
+      {/* layer 2 — the photographic plate */}
+      <div className="hero__plate" ref={plateRef} aria-hidden="true">
         <img
-          ref={imgRef}
-          className="hero__img"
-          src={localHero}
+          className="hero__img hero__img--back"
+          src={IMG.nightbridge}
           alt=""
-          aria-hidden="true"
-          loading="eager"
           fetchPriority="high"
-          decoding="async"
-          sizes="100vw"
-          srcSet={`
-            ${base}images/hero_wuzhen-768.avif 768w,
-            ${base}images/hero_wuzhen-1200.avif 1200w,
-            ${base}images/hero_wuzhen-1600.avif 1600w,
-            ${base}images/hero_wuzhen-1920.avif 1920w
-          `}
-          onLoad={handleHeroLoad}
-          onError={handleHeroError}
         />
-        <div className="hero__overlay" />
+        <img
+          className="hero__img hero__img--front"
+          src={IMG.night}
+          alt=""
+          fetchPriority="high"
+        />
       </div>
 
-      <div className="hero__grain" aria-hidden="true" />
-      <div className="hero__orb hero__orb--one" aria-hidden="true" />
-      <div className="hero__orb hero__orb--two" aria-hidden="true" />
-      <div className="hero__ripple" aria-hidden="true" />
-
-      <div className={`hero__content ${showContent ? 'hero__content--visible' : ''}`}>
-        <h1 className="hero__title">WUZHEN</h1>
-        <p className="hero__subtitle">Waterways &amp; Bridges</p>
-        <p className="hero__question">A digital passage through water, light and memory.</p>
+      {/* layer 3a — scrim, grain and the reflected edge */}
+      <div className="hero__frame" ref={frameRef} aria-hidden="true">
+        <div className="hero__scrim" />
+        <div className="hero__grain" />
+        <div className="hero__edge" />
       </div>
 
-      <div className="hero__footer">
-        <a
-          className="hero__source"
-          href="https://commons.wikimedia.org/wiki/File:Aerial_panorama_of_Wuzhen_%E4%B9%8C%E9%95%87_Water_Town._December_2023.jpg"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <span className="hero__source-dot" />
-          Aerial panorama · CC BY 4.0
-        </a>
-        <a href="#focus" className="hero__scroll" aria-label="Scroll down to explore">
-          Scroll to explore
-        </a>
-        <div className="hero__coordinates" aria-label={`Pointer position ${pointer.x}, ${pointer.y}`}>
-          <span>LAT {pointer.y.toString().padStart(2, '0')}</span>
-          <span>LNG {pointer.x.toString().padStart(2, '0')}</span>
+      {/* the slow hairline that gives the frame a sense of life */}
+      <svg className="hero__thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 50 C 22 41, 38 59, 56 50 S 86 41, 100 50" />
+      </svg>
+
+      {/* layer 3b — the type */}
+      <div className="hero__copy" ref={copyRef}>
+        <div className="hero__eyebrow hero__chrome-in">
+          <span className="hero__dot" />
+          <span>WUZHEN · ZHEJIANG · 30°42′N 120°26′E</span>
         </div>
+
+        <h1 className="hero__title" ref={titleRef}>
+          WUZHEN
+        </h1>
+        <p className="hero__sub hero__chrome-in">WATERWAYS &amp; BRIDGES</p>
+        <p className="hero__tag hero__chrome-in">A DIGITAL JOURNEY THROUGH WUZHEN</p>
       </div>
-    </section>
+
+      <div className="hero__meta">
+        <span className="hero__chrome-in">CHAPTERS 06</span>
+        <span className="hero__chrome-in">2026</span>
+      </div>
+
+      <a
+        href="#chapter-water"
+        className={`hero__scroll ${ready ? 'is-ready' : ''}`}
+        aria-label="Scroll to explore"
+        onClick={(e) => {
+          e.preventDefault();
+          const t = document.querySelector('#chapter-water');
+          if (!t) return;
+          if (window.__lenis) {
+            window.__lenis.scrollTo(t, { duration: 1.15, offset: -40 });
+          } else {
+            t.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
+      >
+        <span className="hero__scroll-text">SCROLL TO EXPLORE</span>
+        <span className="hero__scroll-line" />
+      </a>
+    </header>
   );
 }

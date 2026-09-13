@@ -1,0 +1,181 @@
+{
+  "waterway": {
+    "key": "waterway",
+    "file": "File:Canal in Wuzhen.JPG",
+    "page": "https://commons.wikimedia.org/wiki/File%3ACanal%20in%20Wuzhen.JPG",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Canal_in_Wuzhen.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "artist": "韩笃一",
+    "license": "CC BY-SA 3.0",
+    "caption": "Wuzhen waterway at dusk",
+    "sizes_kb": {
+      "webp": 361.9,
+      "jpg": 417.6,
+      "avif": 258.8
+    },
+    "used_in": "Wuzhen waterway at dusk",
+    "section": "01 WATER"
+  },
+  "bridge": {
+    "key": "bridge",
+    "file": "File:Bridge in Wuzhen 01.JPG",
+    "page": "https://commons.wikimedia.org/wiki/File%3ABridge%20in%20Wuzhen%2001.JPG",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Bridge_in_Wuzhen_01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "artist": "Immanuel Giel",
+    "license": "CC BY-SA 4.0",
+    "caption": "Stone arch bridge over the canal",
+    "sizes_kb": {
+      "webp": 381.7,
+      "jpg": 422.1,
+      "avif": 280.7
+    },
+    "used_in": "Stone arch bridge over the canal",
+    "section": "02 BRIDGES"
+  },
+  "bridge2": {
+    "key": "bridge2",
+    "file": "File:Bridge in Wuzhen 02.JPG",
+    "page": "https://commons.wikimedia.org/wiki/File%3ABridge%20in%20Wuzhen%2002.JPG",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Bridge_in_Wuzhen_02.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "artist": "Immanuel Giel",
+    "license": "CC BY-SA 4.0",
+    "caption": "A bridge linking two banks",
+    "sizes_kb": {
+      "webp": 341.4,
+      "jpg": 397.3,
+      "avif": 238.6
+    },
+    "used_in": "A bridge linking two banks",
+    "section": "02 BRIDGES"
+  },
+  "boat": {
+    "key": "boat",
+    "file": "File:20090913 Wuzhen Town canal 5133.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3A20090913%20Wuzhen%20Town%20canal%205133.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/6/68/20090913_Wuzhen_Town_canal_5133.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "artist": "Jakub Hałun",
+    "license": "CC BY-SA 3.0",
+    "caption": "Rowing along the waterway",
+    "sizes_kb": {
+      "webp": 306.3,
+      "jpg": 389.6,
+      "avif": 207.6
+    },
+    "used_in": "Rowing along the waterway",
+    "section": "03 BOATS"
+  },
+  "boat2": {
+    "key": "boat2",
+    "file": "File:20090913 Wuzhen 5020.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3A20090913%20Wuzhen%205020.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/1d/20090913_Wuzhen_5020.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "artist": "Jakub Hałun",
+    "license": "CC BY-SA 4.0",
+    "caption": "Boats at the canal",
+    "sizes_kb": {
+      "webp": 354.5,
+      "jpg": 418.3,
+      "avif": 262.3
+    },
+    "used_in": "Boats at the canal",
+    "section": "03 BOATS"
+  },
+  "street": {
+    "key": "street",
+    "file": "File:Wuzhen Xizha 2009-14.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3AWuzhen%20Xizha%202009-14.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Wuzhen_Xizha_2009-14.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "artist": "Gerbil",
+    "license": "CC BY-SA 3.0",
+    "caption": "Life along the waterfront",
+    "sizes_kb": {
+      "webp": 215.2,
+      "jpg": 316.9,
+      "avif": 136.7
+    },
+    "used_in": "Life along the waterfront",
+    "section": "04 LIFE"
+  },
+  "night": {
+    "key": "night",
+    "file": "File:Wuzhen by night 1.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3AWuzhen%20by%20night%201.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Wuzhen_by_night_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "artist": "Nico le terrible",
+    "license": "CC0",
+    "caption": "Wuzhen after dark",
+    "sizes_kb": {
+      "webp": 273.4,
+      "jpg": 357.4,
+      "avif": 190.8
+    },
+    "used_in": "Wuzhen after dark",
+    "section": "05 NIGHT"
+  },
+  "lantern": {
+    "key": "lantern",
+    "file": "File:Wuzhen by night 3.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3AWuzhen%20by%20night%203.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/8/87/Wuzhen_by_night_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "artist": "Nico le terrible",
+    "license": "CC0",
+    "caption": "Lantern light over the water",
+    "sizes_kb": {
+      "webp": 184.3,
+      "jpg": 275.0,
+      "avif": 131.4
+    },
+    "used_in": "Lantern light over the water",
+    "section": "05 NIGHT"
+  },
+  "lantern2": {
+    "key": "lantern2",
+    "file": "File:Lampions-china.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ALampions-china.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Lampions-china.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "artist": "Sastognuti",
+    "license": "CC BY-SA 4.0",
+    "caption": "Red lanterns glowing at night",
+    "section": "05 NIGHT",
+    "original": "2048x1536",
+    "sizes_kb": {
+      "webp": 154.7,
+      "jpg": 269.9,
+      "avif": 87.9
+    },
+    "used_in": "05 NIGHT"
+  },
+  "nightxizha": {
+    "key": "nightxizha",
+    "file": "File:Night in Wuzhen Xizha (20171231174337).jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3ANight%20in%20Wuzhen%20Xizha%20%2820171231174337%29.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Night_in_Wuzhen_Xizha_%2820171231174337%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "artist": "N509FZ",
+    "license": "CC BY-SA 4.0",
+    "caption": "Xizha by night",
+    "section": "GALLERY",
+    "original": "4608x3072",
+    "sizes_kb": {
+      "webp": 221.3,
+      "jpg": 282.5,
+      "avif": 121.6
+    },
+    "used_in": "GALLERY"
+  },
+  "nightbridge": {
+    "key": "nightbridge",
+    "file": "File:·˙·ChinaUli2010·.· Wuzhen - Bridge by night - panoramio.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File%3A%C2%B7%CB%99%C2%B7ChinaUli2010%C2%B7.%C2%B7%20Wuzhen%20-%20Bridge%20by%20night%20-%20panoramio.jpg",
+    "source_url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/%C2%B7%CB%99%C2%B7ChinaUli2010%C2%B7.%C2%B7_Wuzhen_-_Bridge_by_night_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "artist": "·˙·ChinaUli2010·.·",
+    "license": "CC BY 3.0",
+    "caption": "A lit bridge at night",
+    "section": "02 BRIDGES",
+    "original": "2048x1536",
+    "sizes_kb": {
+      "webp": 109.2,
+      "jpg": 168.6,
+      "avif": 73.9
+    },
+    "used_in": "02 BRIDGES"
+  }
+}

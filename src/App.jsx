@@ -1,5 +1,8 @@
 import Navbar from './components/Navbar.jsx';
+import ChapterRail from './components/ChapterRail.jsx';
+import Hero from './components/Hero.jsx';
 import Atlas from './components/Atlas.jsx';
+import Story from './components/Story.jsx';
 import Focus from './components/Focus.jsx';
 import CoreQuestion from './components/CoreQuestion.jsx';
 import Questions from './components/Questions.jsx';
@@ -17,7 +20,10 @@ export default function App() {
   return (
     <div className="app">
       <Navbar />
+      <ChapterRail />
       <main>
+        <Hero />
+        <Story />
         <Atlas />
         <Focus />
         <CoreQuestion />

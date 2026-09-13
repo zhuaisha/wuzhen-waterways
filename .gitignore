@@ -10,6 +10,12 @@ node_modules/
 /dist
 /build
 
+# Local dev artifacts — raw downloads and Python caches are not for the site.
+# The processed AVIF/WebP/JPG assets in public/images/ are tracked on purpose.
+/tools/raw/
+/tools/__pycache__/
+/tools/old-manifest.json
+
 # Misc
 .DS_Store
 .env.local

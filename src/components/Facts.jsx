@@ -1,5 +1,6 @@
 import SectionHeader from './SectionHeader.jsx';
 import Reveal from './Reveal.jsx';
+import CountUp from './CountUp.jsx';
 
 export default function Facts() {
   return (
@@ -18,11 +19,29 @@ export default function Facts() {
 
           <Reveal className="fact-card fact-card--big" delay={100}>
             <div className="fact-card__tag">Fact 02</div>
-            <div className="fact-card__big-num">72</div>
+            <div className="fact-card__big-num">
+              <CountUp to={72} className="fact-card__count" />
+            </div>
             <div className="fact-card__big-label">Ancient Stone Bridges</div>
             <p className="fact-card__en">
               Xizha has nearly 10,000 meters of waterways and 72 ancient stone bridges.
             </p>
+            <div className="fact-card__stats">
+              <div className="fact-card__stat">
+                <span className="fact-card__stat-num">
+                  <CountUp to={10000} duration={2} className="fact-card__count" />
+                </span>
+                <span className="fact-card__stat-unit">METERS</span>
+                <span className="fact-card__stat-label">of waterways in Xizha</span>
+              </div>
+              <div className="fact-card__stat">
+                <span className="fact-card__stat-num">
+                  <CountUp to={72} className="fact-card__count" />
+                </span>
+                <span className="fact-card__stat-unit">BRIDGES</span>
+                <span className="fact-card__stat-label">ancient stone arches</span>
+              </div>
+            </div>
             <p className="fact-card__cn">
               西栅有近万米河道和72座古石桥，桥梁与水道共同构成典型的江南水乡景观。
             </p>

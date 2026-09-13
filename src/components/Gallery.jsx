@@ -130,24 +130,29 @@ export default function Gallery() {
                         <span className="shimmer" />
                       </div>
                     )}
-                    <img
-                      src={src.webp}
-                      srcSet={`${src.avif} 1600w`}
-                      sizes="(max-width: 900px) 92vw, 46vw"
-                      alt={img.alt}
-                      className={`gallery-card__img ${loadedIds.has(img.id) ? '--loaded' : ''}`}
-                      loading="lazy"
-                      decoding="async"
-                      fetchPriority="low"
-                      onLoad={() => setLoadedIds((prev) => new Set(prev).add(img.id))}
-                      onError={(e) => {
-                        const t = e.currentTarget;
-                        if (t.dataset.step !== '2') {
-                          t.dataset.step = '2';
-                          t.src = src.jpg;
-                        }
-                      }}
-                    />
+                    <picture>
+                      <source
+                        type="image/avif"
+                        srcSet={`${src.avif} 1600w`}
+                        sizes="(max-width: 900px) 92vw, 46vw"
+                      />
+                      <img
+                        src={src.webp}
+                        alt={img.alt}
+                        className={`gallery-card__img ${loadedIds.has(img.id) ? '--loaded' : ''}`}
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
+                        onLoad={() => setLoadedIds((prev) => new Set(prev).add(img.id))}
+                        onError={(e) => {
+                          const t = e.currentTarget;
+                          if (t.dataset.step !== '2') {
+                            t.dataset.step = '2';
+                            t.src = src.jpg;
+                          }
+                        }}
+                      />
+                    </picture>
                     {/* hover reveal: a small quiet "VIEW" marker */}
                     <span className="gallery-card__view" aria-hidden="true">
                       <span>VIEW</span>

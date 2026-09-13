@@ -219,14 +219,15 @@ function Chapter({ c, i }) {
       {hasImage && (
         <div className="chapter__stage" aria-hidden="true">
           <div className="chapter__plate">
-            <img
-              src={c.image.webp}
-              srcSet={`${c.image.avif} 1600w`}
-              sizes="100vw"
-              alt=""
-              loading="lazy"
-              decoding="async"
-            />
+            <picture>
+              <source type="image/avif" srcSet={`${c.image.avif} 1600w`} sizes="100vw" />
+              <img
+                src={c.image.webp}
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
             <div className="chapter__plate-veil" />
           </div>
           {c.motif === 'ripple' && <Ripple active />}
@@ -262,17 +263,22 @@ function Chapter({ c, i }) {
         {hasImage && (
           <div className="chapter__figure">
             <div className="chapter__figure-inner">
-              <img
-                src={c.image.webp}
-                srcSet={`${c.image.avif} 1600w`}
-                sizes="(max-width: 900px) 92vw, 46vw"
-                alt={c.caption}
-                loading="lazy"
-                decoding="async"
-                onError={(e) => {
-                  e.currentTarget.src = c.image.jpg;
-                }}
-              />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcSet={`${c.image.avif} 1600w`}
+                  sizes="(max-width: 900px) 92vw, 46vw"
+                />
+                <img
+                  src={c.image.webp}
+                  alt={c.caption}
+                  loading="lazy"
+                  decoding="async"
+                  onError={(e) => {
+                    e.currentTarget.src = c.image.jpg;
+                  }}
+                />
+              </picture>
               <figcaption className="chapter__figcap">
                 <span>{c.caption}</span>
                 {c.source && <span className="chapter__figcap-src">SRC {c.source}</span>}

@@ -1,6 +1,6 @@
 import json
 
-m = json.load(open("public/images-sources.json", encoding="utf-8"))
+m = json.load(open("src/data/images-sources.json", encoding="utf-8"))
 
 # Section assignment mirrored from tools/fetch_images.py PICKS.
 SECTION = {
@@ -36,7 +36,7 @@ for k, v in m.items():
     v.setdefault("caption", CAPTION.get(k, ""))
     v.setdefault("used_in", v["section"])
 
-json.dump(m, open("public/images-sources.json", "w", encoding="utf-8"),
+json.dump(m, open("src/data/images-sources.json", "w", encoding="utf-8"),
           ensure_ascii=False, indent=2)
 
 print("total:", len(m))

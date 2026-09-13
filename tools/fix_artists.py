@@ -2,7 +2,7 @@ import json, re, sys, time
 sys.path.insert(0, "tools")
 import fetch_images as F
 
-m = json.load(open("public/images-sources.json", encoding="utf-8"))
+m = json.load(open("src/data/images-sources.json", encoding="utf-8"))
 
 def clean_artist(raw):
     """Commons Artist is HTML like <a href=".../wiki/User:Foo" title="User:Foo">Foo</a>
@@ -36,7 +36,7 @@ for k, v in m.items():
         print(f"  ! {k}: {type(e).__name__}")
     time.sleep(F.SLEEP)
 
-json.dump(m, open("public/images-sources.json", "w", encoding="utf-8"),
+json.dump(m, open("src/data/images-sources.json", "w", encoding="utf-8"),
           ensure_ascii=False, indent=2)
 
 print(f"{'key':12s} {'license':14s} {'artist':26s} file")

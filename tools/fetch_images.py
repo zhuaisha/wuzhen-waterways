@@ -9,7 +9,7 @@ Robustness:
     sleeps between calls (Commons returns HTTP 429 if you hammer it);
   - resumable: keys that already produced local files are skipped;
   - every file records source URL / page / artist / license into
-    public/images-sources.json, which the site's Sources section renders.
+    src/data/images-sources.json, which the site's Sources section renders.
 """
 import json, os, ssl, sys, time, urllib.error, urllib.parse, urllib.request
 from PIL import Image, ImageEnhance, ImageFilter, ImageDraw
@@ -17,7 +17,7 @@ from PIL import Image, ImageEnhance, ImageFilter, ImageDraw
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "tools", "raw")
 OUT = os.path.join(ROOT, "public", "images")
-MANIFEST = os.path.join(ROOT, "public", "images-sources.json")
+MANIFEST = os.path.join(ROOT, "src", "data", "images-sources.json")
 os.makedirs(RAW, exist_ok=True)
 os.makedirs(OUT, exist_ok=True)
 

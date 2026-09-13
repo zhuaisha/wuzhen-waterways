@@ -1,5 +1,5 @@
 import json
-m = json.load(open("public/images-sources.json", encoding="utf-8"))
+m = json.load(open("src/data/images-sources.json", encoding="utf-8"))
 print("total:", len(m))
 print(f"{'key':12s} {'license':15s} {'section':14s} {'artist':24s} file")
 for k, v in sorted(m.items()):

@@ -1,6 +1,6 @@
 import SectionHeader from './SectionHeader.jsx';
 import Reveal from './Reveal.jsx';
-import sourcesData from '../../public/images-sources.json';
+import sourcesData from '../data/images-sources.json';
 
 // The manifest is written by tools/fetch_images.py — every image used on the
 // site, with the license and author verified from the Wikimedia Commons API.

@@ -1,4 +1,3 @@
-import ThreeScene from './ThreeScene.jsx';
 import Reveal from './Reveal.jsx';
 
 export default function CoreQuestion() {
@@ -8,8 +7,6 @@ export default function CoreQuestion() {
         <div className="core-question__gradient" />
         <div className="core-question__pattern" />
       </div>
-
-      <ThreeScene className="core-question__three" variant="core" scrollAffected opacity={0.5} />
 
       <div className="container">
         <Reveal className="core-question__box">

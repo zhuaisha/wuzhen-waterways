@@ -1,10 +1,8 @@
-import ThreeScene from './ThreeScene.jsx';
 import Reveal from './Reveal.jsx';
 
 export default function Summary() {
   return (
     <section id="summary" className="summary-section">
-      <ThreeScene className="summary-section__three" variant="summary" opacity={0.6} />
       <div className="summary-section__overlay" />
       <div className="container">
         <Reveal className="summary-box">

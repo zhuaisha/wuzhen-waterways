@@ -111,7 +111,7 @@ export default function Gallery() {
         <p className="gallery-intro">通过图片感受乌镇的水道、古桥与传统生活</p>
         <div className="gallery-grid">
           {images.map((img, i) => (
-            <Reveal key={img.id} className="gallery-card" delay={i * 100}>
+            <Reveal key={img.id} className={`gallery-card gallery-card--${img.id}`} delay={i * 100}>
               <button
                 className="gallery-card__btn"
                 onClick={() => setSelected(img)}

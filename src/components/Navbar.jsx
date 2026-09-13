@@ -2,12 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
 const navLinks = [
-  { label: 'Focus', href: '#focus', section: 'focus' },
-  { label: 'Questions', href: '#questions', section: 'questions' },
-  { label: 'Facts', href: '#facts', section: 'facts' },
-  { label: 'Gallery', href: '#gallery', section: 'gallery' },
-  { label: 'Keywords', href: '#keywords', section: 'keywords' },
-  { label: 'Sources', href: '#sources', section: 'sources' },
+  { label: 'Focus', href: '#focus', section: 'focus', journey: 0.14 },
+  { label: 'Questions', href: '#questions', section: 'questions', journey: 0.29 },
+  { label: 'Facts', href: '#facts', section: 'facts', journey: 0.63 },
+  { label: 'Gallery', href: '#gallery', section: 'gallery', journey: 0.5 },
+  { label: 'Keywords', href: '#keywords', section: 'keywords', journey: 0.77 },
+  { label: 'Sources', href: '#sources', section: 'sources', journey: 0.92 },
 ];
 
 export default function Navbar() {
@@ -52,7 +52,12 @@ export default function Navbar() {
   }, []);
 
   // 平滑滚动
-  const smoothScrollTo = (targetId, event) => {
+  const smoothScrollTo = (targetId, event, journeyProgress) => {
+    if (typeof journeyProgress === 'number') {
+      window.dispatchEvent(new CustomEvent('journey:go', { detail: { progress: journeyProgress } }));
+      setOpen(false);
+      return;
+    }
     const target = document.querySelector(targetId);
     if (!target) return;
 
@@ -122,7 +127,7 @@ export default function Navbar() {
                 className={`navbar__link ${activeSection === link.section ? 'navbar__link--active' : ''}`}
                 onClick={(e) => {
                   e.preventDefault();
-                  smoothScrollTo(link.href, e);
+                  smoothScrollTo(link.href, e, link.journey);
                 }}
               >
                 {link.label}

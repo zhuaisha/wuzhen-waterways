@@ -1,5 +1,5 @@
 import Navbar from './components/Navbar.jsx';
-import Journey from './components/Journey.jsx';
+import Atlas from './components/Atlas.jsx';
 import Focus from './components/Focus.jsx';
 import CoreQuestion from './components/CoreQuestion.jsx';
 import Questions from './components/Questions.jsx';
@@ -18,7 +18,7 @@ export default function App() {
     <div className="app">
       <Navbar />
       <main>
-        <Journey />
+        <Atlas />
         <Focus />
         <CoreQuestion />
         <Questions />

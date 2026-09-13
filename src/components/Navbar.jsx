@@ -52,12 +52,7 @@ export default function Navbar() {
   }, []);
 
   // 平滑滚动
-  const smoothScrollTo = (targetId, event, journeyProgress) => {
-    if (typeof journeyProgress === 'number') {
-      window.dispatchEvent(new CustomEvent('journey:go', { detail: { progress: journeyProgress } }));
-      setOpen(false);
-      return;
-    }
+  const smoothScrollTo = (targetId, event) => {
     const target = document.querySelector(targetId);
     if (!target) return;
 
@@ -127,7 +122,7 @@ export default function Navbar() {
                 className={`navbar__link ${activeSection === link.section ? 'navbar__link--active' : ''}`}
                 onClick={(e) => {
                   e.preventDefault();
-                  smoothScrollTo(link.href, e, link.journey);
+                  smoothScrollTo(link.href, e);
                 }}
               >
                 {link.label}

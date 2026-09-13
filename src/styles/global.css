@@ -468,15 +468,6 @@ ul, ol { list-style: none; }
 
 .hero__scroll:hover { color: rgba(255, 255, 255, 0.7); }
 
-.hero__scroll-icon {
-  animation: heroBounce 2.5s ease-in-out infinite;
-}
-
-@keyframes heroBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(5px); }
-}
-
 /* ============================================
    SECTION HEADER — Apple-style: minimal, centered
    ============================================ */
@@ -1884,7 +1875,6 @@ ul, ol { list-style: none; }
   }
 
   .hero__img { animation: none !important; }
-  .hero__scroll-icon { animation: none !important; }
   .whywater-arrow { animation: none !important; opacity: 0.4 !important; }
   .timeline-connector__line { animation: none !important; }
   .hero__pattern { animation: none !important; }
@@ -1946,9 +1936,6 @@ body { background: var(--night); color: var(--warm); }
 .hero__source:hover { color: var(--warm); }
 .hero__source-dot { width: 6px; height: 6px; border: 1px solid var(--lantern); border-radius: 50%; box-shadow: 0 0 12px rgba(215,173,105,.75); }
 .hero__coordinates { display: flex; gap: 12px; font-variant-numeric: tabular-nums; color: rgba(245,238,223,.44); }
-.hero__scroll { position: relative; padding-top: 21px; color: rgba(245,238,223,.7); font-size: 9px; letter-spacing: .25em; }
-.hero__scroll::before { content: ''; position: absolute; top: 0; left: 50%; width: 1px; height: 13px; background: linear-gradient(var(--lantern), transparent); animation: scroll-flow 2.8s var(--ease-water) infinite; }
-@keyframes scroll-flow { 0%, 100% { transform: scaleY(.45); transform-origin: top; opacity: .35; } 45% { transform: scaleY(1); opacity: 1; } }
 
 /* editorial type replaces centred "coursework" headings */
 .section-header { text-align: left; max-width: 550px; margin: 0 0 clamp(50px, 7vw, 86px); }

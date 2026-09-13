@@ -24,13 +24,13 @@ function canUseWebGL() {
 function addBuilding(scene, x, z, width, height, depth, side = 1) {
   const wall = new THREE.Mesh(
     new THREE.BoxGeometry(width, height, depth),
-    new THREE.MeshStandardMaterial({ color: side > 0 ? 0x263542 : 0x1b2934, roughness: .9 })
+    new THREE.MeshStandardMaterial({ color: side > 0 ? 0x385363 : 0x2a4252, roughness: .9 })
   );
   wall.position.set(x, height / 2 - .2, z);
   scene.add(wall);
   const roof = new THREE.Mesh(
     new THREE.ConeGeometry(width * .9, height * .42, 4),
-    new THREE.MeshStandardMaterial({ color: 0x111a22, roughness: .78 })
+    new THREE.MeshStandardMaterial({ color: 0x1e313d, roughness: .78 })
   );
   roof.scale.z = depth / width * 1.12;
   roof.rotation.y = Math.PI / 4;
@@ -39,8 +39,8 @@ function addBuilding(scene, x, z, width, height, depth, side = 1) {
 }
 
 function createTown(scene, lights, lite) {
-  scene.add(new THREE.HemisphereLight(0x31536b, 0x071016, .75));
-  const moon = new THREE.DirectionalLight(0x8fb7d1, 1.05);
+  scene.add(new THREE.HemisphereLight(0x547c93, 0x102330, 1.25));
+  const moon = new THREE.DirectionalLight(0xa9cbe0, 1.45);
   moon.position.set(-8, 13, 3);
   scene.add(moon);
 
@@ -50,7 +50,7 @@ function createTown(scene, lights, lite) {
   water.position.set(0, -.18, -54);
   scene.add(water);
 
-  const bankMaterial = new THREE.MeshStandardMaterial({ color: 0x152832, roughness: 1 });
+  const bankMaterial = new THREE.MeshStandardMaterial({ color: 0x294654, roughness: 1 });
   [-1, 1].forEach((side) => {
     const bank = new THREE.Mesh(new THREE.BoxGeometry(8, .55, 142), bankMaterial);
     bank.position.set(side * 7.4, -.44, -54);
@@ -123,9 +123,10 @@ export default function Journey() {
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, lite ? 1 : 1.5));
       renderer.setSize(host.clientWidth, host.clientHeight, false);
       renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.setClearColor(0x163b4d, 0.14);
       host.appendChild(renderer.domElement);
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x07131f, lite ? .017 : .023);
+      scene.fog = new THREE.FogExp2(0x163b4d, lite ? .012 : .016);
       const camera = new THREE.PerspectiveCamera(lite ? 57 : 51, host.clientWidth / host.clientHeight, .1, 180);
       const path = new THREE.CatmullRomCurve3([
         new THREE.Vector3(16, 19, 22), new THREE.Vector3(7, 8, 8), new THREE.Vector3(2.4, 2.1, -8),
@@ -161,6 +162,12 @@ export default function Journey() {
         const width = host.clientWidth, height = host.clientHeight;
         camera.aspect = width / height; camera.updateProjectionMatrix(); renderer.setSize(width, height, false);
       };
+      const onContextLost = (event) => {
+        event.preventDefault();
+        alive = false;
+        cancelAnimationFrame(animationId);
+        setFallback(true);
+      };
       const animate = () => {
         if (!alive) return;
         current += (desired - current) * .055; // damp scroll velocity, never let the camera fly past its stage
@@ -184,10 +191,12 @@ export default function Journey() {
       };
       window.addEventListener('scroll', onScroll, { passive: true });
       window.addEventListener('journey:go', goTo); window.addEventListener('resize', resize);
+      renderer.domElement.addEventListener('webglcontextlost', onContextLost, false);
       onScroll(); animate(); setReady(true);
       return () => {
         alive = false; cancelAnimationFrame(animationId);
         window.removeEventListener('scroll', onScroll); window.removeEventListener('journey:go', goTo); window.removeEventListener('resize', resize);
+        renderer.domElement.removeEventListener('webglcontextlost', onContextLost);
         renderer.dispose(); water.geometry.dispose(); water.material.dispose(); scene.traverse((item) => { if (item.isMesh && item !== water) { item.geometry?.dispose(); item.material?.dispose(); } });
         renderer.domElement.remove();
       };

@@ -2049,12 +2049,12 @@ body { background: var(--night); color: var(--warm); }
    cinematic frame pinned explicitly while the journey rail is in view. */
 .journey.is-active .journey__sticky { position: fixed; inset: 0; height: 100svh; }
 .journey__canvas, .journey__fallback, .journey__shade { position: absolute; inset: 0; }
-.journey__canvas { z-index: 1; }
+.journey__canvas { z-index: 1; opacity: .88; }
 .journey__canvas canvas { width: 100%; height: 100%; display: block; }
 .journey__fallback { z-index: 0; background: #07131f; }
-.journey__fallback img { width: 100%; height: 100%; object-fit: cover; opacity: .62; filter: brightness(.58) saturate(.72); }
+.journey__fallback img { width: 100%; height: 100%; object-fit: cover; opacity: .78; filter: brightness(.76) saturate(.82); }
 .journey__canvas:not(:empty) + .journey__loading { display: none; }
-.journey__shade { z-index: 2; pointer-events: none; background: linear-gradient(90deg, rgba(4,13,22,.42), transparent 46%, rgba(4,13,22,.17)), linear-gradient(0deg, rgba(4,12,20,.42), transparent 35%); }
+.journey__shade { z-index: 2; pointer-events: none; background: linear-gradient(90deg, rgba(4,13,22,.24), transparent 46%, rgba(4,13,22,.08)), linear-gradient(0deg, rgba(4,12,20,.25), transparent 35%); }
 .journey__copy { position: absolute; z-index: 4; left: clamp(24px, 7vw, 112px); bottom: clamp(82px, 13vh, 150px); max-width: 540px; color: var(--warm); transition: opacity .5s var(--ease-water), transform .5s var(--ease-water); }
 .journey__copy h1 { font-size: clamp(3.5rem, 9vw, 9rem); font-weight: 500; line-height: .83; letter-spacing: -.075em; margin: 7px 0 20px; text-shadow: 0 8px 30px rgba(0,0,0,.28); }
 .journey__copy p:last-child { max-width: 330px; font-size: clamp(.75rem, 1.1vw, .95rem); line-height: 1.65; letter-spacing: .09em; color: rgba(245,238,223,.75); }
@@ -2073,6 +2073,7 @@ body { background: var(--night); color: var(--warm); }
 .journey__loading span::after { content: ''; display: block; width: 35%; height: 100%; background: var(--lantern); animation: loading-flow 1s var(--ease-water) infinite; }
 @keyframes loading-flow { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
 .journey--fallback { height: 100svh; }
+.journey--fallback .journey__canvas { display: none; }
 .journey--fallback .journey__stages { display: none; }
 .journey--fallback .journey__copy { left: 50%; bottom: 50%; width: 90%; text-align: center; transform: translate(-50%, 50%); }
 .journey--fallback .journey__copy h1 { font-size: clamp(5rem, 16vw, 14rem); }
@@ -2088,6 +2089,25 @@ body { background: var(--night); color: var(--warm); }
   .journey { height: 100svh; }
   .journey__canvas { display: none; }
   .journey__prompt, .journey__loading span::after { animation: none; }
+}
+
+/* Final refinement: a stable triptych and a balanced facts composition. */
+.gallery-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 3.4vw, 52px); align-items: start; }
+.gallery-card--1, .gallery-card--2, .gallery-card--3 { grid-row: auto; width: auto; margin: 0; }
+.gallery-card--1 .gallery-card__img-wrap, .gallery-card__img-wrap { aspect-ratio: 4 / 3; }
+.gallery-card__body { min-height: 192px; padding: 18px 0 0; background: transparent; }
+.gallery-card__title { color: var(--warm); }
+.gallery-card__desc, .gallery-card__observation, .gallery-card__source { color: rgba(245,238,223,.6); }
+.gallery-card__observation { background: rgba(80,143,164,.1); border-left-color: var(--lantern); border-radius: 0; }
+.facts-grid { align-items: center; }
+.fact-card:not(.fact-card--big) { align-self: center; min-height: 270px; display: flex; flex-direction: column; justify-content: center; }
+.fact-card--big { text-align: center; }
+.fact-card--big .fact-card__en, .fact-card--big .fact-card__cn, .fact-card--big .fact-card__summary { max-width: 410px; margin-left: auto; margin-right: auto; }
+.fact-card--big .fact-card__summary { text-align: center; }
+@media (max-width: 900px) {
+  .gallery-grid { grid-template-columns: 1fr; gap: 58px; }
+  .gallery-card__body { min-height: 0; }
+  .fact-card:not(.fact-card--big) { min-height: 0; }
 }
 
 @media (prefers-reduced-transparency: reduce) {

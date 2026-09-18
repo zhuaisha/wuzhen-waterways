@@ -394,6 +394,10 @@
 }
 
 /* per-chapter clip-path reveal variants */
+/* The reveal plays once the figure is in view; the old 1.4s was slow enough
+   that the user read the first two paragraphs while the picture was still
+   clipped away (clip-bridge hides 42% of it, clip-rise 100%). 0.6s keeps the
+   wipe readable but out of the way of the reading. */
 .chapter--clip-expand .chapter__figure-inner { clip-path: inset(12% 22% 12% 22% round 2px); }
 .chapter--clip-rise .chapter__figure-inner { clip-path: inset(100% 0 0 0); }
 .chapter--clip-slide .chapter__figure-inner { clip-path: inset(0 100% 0 0); }
@@ -403,7 +407,7 @@
   clip-path: inset(0 0 0 0 round 3px);
 }
 .chapter--clip-lantern.in-view .chapter__figure-inner { clip-path: circle(120% at 50% 62%); }
-.chapter__figure-inner { transition: clip-path 1.4s var(--ease-water), transform 1.2s var(--ease-water); }
+.chapter__figure-inner { transition: clip-path 0.6s var(--ease-water), transform 1.2s var(--ease-water); }
 
 /* ---------------- motif: ripple ---------------- */
 .ripple {

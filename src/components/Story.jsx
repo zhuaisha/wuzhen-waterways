@@ -106,23 +106,39 @@ function Chapter({ c, i }) {
 
     ctx = gsap.context(() => {
       // Image: scale 1.05 -> 1, blur in, travelling slowly through the frame.
-      // Scrubbed, so the visible blur is proportional to the tiny distance
-      // between start and end — keep that distance small or the picture sits
-      // smudged for most of the scroll.
+      // Blur was scrubbed across the whole chapter (top 82% -> center 65%), so a
+      // plate sitting ~1500px into a 1953px chapter stayed fully smudged at
+      // 6px while it was already well inside the viewport. Blur now plays once
+      // the plate is on screen and settles in 0.45s; the slow motion stays on
+      // scale and travel, which is what the "traveling through the frame" look
+      // actually comes from.
       const plate = root.querySelector('.chapter__plate');
       if (plate) {
         gsap.fromTo(
           plate,
-          { scale: 1.05, filter: 'blur(6px)' },
+          { scale: 1.05 },
           {
             scale: 1,
-            filter: 'blur(0px)',
             ease: 'none',
             scrollTrigger: {
               trigger: root,
               start: 'top 82%',
               end: 'center 65%',
               scrub: true,
+            },
+          }
+        );
+        gsap.fromTo(
+          plate,
+          { filter: 'blur(6px)' },
+          {
+            filter: 'blur(0px)',
+            duration: 0.45,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: root,
+              start: 'top 74%',
+              toggleActions: 'play none none reverse',
             },
           }
         );

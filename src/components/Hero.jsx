@@ -185,6 +185,9 @@ export default function Hero() {
         <div className="hero__edge" />
       </div>
 
+      {/* static bottom fade — never parallaxed, holds the seam dark */}
+      <div className="hero__bottomfade" aria-hidden="true" />
+
       {/* the slow hairline that gives the frame a sense of life */}
       <svg className="hero__thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
         <path d="M0 50 C 22 41, 38 59, 56 50 S 86 41, 100 50" />

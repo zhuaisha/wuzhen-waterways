@@ -96,6 +96,26 @@
   border-top: 1px solid rgba(168, 204, 199, 0.07);
 }
 
+/* Static bottom fade. The scrim above lives inside .hero__frame, which is
+   parallaxed up to -7% on scroll, so as you scroll down the dark overlay
+   slides away and the lower edge of the hero shows un-darkened aerial
+   imagery as a light strip before the chapter seam. This element is a
+   direct child of .hero and is never transformed, so it holds the chapter
+   base colour at the bottom edge and the seam reads as one continuous
+   dark field. */
+.hero__bottomfade {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 26%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(0deg,
+    #07131f 0%,
+    rgba(7, 19, 31, 0.85) 36%,
+    rgba(7, 19, 31, 0.34) 68%,
+    transparent 100%);
+}
+
 /* the single slow hairline that gives the frame its sense of life */
 .hero__thread {
   position: absolute;

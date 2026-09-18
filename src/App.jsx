@@ -3,9 +3,6 @@ import ChapterRail from './components/ChapterRail.jsx';
 import Hero from './components/Hero.jsx';
 import Atlas from './components/Atlas.jsx';
 import Story from './components/Story.jsx';
-import Focus from './components/Focus.jsx';
-import CoreQuestion from './components/CoreQuestion.jsx';
-import Questions from './components/Questions.jsx';
 import Facts from './components/Facts.jsx';
 import Gallery from './components/Gallery.jsx';
 import Keywords from './components/Keywords.jsx';
@@ -25,9 +22,6 @@ export default function App() {
         <Hero />
         <Story />
         <Atlas />
-        <Focus />
-        <CoreQuestion />
-        <Questions />
         <Facts />
         <Gallery />
         <Keywords />

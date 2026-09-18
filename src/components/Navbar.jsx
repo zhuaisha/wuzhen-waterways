@@ -2,18 +2,16 @@ import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
 const navLinks = [
-  { label: 'Focus', href: '#focus', section: 'focus', journey: 0.14 },
-  { label: 'Questions', href: '#questions', section: 'questions', journey: 0.29 },
-  { label: 'Facts', href: '#facts', section: 'facts', journey: 0.63 },
-  { label: 'Gallery', href: '#gallery', section: 'gallery', journey: 0.5 },
-  { label: 'Keywords', href: '#keywords', section: 'keywords', journey: 0.77 },
+  { label: 'Facts', href: '#facts', section: 'facts', journey: 0.14 },
+  { label: 'Gallery', href: '#gallery', section: 'gallery', journey: 0.36 },
+  { label: 'Keywords', href: '#keywords', section: 'keywords', journey: 0.5 },
   { label: 'Sources', href: '#sources', section: 'sources', journey: 0.92 },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('focus');
+  const [activeSection, setActiveSection] = useState('facts');
   const lenisRef = useRef(null);
 
   // 获取 Lenis 实例

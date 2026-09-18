@@ -112,7 +112,7 @@ export default function Gallery() {
   return (
     <section id="gallery" className="section gallery-section">
       <div className="container">
-        <SectionHeader number="04" en="VISUAL RESEARCH" cn="视觉调研" week="Week 1" />
+        <SectionHeader number="02" en="VISUAL RESEARCH" cn="视觉调研" week="Week 1" />
         <p className="gallery-intro">通过图片感受乌镇的水道、古桥与传统生活</p>
         <div className="gallery-grid">
           {images.map((img, i) => {

@@ -24,7 +24,7 @@ export default function Sources() {
   return (
     <section id="sources" className="section sources-section">
       <div className="container">
-        <SectionHeader number="08" en="SOURCES" cn="资料来源" week="Week 1" />
+        <SectionHeader number="06" en="SOURCES" cn="资料来源" week="Week 1" />
         <p className="sources-intro">
           本站所有图片均来自 Wikimedia Commons，经核验为 CC0 / CC BY / CC BY-SA 公开授权。
           原始文件下载后统一处理为 WebP / AVIF / JPG 并存放于本地资源目录，网站运行时不依赖境外图片服务器。

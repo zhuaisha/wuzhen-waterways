@@ -24,7 +24,7 @@ export default function Keywords() {
   return (
     <section id="keywords" className="section keywords-section">
       <div className="container">
-        <SectionHeader number="05" en="KEYWORDS" cn="Key Words for Our Presentation" week="Week 2" />
+        <SectionHeader number="03" en="KEYWORDS" cn="Key Words for Our Presentation" week="Week 2" />
         <div className="keywords-cloud">
           {keywords.map((kw, i) => (
             <Reveal key={kw.en} className={`keyword-tag keyword-tag--${kw.size}`} delay={i * 45}>

@@ -5,7 +5,7 @@ export default function Timeline() {
   return (
     <section id="timeline" className="section timeline-section">
       <div className="container">
-        <SectionHeader number="07" en="PAST → PRESENT" cn="From Everyday Life to Cultural Experience" week="Week 2" />
+        <SectionHeader number="05" en="PAST → PRESENT" cn="From Everyday Life to Cultural Experience" week="Week 2" />
         <p className="timeline-subtitle">从日常生活到文化体验</p>
         <div className="timeline-grid">
           <Reveal className="timeline-side timeline-side--past">

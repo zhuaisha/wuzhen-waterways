@@ -6,7 +6,7 @@ export default function Facts() {
   return (
     <section id="facts" className="section facts-section">
       <div className="container">
-        <SectionHeader number="03" en="FACTS" cn="3 Facts about Wuzhen" week="Week 1" />
+        <SectionHeader number="01" en="FACTS" cn="3 Facts about Wuzhen" week="Week 1" />
         <div className="facts-grid">
           <Reveal className="fact-card">
             <div className="fact-card__tag">Fact 01</div>

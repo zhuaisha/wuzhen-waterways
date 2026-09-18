@@ -79,22 +79,23 @@ function Chapter({ c, i }) {
     const root = rootRef.current;
     if (!root) return;
     // The clip-path reveals resolve to their final state via `.in-view`.
-    // Nothing applied that class before, so every chapter image stayed
-    // permanently clipped (invisible, or with its lower half cut off).
-    // Threshold kept low: chapters are ~1900px tall against a ~980px viewport,
-    // so a high threshold can be impossible to reach.
+    // Observe the figure itself, not the chapter root: chapters are ~2000px
+    // tall and the figure sits ~1500px in, so a chapter-level observer adds
+    // `in-view` long before the figure is visible — leaving it clipped when
+    // it first enters the viewport on tall desktop viewports.
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (e.isIntersecting) {
-            e.target.classList.add('in-view');
+            root.classList.add('in-view');
             io.unobserve(e.target);
           }
         }
       },
-      { threshold: 0.12 }
+      { threshold: 0.05 }
     );
-    io.observe(root);
+    const fig = root.querySelector('.chapter__figure-inner');
+    io.observe(fig || root);
     return () => io.disconnect();
   }, []);
 

@@ -1,14 +1,12 @@
 // Team data for the OUR TEAM section.
 //
-// Names, roles and contributions are deliberately NOT invented. The photos were
-// provided without any roster, so every field is an editable placeholder:
-//   - replace `label` with a real name
-//   - fill `role` and `contribution` with what the member actually did
-// Numbering follows the order the photos were handed over (01..06).
+// Names were supplied by the group in photo-taking order (01..06):
+//   01 汪瀚宇  02 蒋盛熠  03 鲁昂  04 朱钟乐  05 沈毅程  06 沈煜程
+// Roles and contributions are still editable placeholders — the group fills
+// them in.
 //
-// Nothing here attempts to match a member to a person in the group photo:
-// the six portraits are too similar to pair up reliably by sight, and a wrong
-// mapping would be worse than no mapping.
+// GROUP_HEADCOUNT is the counter shown at the bottom-right of the group
+// photo. The group counts as 7 (one more than the six portrait slots).
 const BASE = import.meta.env.BASE_URL;
 const img = (key) => ({
   avif: `${BASE}images/${key}-avif.avif`,
@@ -27,59 +25,73 @@ export const GROUP_PHOTO = {
   alt: '六位组员在校园走廊拍摄的合照',
 };
 
+export const GROUP_HEADCOUNT = 7;
+
 // Portrait square (900px, for the detail panel) and avatar (200px, for the row).
 export const MEMBERS = [
   {
     n: '01',
     label: 'MEMBER 01',
+    name: '汪瀚宇',
+    pinyin: 'WANG HANYU',
     role: 'Role — to be filled',
     contribution: 'Contribution — to be filled',
-    alt: '组员 01 个人照片',
+    alt: '汪瀚宇 个人照片',
     sq: img('team-m1-sq-900x900'),
     av: img('team-m1-av-200x200'),
   },
   {
     n: '02',
     label: 'MEMBER 02',
+    name: '蒋盛熠',
+    pinyin: 'JIANG SHENGYI',
     role: 'Role — to be filled',
     contribution: 'Contribution — to be filled',
-    alt: '组员 02 个人照片',
+    alt: '蒋盛熠 个人照片',
     sq: img('team-m2-sq-900x900'),
     av: img('team-m2-av-200x200'),
   },
   {
     n: '03',
     label: 'MEMBER 03',
+    name: '鲁昂',
+    pinyin: 'LU ANG',
     role: 'Role — to be filled',
     contribution: 'Contribution — to be filled',
-    alt: '组员 03 个人照片',
+    alt: '鲁昂 个人照片',
     sq: img('team-m3-sq-900x900'),
     av: img('team-m3-av-200x200'),
   },
   {
     n: '04',
     label: 'MEMBER 04',
+    name: '朱钟乐',
+    pinyin: 'ZHU ZHONGLE',
     role: 'Role — to be filled',
     contribution: 'Contribution — to be filled',
-    alt: '组员 04 个人照片',
+    alt: '朱钟乐 个人照片',
     sq: img('team-m4-sq-900x900'),
     av: img('team-m4-av-200x200'),
   },
   {
     n: '05',
     label: 'MEMBER 05',
+    name: '沈毅程',
+    pinyin: 'SHEN YICHENG',
     role: 'Role — to be filled',
     contribution: 'Contribution — to be filled',
-    alt: '组员 05 个人照片',
+    alt: '沈毅程 个人照片',
     sq: img('team-m5-sq-900x900'),
     av: img('team-m5-av-200x200'),
   },
   {
     n: '06',
     label: 'MEMBER 06',
+    name: '沈煜程',
+    pinyin: 'SHEN YUCHENG',
     role: 'Role — to be filled',
     contribution: 'Contribution — to be filled',
-    alt: '组员 06 个人照片',
+    alt: '沈煜程 个人照片',
     sq: img('team-m6-sq-900x900'),
     av: img('team-m6-av-200x200'),
   },

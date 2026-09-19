@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionHeader from './SectionHeader.jsx';
-import { GROUP_PHOTO, MEMBERS } from '../data/team.js';
+import { GROUP_PHOTO, GROUP_HEADCOUNT, MEMBERS } from '../data/team.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -218,14 +218,14 @@ export default function Team() {
     <section id="team" className="team" ref={rootRef}>
       <div className="team__chrome" aria-hidden="true">
         <span>WUZHEN / 2026</span>
-        <span>{pad2(MEMBERS.length)} MEMBERS</span>
+        <span>{pad2(GROUP_HEADCOUNT)} MEMBERS</span>
       </div>
 
       <div className="container team__grid">
         <SectionHeader number="08" en="OUR TEAM" />
         <p className="team__lede">
-          Six people. One journey through Wuzhen.
-          <span>六个人，一段乌镇。</span>
+          Seven people. One journey through Wuzhen.
+          <span>七个人，一段乌镇。</span>
         </p>
 
         {/* the group plate — the team as a single image */}
@@ -249,8 +249,8 @@ export default function Team() {
           <figcaption className="team__group-cap">
             <span>GROUP PHOTO</span>
             <span className="team__group-cap-num">
-              {pad2(MEMBERS.length)}
-              <small>/ {pad2(MEMBERS.length)}</small>
+              {pad2(GROUP_HEADCOUNT)}
+              <small>/ {pad2(GROUP_HEADCOUNT)}</small>
             </span>
           </figcaption>
         </figure>
@@ -289,13 +289,16 @@ export default function Team() {
                   }
                 />
               </span>
-              <span className="team-member__label">{m.label}</span>
+              <span className="team-member__label">
+                <b className="team-member__name">{m.name}</b>
+                <i className="team-member__pinyin">{m.pinyin}</i>
+              </span>
             </button>
           ))}
         </div>
 
         <p className="team__note">
-          Names, roles and contributions are filled in by the group. The portraits are shown in
+          Roles and contributions are filled in by the group. The portraits are shown in
           the order the photos were taken.
         </p>
       </div>
@@ -351,9 +354,12 @@ export default function Team() {
                 <div className="team-panel__meta">
                   <p className="team-panel__index">
                     MEMBER <b>{member.n}</b>
-                    <span>{pad2(MEMBERS.length)} MEMBERS</span>
+                    <span>{GROUP_HEADCOUNT} MEMBERS</span>
                   </p>
-                  <h3 id={`team-panel-name-${member.n}`}>{member.label}</h3>
+                  <h3 id={`team-panel-name-${member.n}`}>
+                    <span className="team-panel__name-cn">{member.name}</span>
+                    <span className="team-panel__name-pinyin">{member.pinyin}</span>
+                  </h3>
                   <dl>
                     <div>
                       <dt>ROLE</dt>
@@ -368,7 +374,7 @@ export default function Team() {
                 <div className="team-panel__foot" aria-hidden="true">
                   <span>WUZHEN / 2026</span>
                   <span>
-                    {member.n} / {pad2(MEMBERS.length)}
+                    {member.n} / {pad2(GROUP_HEADCOUNT)}
                   </span>
                 </div>
               </div>

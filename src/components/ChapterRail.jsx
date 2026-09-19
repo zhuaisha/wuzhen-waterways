@@ -12,6 +12,7 @@ const prefersReduced = () =>
  */
 export default function ChapterRail() {
   const fillRef = useRef(null);
+  const lockUntil = useRef(0);
   const [active, setActive] = useState('01');
   const [progress, setProgress] = useState(0);
   const [show, setShow] = useState(false);
@@ -27,14 +28,20 @@ export default function ChapterRail() {
         fillRef.current.style.transform = `scaleY(${p})`;
       }
 
-      // Current chapter = the last chapter whose top has passed viewport middle.
-      let cur = CHAPTERS[0].n;
-      const mid = window.innerHeight * 0.5;
-      for (const c of CHAPTERS) {
-        const el = document.querySelector(`#${c.id}`);
-        if (el && el.getBoundingClientRect().top <= mid) cur = c.n;
+      // While a click is animating through Lenis, the rail is locked to the
+      // clicked chapter — otherwise the mid-scroll position would make the
+      // counter "count up/down" past intermediate chapters. After the lock
+      // expires, scroll ownership resumes and the rule below is correct.
+      if (Date.now() >= lockUntil.current) {
+        // Current chapter = the last chapter whose top has passed viewport middle.
+        let cur = CHAPTERS[0].n;
+        const mid = window.innerHeight * 0.5;
+        for (const c of CHAPTERS) {
+          const el = document.querySelector(`#${c.id}`);
+          if (el && el.getBoundingClientRect().top <= mid) cur = c.n;
+        }
+        setActive(cur);
       }
-      setActive(cur);
 
       setShow(y > window.innerHeight * 0.35);
     };
@@ -47,7 +54,17 @@ export default function ChapterRail() {
     };
   }, []);
 
-  const go = (id) => {
+  const go = (id, n) => {
+    // Snap the counter + highlight to the target immediately so the bottom
+    // "NN / 06" reads the chapter you clicked on, without waiting for the
+    // Lenis scroll (and its scroll events) to catch up. Then lock the rail
+    // for the duration of the animation so mid-scroll positions can't make
+    // the counter wobble through intermediate chapters. Manual scrolling
+    // still owns `active` once the lock expires.
+    if (n) {
+      setActive(n);
+      lockUntil.current = Date.now() + 1350;
+    }
     const t = document.querySelector(`#${id}`);
     if (!t) return;
     if (window.__lenis) {
@@ -75,7 +92,7 @@ export default function ChapterRail() {
             key={c.n}
             type="button"
             className={`chapter-rail__item ${active === c.n ? 'is-active' : ''}`}
-            onClick={() => go(c.id)}
+            onClick={() => go(c.id, c.n)}
             aria-label={`Chapter ${c.n} ${c.en}`}
             aria-current={active === c.n ? 'true' : undefined}
           >

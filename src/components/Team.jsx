@@ -54,13 +54,21 @@ function addReveal(el, { at = 0, duration = 0.85, y = 34, blur = 8 } = {}) {
   );
 }
 
-/* AVIF -> WebP -> JPG, so a browser that cannot decode AVIF still gets a file. */
+/* AVIF -> WebP -> JPG, so a browser that cannot decode AVIF still gets a file.
+ * `src` is always a plain-URL map; `srcSet` (optional) is a srcset string map
+ * that only belongs on <source>. The <img src> must stay a single URL —
+ * feeding it a srcset string ("a.avif 4096w, b.avif 1120w") makes the browser
+ * request a nonsense URL and the image 404s. */
 function Picture({ src, alt, className, sizes, srcSet, width, height, ...rest }) {
   return (
     <picture>
-      <source type="image/avif" srcSet={srcSet ? srcSet.avif : src.avif} sizes={sizes} />
+      {srcSet ? (
+        <source type="image/avif" srcSet={srcSet.avif} sizes={sizes} />
+      ) : (
+        <source type="image/avif" srcSet={src.avif} sizes={sizes} />
+      )}
       <img
-        src={srcSet ? srcSet.webp : src.webp}
+        src={src.webp}
         alt={alt}
         width={width}
         height={height}
@@ -70,7 +78,7 @@ function Picture({ src, alt, className, sizes, srcSet, width, height, ...rest })
           const t = e.currentTarget;
           if (t.dataset.step !== '2') {
             t.dataset.step = '2';
-            t.src = srcSet ? srcSet.jpg : src.jpg;
+            t.src = src.jpg;
           }
         }}
       />

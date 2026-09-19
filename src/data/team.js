@@ -1,12 +1,12 @@
 // Team data for the OUR TEAM section.
 //
 // Names were supplied by the group in photo-taking order (01..06):
-//   01 汪瀚宇  02 蒋盛熠  03 鲁昂  04 朱钟乐  05 沈毅程  06 沈煜程
+//   01 蒋盛熠  02 汪瀚宇  03 鲁昂  04 朱钟乐  05 沈毅程  06 沈煜程
 // Roles and contributions are still editable placeholders — the group fills
 // them in.
 //
 // GROUP_HEADCOUNT is the counter shown at the bottom-right of the group
-// photo. The group counts as 7 (one more than the six portrait slots).
+// photo. It matches the six portrait slots.
 const BASE = import.meta.env.BASE_URL;
 const img = (key) => ({
   avif: `${BASE}images/${key}-avif.avif`,
@@ -25,24 +25,13 @@ export const GROUP_PHOTO = {
   alt: '六位组员在校园走廊拍摄的合照',
 };
 
-export const GROUP_HEADCOUNT = 7;
+export const GROUP_HEADCOUNT = 6;
 
 // Portrait square (900px, for the detail panel) and avatar (200px, for the row).
 export const MEMBERS = [
   {
     n: '01',
     label: 'MEMBER 01',
-    name: '汪瀚宇',
-    pinyin: 'WANG HANYU',
-    role: 'Role — to be filled',
-    contribution: 'Contribution — to be filled',
-    alt: '汪瀚宇 个人照片',
-    sq: img('team-m1-sq-900x900'),
-    av: img('team-m1-av-200x200'),
-  },
-  {
-    n: '02',
-    label: 'MEMBER 02',
     name: '蒋盛熠',
     pinyin: 'JIANG SHENGYI',
     role: 'Role — to be filled',
@@ -50,6 +39,17 @@ export const MEMBERS = [
     alt: '蒋盛熠 个人照片',
     sq: img('team-m2-sq-900x900'),
     av: img('team-m2-av-200x200'),
+  },
+  {
+    n: '02',
+    label: 'MEMBER 02',
+    name: '汪瀚宇',
+    pinyin: 'WANG HANYU',
+    role: 'Role — to be filled',
+    contribution: 'Contribution — to be filled',
+    alt: '汪瀚宇 个人照片',
+    sq: img('team-m1-sq-900x900'),
+    av: img('team-m1-av-200x200'),
   },
   {
     n: '03',

@@ -224,8 +224,8 @@ export default function Team() {
       <div className="container team__grid">
         <SectionHeader number="08" en="OUR TEAM" />
         <p className="team__lede">
-          Seven people. One journey through Wuzhen.
-          <span>七个人，一段乌镇。</span>
+          Six people. One journey through Wuzhen.
+          <span>六个人，一段乌镇。</span>
         </p>
 
         {/* the group plate — the team as a single image */}

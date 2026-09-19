@@ -3,9 +3,10 @@ import gsap from 'gsap';
 
 const navLinks = [
   { label: 'Facts', href: '#facts', section: 'facts', journey: 0.14 },
-  { label: 'Gallery', href: '#gallery', section: 'gallery', journey: 0.36 },
-  { label: 'Keywords', href: '#keywords', section: 'keywords', journey: 0.5 },
-  { label: 'Sources', href: '#sources', section: 'sources', journey: 0.92 },
+  { label: 'Gallery', href: '#gallery', section: 'gallery', journey: 0.3 },
+  { label: 'Keywords', href: '#keywords', section: 'keywords', journey: 0.42 },
+  { label: 'Sources', href: '#sources', section: 'sources', journey: 0.86 },
+  { label: 'Team', href: '#team', section: 'team', journey: 0.94 },
 ];
 
 export default function Navbar() {

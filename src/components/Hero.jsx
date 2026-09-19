@@ -208,7 +208,7 @@ export default function Hero() {
       </div>
 
       <div className="hero__meta">
-        <span className="hero__chrome-in">CHAPTERS 06</span>
+        <span className="hero__chrome-in">CHAPTERS 08</span>
         <span className="hero__chrome-in">2026</span>
       </div>
 

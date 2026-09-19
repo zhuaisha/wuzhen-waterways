@@ -6,6 +6,7 @@ import Lenis from 'lenis';
 import App from './App.jsx';
 import './styles/global.css';
 import './styles/cinematic.css';
+import './styles/team.css';
 
 gsap.registerPlugin(ScrollTrigger);
 

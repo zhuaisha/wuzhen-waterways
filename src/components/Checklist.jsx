@@ -60,8 +60,8 @@ const WEEKS = [
     en: 'WEEK FOUR',
     cn: 'Week Four Task Report',
     weekLabel: 'Week 04',
-    status: 'COMPLETED',
-    statusTone: 'done',
+    status: 'IN PROGRESS',
+    statusTone: 'doing',
     tasks: [
       '定稿英文导览页',
       '完成最终展示PPT/网页',

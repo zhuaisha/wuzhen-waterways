@@ -1583,10 +1583,21 @@ ul, ol { list-style: none; }
   letter-spacing: 0.14em;
   color: var(--night);
 }
-/* tones — all four weeks are COMPLETED, so the badge is the gold square */
+/* tones — done = gold filled square, doing = glass teal square */
 .week-badge--done {
   background: var(--lantern);
   box-shadow: 0 14px 40px rgba(215, 173, 105, 0.28);
+}
+.week-badge--doing {
+  background: rgba(168, 204, 199, 0.16);
+  border: 1px solid rgba(168, 204, 199, 0.35);
+  box-shadow: none;
+}
+.week-badge--doing .week-badge__week {
+  color: rgba(168, 204, 199, 0.6);
+}
+.week-badge--doing .week-badge__status {
+  color: rgba(168, 204, 199, 0.9);
 }
 
 /* eyebrow = section number for the NEXT week, thin divider above */

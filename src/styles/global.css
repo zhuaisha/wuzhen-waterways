@@ -1482,40 +1482,33 @@ ul, ol { list-style: none; }
 }
 
 /* ==================================================================
-   WEEKLY TASK REPORTS — unified layout for Week 1–4 cards
+   WEEKLY TASK REPORTS — centered title + 2-col tasks + right badge
    ================================================================== */
 .checklist-section {
   background: linear-gradient(180deg, transparent, rgba(43, 99, 115, 0.18) 50%, transparent);
   display: flex;
   flex-direction: column;
-  gap: clamp(40px, 6vh, 72px);
+  gap: clamp(56px, 7vh, 88px);
 }
 
-.week-card__head {
-  margin-bottom: 22px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--hairline);
-}
-.week-card__num {
+/* centered week title */
+.week-card__body {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  color: rgba(245, 238, 223, 0.5);
-  margin-bottom: 10px;
-}
-.week-card__slash {
-  color: rgba(168, 204, 199, 0.4);
+  flex-direction: column;
+  gap: 28px;
+  max-width: 980px;
+  margin: 0 auto;
 }
 .week-card__title {
-  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  margin: 0;
+  text-align: center;
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 500;
   letter-spacing: -0.02em;
   color: #f5f0e3;
-  margin: 0;
 }
 
+/* tasks + badge row */
 .week-card__grid {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -1523,12 +1516,14 @@ ul, ol { list-style: none; }
   align-items: center;
   column-gap: 48px;
   max-width: 1080px;
+  margin: 0 auto;
 }
 
 /* left: task rows */
 .week-card__list {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 1fr;
   gap: 10px;
   flex: 1;
   min-width: 0;
@@ -1537,7 +1532,8 @@ ul, ol { list-style: none; }
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 12px 16px;
+  padding: 14px 16px;
+  min-height: 44px;
   background: rgba(232, 229, 220, 0.04);
   border: 1px solid var(--hairline);
   transition: transform 0.3s var(--ease-water), border-color 0.3s var(--ease-water),
@@ -1567,7 +1563,7 @@ ul, ol { list-style: none; }
 
 /* right: status badge */
 .week-badge {
-  width: 116px;
+  width: 132px;
   aspect-ratio: 1;
   display: flex;
   flex-direction: column;
@@ -1591,6 +1587,26 @@ ul, ol { list-style: none; }
 .week-badge--done {
   background: var(--lantern);
   box-shadow: 0 14px 40px rgba(215, 173, 105, 0.28);
+}
+
+/* eyebrow = section number for the NEXT week, thin divider above */
+.week-card__head {
+  margin-top: 0;
+  text-align: center;
+}
+.week-card__num {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: rgba(245, 238, 223, 0.5);
+  border-top: 1px solid var(--hairline);
+  padding-top: 16px;
+}
+.week-card__slash {
+  color: rgba(168, 204, 199, 0.4);
 }
 
 @media (max-width: 720px) {

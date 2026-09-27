@@ -73,45 +73,49 @@ const WEEKS = [
   },
 ];
 
-function WeekCard({ w, idx }) {
+function WeekCard({ w, idx, showHead }) {
   const done = w.statusTone === 'done';
   return (
     <Reveal className={`week-card week-card--${w.statusTone}`} delay={idx * 120}>
-      <div className="week-card__head">
-        <div className="week-card__num">
-          <span>{w.num}</span>
-          <span className="week-card__slash">/</span>
-          <span>{w.en}</span>
-        </div>
+      <div className="week-card__body">
         <h3 className="week-card__title">{w.cn}</h3>
-      </div>
-      <div className="week-card__grid">
-        <div className="week-card__list">
-          {w.tasks.map((task, i) => (
-            <div
-              key={task}
-              className={`week-task${done ? ' week-task--done' : ''}`}
-              style={{ transitionDelay: `${i * 50}ms` }}
-            >
-              <span className="week-task__icon">
-                <svg width="18" height="18" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-                  <circle cx="11" cy="11" r="10" stroke="currentColor" strokeWidth="1.5" />
-                  {done ? (
-                    <path d="M7 11l3 3 5-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  ) : (
-                    <line x1="4" y1="11" x2="18" y2="11" stroke="currentColor" strokeWidth="1.5" opacity="0.35" />
-                  )}
-                </svg>
-              </span>
-              <span className="week-task__text">{task}</span>
-            </div>
-          ))}
+        <div className="week-card__grid">
+          <div className="week-card__list">
+            {w.tasks.map((task, i) => (
+              <div
+                key={task}
+                className={`week-task${done ? ' week-task--done' : ''}`}
+                style={{ transitionDelay: `${i * 50}ms` }}
+              >
+                <span className="week-task__icon">
+                  <svg width="18" height="18" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+                    <circle cx="11" cy="11" r="10" stroke="currentColor" strokeWidth="1.5" />
+                    {done ? (
+                      <path d="M7 11l3 3 5-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    ) : (
+                      <line x1="4" y1="11" x2="18" y2="11" stroke="currentColor" strokeWidth="1.5" opacity="0.35" />
+                    )}
+                  </svg>
+                </span>
+                <span className="week-task__text">{task}</span>
+              </div>
+            ))}
+          </div>
+          <div className={`week-badge week-badge--${w.statusTone}`}>
+            <div className="week-badge__week">{w.weekLabel}</div>
+            <div className="week-badge__status">{w.status}</div>
+          </div>
         </div>
-        <div className={`week-badge week-badge--${w.statusTone}`}>
-          <div className="week-badge__week">{w.weekLabel}</div>
-          <div className="week-badge__status">{w.status}</div>
-        </div>
       </div>
+      {showHead && (
+        <div className="week-card__head">
+          <div className="week-card__num">
+            <span>{w.num}</span>
+            <span className="week-card__slash">/</span>
+            <span>{w.en}</span>
+          </div>
+        </div>
+      )}
     </Reveal>
   );
 }
@@ -121,7 +125,7 @@ export default function Checklist() {
     <section id="checklist" className="section checklist-section">
       <div className="container">
         {WEEKS.map((w, i) => (
-          <WeekCard key={w.num} w={w} idx={i} />
+          <WeekCard key={w.num} w={w} idx={i} showHead={i < WEEKS.length - 1} />
         ))}
       </div>
     </section>

@@ -74,6 +74,7 @@ function LanternGlow({ active }) {
 
 function Chapter({ c, i }) {
   const rootRef = useRef(null);
+  const touch = isTouch();
 
   useEffect(() => {
     const root = rootRef.current;
@@ -223,6 +224,27 @@ function Chapter({ c, i }) {
         });
       }
 
+      // Chapter mini figure: rise into the copy column's quiet space.
+      const mini = root.querySelector('.chapter__mini');
+      if (mini) {
+        gsap.fromTo(
+          mini,
+          { opacity: 0, y: 22, scale: 0.94 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.85,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: root,
+              start: 'top 55%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
+
       // Water current hairline.
       const line = root.querySelector('.current__line');
       if (line) {
@@ -297,6 +319,28 @@ function Chapter({ c, i }) {
               <span className="chapter__caption-dot" />
               {c.caption}
             </p>
+          )}
+          {hasImage && (
+            <figure className={`chapter__mini${touch ? '' : ' chapter__mini--drift'}`}>
+              <div className="chapter__mini-frame">
+                <picture>
+                  <source type="image/avif" srcSet={`${c.image.avif} 1600w`} sizes="180px" />
+                  <img
+                    src={c.image.webp}
+                    alt={c.caption}
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      e.currentTarget.src = c.image.jpg;
+                    }}
+                  />
+                </picture>
+              </div>
+              <figcaption>
+                <span>{c.cn}</span>
+                <span className="chapter__mini-en">{c.en}</span>
+              </figcaption>
+            </figure>
           )}
         </div>
 

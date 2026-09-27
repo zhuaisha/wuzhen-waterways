@@ -1481,75 +1481,136 @@ ul, ol { list-style: none; }
   box-shadow: var(--shadow-sm);
 }
 
-/* ============================================
-   CHECKLIST — Apple-style week one complete
-   ============================================ */
-.checklist-section { background: var(--bg-light); }
+/* ==================================================================
+   WEEKLY TASK REPORTS — unified layout for Week 1–4 cards
+   ================================================================== */
+.checklist-section {
+  background: linear-gradient(180deg, transparent, rgba(43, 99, 115, 0.18) 50%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(40px, 6vh, 72px);
+}
 
-.checklist-grid {
+.week-card__head {
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--hairline);
+}
+.week-card__num {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: rgba(245, 238, 223, 0.5);
+  margin-bottom: 10px;
+}
+.week-card__slash {
+  color: rgba(168, 204, 199, 0.4);
+}
+.week-card__title {
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #f5f0e3;
+  margin: 0;
+}
+
+.week-card__grid {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 40px;
+  gap: 32px;
   align-items: center;
 }
 
-.checklist-list {
+/* left: task rows */
+.week-card__list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
-.checklist-item {
+.week-task {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: var(--bg-white);
-  border-radius: var(--radius-sm);
-  padding: 14px 20px;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.3s var(--ease), box-shadow 0.3s;
+  padding: 12px 16px;
+  background: rgba(232, 229, 220, 0.04);
+  border: 1px solid var(--hairline);
+  transition: transform 0.3s var(--ease-water), border-color 0.3s var(--ease-water),
+    background 0.3s var(--ease-water);
 }
-
-.checklist-item:hover {
+.week-task:hover {
   transform: translateX(4px);
-  box-shadow: var(--shadow-md);
+}
+.week-task--done:hover {
+  background: rgba(215, 173, 105, 0.08);
+  border-color: rgba(215, 173, 105, 0.4);
+}
+.week-task__icon {
+  flex: none;
+  color: var(--lantern);
+  display: inline-flex;
+}
+.week-card--doing .week-task__icon,
+.week-card--next .week-task__icon {
+  color: rgba(245, 238, 223, 0.4);
+}
+.week-task__text {
+  font-size: 0.92rem;
+  color: rgba(245, 238, 223, 0.86);
 }
 
-.checklist-item__icon {
-  flex-shrink: 0;
-  color: var(--water-dark);
+/* right: status badge */
+.week-badge {
+  width: 116px;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: none;
 }
-
-.checklist-item__text {
-  font-family: var(--font-cn);
-  font-size: 0.88rem;
-  color: var(--text);
-  font-weight: 500;
+.week-badge__week {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  color: rgba(7, 19, 31, 0.5);
 }
-
-.checklist-badge {
-  text-align: center;
-  background: var(--bg-dark-alt);
-  color: #fff;
-  border-radius: var(--radius-lg);
-  padding: 36px 44px;
-  box-shadow: var(--shadow-dark);
-}
-
-.checklist-badge__week {
-  font-size: 0.66rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.checklist-badge__status {
-  font-size: 1.2rem;
+.week-badge__status {
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
+  color: var(--night);
 }
+/* tones */
+.week-badge--done {
+  background: var(--lantern);
+  box-shadow: 0 14px 40px rgba(215, 173, 105, 0.28);
+}
+.week-badge--doing {
+  background: rgba(168, 204, 199, 0.16);
+  border: 1px solid rgba(168, 204, 199, 0.35);
+}
+.week-badge--doing .week-badge__week { color: rgba(168, 204, 199, 0.6); }
+.week-badge--doing .week-badge__status { color: rgba(168, 204, 199, 0.9); }
+.week-badge--next {
+  background: transparent;
+  border: 1px dashed rgba(245, 238, 223, 0.25);
+}
+.week-badge--next .week-badge__week { color: rgba(245, 238, 223, 0.4); }
+.week-badge--next .week-badge__status { color: rgba(245, 238, 223, 0.55); }
+
+@media (max-width: 720px) {
+  .week-card__grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .week-badge {
+    width: 96px;
+    margin: 0 auto;
+  }
+}
+
 
 /* ============================================
    SUMMARY — Apple keynote closing, dark + Three.js
@@ -1768,11 +1829,6 @@ ul, ol { list-style: none; }
     flex-direction: row;
     transform: rotate(90deg);
     margin: 0 auto;
-  }
-
-  .checklist-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
   }
 
   .footer__content {
@@ -2027,18 +2083,11 @@ body { background: var(--night); color: var(--warm); }
 .timeline-connector__water { color: var(--lantern); }
 .timeline-connector__arrow { color: var(--lantern); }
 
-/* week one — last light section, now matches the rest */
-.checklist-section { background: linear-gradient(180deg, transparent, rgba(43,99,115,.18) 50%, transparent); }
-.checklist-item { background: rgba(232,229,220,.05); border: 1px solid var(--hairline); box-shadow: none; transition: transform .3s var(--ease-water), border-color .3s var(--ease-water), background .3s var(--ease-water); }
-.checklist-item:hover { transform: translateX(4px); box-shadow: none; background: rgba(215,173,105,.08); border-color: rgba(215,173,105,.4); }
-.checklist-item__icon { color: var(--lantern); }
-.checklist-item__text { color: rgba(245,238,223,.86); }
-.checklist-badge { background: var(--lantern); color: var(--night); box-shadow: 0 14px 40px rgba(215,173,105,.28); border-radius: 0; }
-.checklist-badge__week { color: rgba(7,19,31,.5); }
+/* week one section — unified dark look */
 
 /* every card stays a hard rectangle - no rounding */
 .q-card, .fact-card, .fact-card--big, .gallery-card__btn,
-.timeline-side, .checklist-item, .checklist-badge { border-radius: 0; }
+.timeline-side, .week-task, .week-badge, .chapter__figure-inner { border-radius: 0; }
 
 @media (max-width: 900px) {
   .questions-grid, .facts-grid { grid-template-columns: 1fr; }

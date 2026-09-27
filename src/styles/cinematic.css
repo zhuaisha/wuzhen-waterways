@@ -272,14 +272,14 @@
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: minmax(300px, 0.92fr) minmax(360px, 1.08fr);
+  grid-template-columns: minmax(300px, 0.92fr) minmax(440px, 1.2fr);
   gap: clamp(40px, 8vw, 120px);
   align-items: center;
 }
-/* even chapters flip the reading order for editorial rhythm */
+/* chapters 02 / 05 flip the reading order for editorial rhythm */
 .chapter--clip-bridge .chapter__grid,
 .chapter--clip-lantern .chapter__grid {
-  grid-template-columns: minmax(360px, 1.08fr) minmax(300px, 0.92fr);
+  grid-template-columns: minmax(440px, 1.2fr) minmax(300px, 0.92fr);
 }
 .chapter--clip-bridge .chapter__copy,
 .chapter--clip-lantern .chapter__copy { order: 2; }
@@ -333,70 +333,6 @@
   flex: none;
 }
 
-/* chapter mini figure — small glass-framed thumbnail in the copy column */
-.chapter__mini {
-  width: clamp(128px, 15vw, 180px);
-  margin: 30px 0 0;
-  opacity: 0;
-}
-.chapter__mini-frame {
-  position: relative;
-  overflow: hidden;
-  border-radius: 8px;
-  border: 1px solid rgba(232, 229, 220, 0.14);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
-  background: rgba(168, 204, 199, 0.06);
-  backdrop-filter: blur(6px);
-}
-.chapter__mini-frame img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-}
-/* slow drift — the picture bobs like something floating on water */
-.chapter__mini--drift .chapter__mini-frame {
-  animation: mini-drift 7s ease-in-out infinite;
-}
-@keyframes mini-drift {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-5px) scale(1.015); }
-}
-.chapter__mini figcaption {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-top: 10px;
-  padding-left: 2px;
-}
-.chapter__mini figcaption span {
-  font-family: var(--font-cn);
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  color: rgba(245, 238, 223, 0.55);
-}
-.chapter__mini-en {
-  font-family: var(--font-en);
-  font-size: 9px;
-  letter-spacing: 0.24em;
-  color: rgba(168, 204, 199, 0.5) !important;
-}
-/* subtle breathing ring around the frame */
-.chapter__mini--drift .chapter__mini-frame::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 8px;
-  border: 1px solid rgba(168, 204, 199, 0.3);
-  opacity: 0;
-  animation: mini-ring 7s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes mini-ring {
-  0%, 100% { opacity: 0; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(1.02); }
-}
-
 /* image stage */
 .chapter__stage {
   position: relative;
@@ -424,18 +360,18 @@
   background: linear-gradient(160deg, rgba(7,19,31,.12), rgba(7,19,31,.5));
 }
 
-/* foreground figure used inside the copy column */
+/* foreground figure — tall, right-of-copy, with bottom caption+SRC overlay */
 .chapter__figure { min-height: 300px; }
 .chapter__figure-inner {
   position: relative;
   overflow: hidden;
-  border-radius: 3px;
+  border-radius: 0;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
 }
 .chapter__figure-inner img {
   display: block;
   width: 100%;
-  height: clamp(300px, 44vh, 520px);
+  height: clamp(320px, 52vh, 620px);
   object-fit: cover;
   transition: transform 1.2s var(--ease-water);
 }
@@ -458,19 +394,19 @@
 }
 
 /* per-chapter clip-path reveal variants */
-/* The reveal plays once the figure is in view; the old 1.4s was slow enough
-   that the user read the first two paragraphs while the picture was still
-   clipped away (clip-bridge hides 42% of it, clip-rise 100%). 0.6s keeps the
-   wipe readable but out of the way of the reading. */
-.chapter--clip-expand .chapter__figure-inner { clip-path: inset(12% 22% 12% 22% round 2px); }
-.chapter--clip-rise .chapter__figure-inner { clip-path: inset(100% 0 0 0); }
-.chapter--clip-slide .chapter__figure-inner { clip-path: inset(0 100% 0 0); }
-.chapter--clip-lantern .chapter__figure-inner { clip-path: circle(38% at 50% 62%); }
-.chapter--clip-bridge .chapter__figure-inner { clip-path: inset(0 0 42% 0); }
-.chapter.in-view .chapter__figure-inner {
-  clip-path: inset(0 0 0 0 round 3px);
+/* Unified wipe for all five image chapters — the figure starts hidden under
+   a tall inset and reveals upward when it scrolls into view (matches the
+   01 reference look; no circular/side wipes, no full-height hides). */
+.chapter--clip-expand .chapter__figure-inner,
+.chapter--clip-rise .chapter__figure-inner,
+.chapter--clip-slide .chapter__figure-inner,
+.chapter--clip-bridge .chapter__figure-inner,
+.chapter--clip-lantern .chapter__figure-inner {
+  clip-path: inset(0 0 62% 0);
 }
-.chapter--clip-lantern.in-view .chapter__figure-inner { clip-path: circle(120% at 50% 62%); }
+.chapter.in-view .chapter__figure-inner {
+  clip-path: inset(0 0 0 0);
+}
 .chapter__figure-inner { transition: clip-path 0.6s var(--ease-water), transform 1.2s var(--ease-water); }
 
 /* ---------------- motif: ripple ---------------- */
@@ -939,20 +875,13 @@
   }
   .hero__title { white-space: normal; }
   .hero__meta { display: none; }
-  .chapter__figure-inner img { height: clamp(240px, 40vh, 380px); }
+  .chapter__figure-inner img { height: clamp(240px, 36vh, 360px); }
 }
 
 @media (max-width: 520px) {
   .chapter { padding: 80px 0 70px; }
   .chapter__lede-line { font-size: clamp(1.9rem, 9vw, 2.7rem); }
   .chapter__meta { gap: 12px; }
-  .chapter__mini { width: 120px; margin-top: 22px; }
-}
-
-/* on touch devices the drift loop is disabled (no class), but the figure
-   must still be visible: force opacity to 1 so the entrance state is safe. */
-@media (hover: none) {
-  .chapter__mini { opacity: 1; }
 }
 
 
@@ -986,10 +915,5 @@
   }
   .bridge-draw__arc { stroke-dashoffset: 0 !important; }
   .chapter-rail__fill { transition: none; }
-  .chapter__mini { opacity: 1 !important; }
-  .chapter__mini--drift .chapter__mini-frame,
-  .chapter__mini--drift .chapter__mini-frame::after {
-    animation: none !important;
-  }
 }
 

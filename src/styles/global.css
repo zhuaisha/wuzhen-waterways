@@ -1519,15 +1519,19 @@ ul, ol { list-style: none; }
 .week-card__grid {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 32px;
+  gap: 48px;
   align-items: center;
+  column-gap: 48px;
+  max-width: 1080px;
 }
 
 /* left: task rows */
 .week-card__list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
+  flex: 1;
+  min-width: 0;
 }
 .week-task {
   display: flex;
@@ -1538,6 +1542,7 @@ ul, ol { list-style: none; }
   border: 1px solid var(--hairline);
   transition: transform 0.3s var(--ease-water), border-color 0.3s var(--ease-water),
     background 0.3s var(--ease-water);
+  min-width: 0;
 }
 .week-task:hover {
   transform: translateX(4px);
@@ -1551,13 +1556,13 @@ ul, ol { list-style: none; }
   color: var(--lantern);
   display: inline-flex;
 }
-.week-card--doing .week-task__icon,
-.week-card--next .week-task__icon {
-  color: rgba(245, 238, 223, 0.4);
-}
 .week-task__text {
   font-size: 0.92rem;
   color: rgba(245, 238, 223, 0.86);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* right: status badge */
@@ -1582,32 +1587,30 @@ ul, ol { list-style: none; }
   letter-spacing: 0.12em;
   color: var(--night);
 }
-/* tones */
+/* tones — all four weeks are COMPLETED, so the badge is the gold square */
 .week-badge--done {
   background: var(--lantern);
   box-shadow: 0 14px 40px rgba(215, 173, 105, 0.28);
 }
-.week-badge--doing {
-  background: rgba(168, 204, 199, 0.16);
-  border: 1px solid rgba(168, 204, 199, 0.35);
-}
-.week-badge--doing .week-badge__week { color: rgba(168, 204, 199, 0.6); }
-.week-badge--doing .week-badge__status { color: rgba(168, 204, 199, 0.9); }
-.week-badge--next {
-  background: transparent;
-  border: 1px dashed rgba(245, 238, 223, 0.25);
-}
-.week-badge--next .week-badge__week { color: rgba(245, 238, 223, 0.4); }
-.week-badge--next .week-badge__status { color: rgba(245, 238, 223, 0.55); }
 
 @media (max-width: 720px) {
   .week-card__grid {
     grid-template-columns: 1fr;
     gap: 20px;
+    max-width: none;
+  }
+  .week-card__list {
+    grid-template-columns: 1fr;
   }
   .week-badge {
     width: 96px;
     margin: 0 auto;
+  }
+}
+
+@media (max-width: 1080px) {
+  .week-card__list {
+    grid-template-columns: 1fr;
   }
 }
 

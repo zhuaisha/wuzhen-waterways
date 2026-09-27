@@ -524,9 +524,9 @@
 .outro__title {
   margin: 0 0 clamp(14px, 2.5vh, 26px);
   font-weight: 500;
-  font-size: clamp(3.6rem, 15vw, 12rem);
-  line-height: 0.84;
-  letter-spacing: -0.07em;
+  font-size: clamp(3.6rem, 13vw, 11rem);
+  line-height: 0.92;
+  letter-spacing: 0;
   color: #f7f2e6;
 }
 .outro__sub {

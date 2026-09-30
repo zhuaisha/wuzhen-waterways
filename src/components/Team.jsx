@@ -298,7 +298,7 @@ export default function Team() {
         </div>
 
         <p className="team__note">
-          Roles and contributions are filled in by the group. The portraits are shown in
+          Each member took the lead on one part of the project. The portraits are shown in
           the order the photos were taken.
         </p>
       </div>

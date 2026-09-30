@@ -4,9 +4,9 @@ import '../styles/presentation.css';
 
 /* ------------------------------------------------------------------ */
 /* PRESENTATION DAY — week 4's show requirements, distilled from the  */
-/* two school task sheets: the 5-part timing plan, the 5-page PPT     */
-/* framework, production specs, the six submission items, and the     */
-/* file-naming rule.                                                  */
+/* two school task sheets: the 5-part timing plan and the 5-page PPT  */
+/* framework, with the file-naming rule. The full 5-page deck is a    */
+/* standalone .pptx — wuzhen_waterways_presentation.pptx in public/.  */
 /* ------------------------------------------------------------------ */
 
 const TIMELINE = [
@@ -25,31 +25,11 @@ const PAGES = [
   { p: '05', role: 'THE CHALLENGE', must: 'The challenge task · an English invitation · one discussion question' },
 ];
 
-const SUBMISSIONS = [
-  'Final presentation PPT — about 5 pages, in PPTX',
-  'Final English guide page — 60–80 words, with the image source',
-  'Presentation script or outline — CN points + the EN guide',
-  'Sources list — texts, images and interviews',
-  'Roles & process record — every member, plus one major revision',
-  'Group reflection — what worked, what to improve',
-];
-
-const SPECS = [
-  ['01', 'One slide, one idea — body under 6 lines, readable from the back row'],
-  ['02', '1–2 images per slide, and every image is credited'],
-  ['03', 'Keywords on the screen — the details are spoken, never pasted'],
-  ['04', 'Face the class, never read the slide — and every member speaks'],
-];
-
 export default function Presentation() {
-  const openDeck = () => {
-    location.hash = '#deck';
-  };
-
   return (
     <section id="presentation" className="section presentation-section">
       <div className="container">
-        <SectionHeader number="09" en="PRESENTATION DAY" cn="展示日 · 四周收官" week="Week 04" />
+        <SectionHeader number="09" en="PRESENTATION DAY" cn="WEEK FOUR · THE FINAL SHOW" week="Week 04" />
 
         <div className="pres-grid">
           <Reveal className="pres-col">
@@ -92,46 +72,21 @@ export default function Presentation() {
           </Reveal>
         </div>
 
-        <Reveal className="pres-subs">
-          <div className="pres-col__head">
-            SUBMISSIONS
-            <span>SIX ITEMS BEFORE THE SHOW</span>
-          </div>
-          <div className="pres-subs__grid">
-            {SUBMISSIONS.map((s) => (
-              <div className="pres-subs__item" key={s}>
-                <span className="pres-subs__box" aria-hidden="true" />
-                {s}
-              </div>
-            ))}
-          </div>
-        </Reveal>
-
-        <Reveal className="pres-specs">
-          <div className="pres-col__head">
-            HOW TO BUILD THE SLIDES
-          </div>
-          <div className="pres-specs__row">
-            {SPECS.map(([n, s]) => (
-              <div className="pres-specs__chip" key={n}>
-                <b>{n}</b>
-                {s}
-              </div>
-            ))}
-          </div>
-        </Reveal>
-
         <Reveal className="pres-foot">
           <div className="pres-naming">
             <span>FILE NAMING</span>
             <code>907G6_乌镇水道_展示PPT</code>
           </div>
-          <button type="button" className="pres-deck-btn" onClick={openDeck}>
-            OPEN THE PRESENTATION DECK
+          <a
+            className="pres-deck-btn"
+            href={`${import.meta.env.BASE_URL}assets/wuzhen_waterways_presentation.pptx`}
+            download
+          >
+            DOWNLOAD THE 5-PAGE PPTX
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </button>
+          </a>
         </Reveal>
       </div>
     </section>

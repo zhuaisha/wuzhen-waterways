@@ -584,8 +584,9 @@
 }
 .team-showroles__grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
+  max-width: 960px;
 }
 .team-showroles__cell {
   display: flex;
@@ -597,6 +598,11 @@
   background: rgba(7, 19, 31, .4);
   transition: border-color .4s var(--ease-water), transform .4s var(--ease-water);
 }
+/* the 4 project-role cells read as a quieter tier under the 5 show-day roles */
+.team-showroles__cell--lead {
+  background: rgba(12, 36, 50, .3);
+}
+.team-showroles__cell--lead b { color: rgba(245, 238, 223, .85); }
 .team-showroles__cell:hover {
   border-color: rgba(215, 173, 105, .4);
   transform: translateY(-3px);

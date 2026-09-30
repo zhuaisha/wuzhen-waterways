@@ -317,8 +317,8 @@ export default function Team() {
             </div>
             <div className="team-showroles__cell">
               <b>文化讲解员</b>
-              <i>Culture — findings &amp; the hometown link</i>
-              <span>汪瀚宇 · 沈毅程</span>
+              <i>Culture — the canals, bridges &amp; the hometown link</i>
+              <span>汪瀚宇</span>
             </div>
             <div className="team-showroles__cell">
               <b>英文推荐员</b>
@@ -328,12 +328,32 @@ export default function Team() {
             <div className="team-showroles__cell">
               <b>PPT操作员</b>
               <i>Slides — pacing &amp; page control</i>
-              <span>朱钟乐</span>
+              <span>鲁昂</span>
             </div>
             <div className="team-showroles__cell">
               <b>互动负责人</b>
               <i>Interaction — the question &amp; the vote</i>
               <span>沈煜程</span>
+            </div>
+            <div className="team-showroles__cell team-showroles__cell--lead">
+              <b>组长统筹</b>
+              <i>Project lead — schedule &amp; final presentation</i>
+              <span>蒋盛熠</span>
+            </div>
+            <div className="team-showroles__cell team-showroles__cell--lead">
+              <b>网站与展示制作</b>
+              <i>Web &amp; presentation production</i>
+              <span>鲁昂 · 沈煜程</span>
+            </div>
+            <div className="team-showroles__cell team-showroles__cell--lead">
+              <b>摄影与图片</b>
+              <i>Photography &amp; image credits</i>
+              <span>朱钟乐</span>
+            </div>
+            <div className="team-showroles__cell team-showroles__cell--lead">
+              <b>文案与史实</b>
+              <i>Copy &amp; fact-checking</i>
+              <span>沈毅程</span>
             </div>
           </div>
         </Reveal>

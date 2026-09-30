@@ -36,7 +36,7 @@ export const MEMBERS = [
     pinyin: 'JIANG SHENGYI',
     role: 'Project lead',
     contribution:
-      'Coordinated the six-week plan, kept the group on schedule, and led the final presentation and Q&A.',
+      'Coordinated the four-week plan, kept the group on schedule, and led the final presentation and Q&A.',
     alt: '蒋盛熠 个人照片',
     sq: img('team-m2-sq-900x900'),
     av: img('team-m2-av-200x200'),
@@ -58,9 +58,9 @@ export const MEMBERS = [
     label: 'MEMBER 03',
     name: '鲁昂',
     pinyin: 'LU ANG',
-    role: 'Photography',
+    role: 'Design & web',
     contribution:
-      'Shot the on-site photo tour of the canals and bridges, and sourced the images shown throughout the site.',
+      'Built the interactive site — layout, motion and the visual story — and managed the image assets and credits.',
     alt: '鲁昂 个人照片',
     sq: img('team-m3-sq-900x900'),
     av: img('team-m3-av-200x200'),
@@ -70,9 +70,9 @@ export const MEMBERS = [
     label: 'MEMBER 04',
     name: '朱钟乐',
     pinyin: 'ZHU ZHONGLE',
-    role: 'Design & web',
+    role: 'Photography',
     contribution:
-      'Built the interactive site — layout, motion and the visual story — and managed the image assets and credits.',
+      'Shot the on-site photo tour of the canals and bridges, and sourced the images shown throughout the site.',
     alt: '朱钟乐 个人照片',
     sq: img('team-m4-sq-900x900'),
     av: img('team-m4-av-200x200'),

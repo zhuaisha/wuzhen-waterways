@@ -3,14 +3,14 @@ import Reveal from './Reveal.jsx';
 import '../styles/presentation.css';
 
 /* ------------------------------------------------------------------ */
-/* PRESENTATION DAY — week 4's show requirements, distilled from the  */
-/* two school task sheets: the 5-part timing plan and the 5-page PPT  */
-/* framework, with the file-naming rule. The full 5-page deck is a    */
-/* standalone .pptx — wuzhen_waterways_presentation.pptx in public/.  */
+/* PRESENTATION DAY — week 4's show requirements, matching the        */
+/* reference screenshot: two side-by-side cards (the 5-part timing    */
+/* plan + the 5-page PPT framework). No submissions grid, no spec     */
+/* chips. The standalone .pptx is linked from the team / summary pages. */
 /* ------------------------------------------------------------------ */
 
 const TIMELINE = [
-  { t: '≈ 30 s', en: 'OPENING', cn: '开场', d: 'Introduce the group and the theme, and issue the challenge invitation.' },
+  { t: '≈ 30 s', en: 'OPENING', cn: '开场', d: 'Introduce the group and the theme.' },
   { t: '1–2 min', en: 'CULTURE DISCOVERY', cn: '文化发现', d: 'What we studied, and the most important findings.' },
   { t: '1–2 min', en: 'WHY RECOMMEND', cn: '推荐理由', d: 'Cultural highlights, the hometown link, and our reasons.' },
   { t: '1–2 min', en: 'ENGLISH GUIDE', cn: '英文导览', d: 'The 60–90 second English recommendation, live.' },
@@ -29,7 +29,7 @@ export default function Presentation() {
   return (
     <section id="presentation" className="section presentation-section">
       <div className="container">
-        <SectionHeader number="09" en="PRESENTATION DAY" cn="WEEK FOUR · THE FINAL SHOW" week="Week 04" />
+        <SectionHeader number="09" en="PRESENTATION DAY" cn="SHOW-DAY REQUIREMENTS" week="Week 04" />
 
         <div className="pres-grid">
           <Reveal className="pres-col">
@@ -71,23 +71,6 @@ export default function Presentation() {
             </div>
           </Reveal>
         </div>
-
-        <Reveal className="pres-foot">
-          <div className="pres-naming">
-            <span>FILE NAMING</span>
-            <code>907G6_乌镇水道_展示PPT</code>
-          </div>
-          <a
-            className="pres-deck-btn"
-            href={`${import.meta.env.BASE_URL}assets/wuzhen_waterways_presentation.pptx`}
-            download
-          >
-            DOWNLOAD THE FULL 10-PAGE PPTX
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </a>
-        </Reveal>
       </div>
     </section>
   );

@@ -49,6 +49,20 @@ prs.slide_width, prs.slide_height = W, H
 BLANK = prs.slide_layouts[6]
 TOTAL = 10
 
+def add_transition(slide, kind="fade"):
+    """Inject an OOXML slide transition (fade / push) into the slide part."""
+    from pptx.oxml.ns import qn
+    from lxml import etree
+    sld = slide._element
+    for el in sld.findall(qn('p:transition')):
+        sld.remove(el)
+    t = etree.SubElement(sld, qn('p:transition'))
+    t.set('spd', 'med')
+    if kind == "push":
+        c = etree.SubElement(t, qn('p:push')); c.set('dir', 'l')
+    else:
+        c = etree.SubElement(t, qn('p:fade')); c.set('thruBlk', '0')
+
 def snew():
     return prs.slides.add_slide(BLANK)
 
@@ -204,33 +218,43 @@ footer(s, 3)
 # ============================================================================
 s = snew(); bg(s, PAPER)
 eyebrow(s, 3, "WHY WATER?", "水如何连接一切")
-def node(x, y, w, txt, accent=False):
-    rect(s, x, y, Inches(w), Inches(0.62), LANTERN if accent else WARM,
+# LEFT column (0.55–4.25): vertical flow. All left-column content stays x<4.25,
+# so it never collides with the right column (photos + quote, x>=4.6).
+def node(x, y, w, txt, accent=False, size=13.5):
+    h = 0.6
+    rect(s, x, y, Inches(w), Inches(h), LANTERN if accent else WARM,
          LANTERN if accent else None, 1.0)
-    one(s, x, y, Inches(w), Inches(0.62), txt, 13.5, DEEP if accent else INK,
+    one(s, x, y, Inches(w), Inches(h), txt, size, DEEP if accent else INK,
         True, font=SANS, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-node(Inches(0.55), Inches(1.7), 2.8, "WATER", True)
-node(Inches(0.55), Inches(2.85), 2.8, "CONNECTS")
+    return y + Inches(h)
+# main chain nodes (width 2.8, centered at x=1.95 in the left column)
+node(Inches(0.55), Inches(1.65), 2.8, "WATER", True)          # 1.65–2.25
+node(Inches(0.55), Inches(2.55), 2.8, "CONNECTS")             # 2.55–3.15
+one(s, Inches(0.55), Inches(3.30), Inches(3.0), Inches(0.25),
+    "it links", 10, MUTED, font=SERIF, align=PP_ALIGN.CENTER)
+# 5 small nodes in one row (width 0.64, gap 0.05): 0.55 + 5*0.64 + 4*0.05 = 4.15 < 4.25
 small = ["HOUSES", "BRIDGES", "STREETS", "PEOPLE", "BOATS"]
-sx = 0.55; sw = 1.18; gap = 0.08
+sx = 0.55; sw = 0.64; gap = 0.05
 for t in small:
-    node(Inches(sx), Inches(3.95), sw, t, False); sx += sw + gap
-node(Inches(0.55), Inches(5.05), 2.8, "TRADITIONAL LIFE", True)
-# connector arrows (small down triangles)
-for ay in [2.35, 3.55, 4.65]:
-    tri = s.shapes.add_shape(MSO_SHAPE.DOWN_ARROW, Inches(1.8), Inches(ay),
-                             Inches(0.2), Inches(0.32))
+    node(Inches(sx), Inches(3.62), sw, t, False, size=8.5); sx += sw + gap
+# 3.62–4.22
+node(Inches(0.55), Inches(4.55), 2.8, "TRADITIONAL LIFE", True)  # 4.55–5.15
+# connector arrows between the tiers (x=1.85, width 0.2 -> centered under 2.8 nodes)
+for ay in [2.30, 3.18, 4.28]:
+    tri = s.shapes.add_shape(MSO_SHAPE.DOWN_ARROW, Inches(1.85), Inches(ay),
+                             Inches(0.2), Inches(0.24))
     tri.fill.solid(); tri.fill.fore_color.rgb = LANTERN
     tri.line.fill.background(); tri.shadow.inherit = False
-# right: two photos + quote
-pic(s, "bridge-jpg.jpg", Inches(4.6), Inches(1.7), Inches(4.0), Inches(2.6),
-    cap="Stone arches: a crossing, and a view.")
-pic(s, "lantern-jpg.jpg", Inches(8.95), Inches(1.7), Inches(3.83), Inches(2.6),
+# RIGHT column (4.6–12.78): two photos on top, quote box below — no overlap.
+pic(s, "bridge-jpg.jpg", Inches(4.6), Inches(1.65), Inches(4.05), Inches(2.4),
+    cap="Stone arches: a crossing, and a view.")          # pic 1.65–4.05, cap ->4.5
+pic(s, "lantern-jpg.jpg", Inches(8.85), Inches(1.65), Inches(3.93), Inches(2.4),
     cap="Lanterns over the water at dusk.")
-rect(s, Inches(4.6), Inches(5.15), Inches(8.18), Inches(1.5), WARM, LANTERN, 1)
-one(s, Inches(4.95), Inches(5.35), Inches(7.5), Inches(0.5),
+# quote box: 4.85–6.4, below the captions (4.5) and above footer (6.98)
+rect(s, Inches(4.6), Inches(4.85), Inches(8.18), Inches(1.55), WARM, LANTERN, 1)
+one(s, Inches(4.95), Inches(5.05), Inches(7.5), Inches(0.5),
     "“Water is the main line of the town.”", 18, LANTERN, True, font=SERIF)
-one(s, Inches(4.95), Inches(5.95), Inches(7.5), Inches(0.55),
+one(s, Inches(4.95), Inches(5.65), Inches(7.5), Inches(0.6),
     "If the canals were blocked, the town would lose its shape, its road "
     "and its image all at once.", 11, BODY, font=SERIF)
 footer(s, 4)
@@ -372,5 +396,11 @@ one(s, Inches(0.55), Inches(6.15), Inches(12.2), Inches(0.5),
 footer(s, 10, dark=True)
 
 # ---- save ----------------------------------------------------------------
+# Bake a slide transition into every slide (fade for cover/closing,
+# push for content pages) so the .pptx has real page-to-page animation.
+for idx, sl in enumerate(prs.slides, start=1):
+    kind = "fade" if idx in (1, TOTAL) else "push"
+    add_transition(sl, kind)
+
 prs.save(OUT)
-print(f"WROTE {OUT}  {os.path.getsize(OUT)//1024} KB, {TOTAL} slides")
+print(f"WROTE {OUT}  {os.path.getsize(OUT)//1024} KB, {TOTAL} slides (+transitions)")

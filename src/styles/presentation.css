@@ -1,0 +1,221 @@
+/* ============================================
+   PRESENTATION DAY — week-4 show requirements
+   Two editorial columns (timeline / PPT framework),
+   a six-item submission grid, spec chips, and a
+   footer with the file-naming rule + deck button.
+   ============================================ */
+
+.presentation-section { position: relative; }
+
+.pres-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 3vw, 40px);
+  margin-bottom: clamp(36px, 5vw, 56px);
+}
+@media (max-width: 900px) {
+  .pres-grid { grid-template-columns: 1fr; }
+}
+
+.pres-col {
+  position: relative;
+  padding: clamp(24px, 3vw, 38px);
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  background: linear-gradient(160deg, rgba(22, 63, 82, .32), rgba(7, 19, 31, .42));
+}
+
+.pres-col__head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 24px;
+  font-size: 10px;
+  letter-spacing: .3em;
+  color: var(--lantern);
+  text-transform: uppercase;
+}
+.pres-col__head span {
+  margin-left: auto;
+  letter-spacing: .14em;
+  color: rgba(245, 238, 223, .38);
+}
+
+/* --- timeline rows -------------------------------------------- */
+.pres-tl { display: grid; }
+.pres-tl__row {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 18px;
+  padding: 13px 0;
+  border-top: 1px solid var(--hairline);
+}
+.pres-tl__row:first-child { border-top: 0; padding-top: 0; }
+.pres-tl__time {
+  font-size: 12px;
+  color: var(--lantern);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .05em;
+  padding-top: 2px;
+}
+.pres-tl__name {
+  font-size: 14px;
+  color: var(--warm);
+  font-weight: 500;
+  letter-spacing: .05em;
+}
+.pres-tl__name i {
+  font-style: normal;
+  font-size: 10.5px;
+  color: rgba(245, 238, 223, .42);
+  margin-left: 10px;
+  letter-spacing: .1em;
+}
+.pres-tl__desc {
+  margin-top: 5px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: rgba(245, 238, 223, .52);
+}
+
+/* --- PPT framework rows --------------------------------------- */
+.pres-pages { display: grid; }
+.pres-pages__row {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  gap: 18px;
+  padding: 13px 0;
+  border-top: 1px solid var(--hairline);
+}
+.pres-pages__row:first-child { border-top: 0; padding-top: 0; }
+.pres-pages__num {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--warm);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .04em;
+  line-height: 1.2;
+}
+.pres-pages__role {
+  font-size: 12px;
+  color: var(--lantern);
+  letter-spacing: .14em;
+}
+.pres-pages__must {
+  margin-top: 5px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: rgba(245, 238, 223, .52);
+}
+
+/* --- submissions ------------------------------------------------ */
+.pres-subs { margin-bottom: clamp(30px, 4vw, 44px); }
+.pres-subs__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px 28px;
+}
+@media (max-width: 900px) {
+  .pres-subs__grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .pres-subs__grid { grid-template-columns: 1fr; }
+}
+.pres-subs__item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(245, 238, 223, .72);
+}
+.pres-subs__box {
+  width: 12px;
+  height: 12px;
+  border: 1px solid rgba(215, 173, 105, .55);
+  border-radius: 2px;
+  margin-top: 3px;
+  flex: none;
+}
+
+/* --- spec chips -------------------------------------------------- */
+.pres-specs { margin-bottom: clamp(30px, 4vw, 44px); }
+.pres-specs__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.pres-specs__chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: .02em;
+  color: rgba(245, 238, 223, .6);
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  padding: 9px 18px;
+  background: rgba(12, 36, 50, .35);
+}
+.pres-specs__chip b {
+  color: var(--lantern);
+  font-weight: 500;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- footer: naming + deck button ------------------------------ */
+.pres-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 22px clamp(20px, 3vw, 32px);
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  background: linear-gradient(120deg, rgba(215, 173, 105, .07), rgba(12, 36, 50, .3));
+}
+.pres-naming {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 9px;
+  letter-spacing: .24em;
+  color: rgba(245, 238, 223, .42);
+  text-transform: uppercase;
+}
+.pres-naming code {
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+  font-size: 13px;
+  letter-spacing: .02em;
+  color: var(--warm);
+  background: rgba(7, 19, 31, .6);
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  padding: 7px 12px;
+}
+
+.pres-deck-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 26px;
+  border: 1px solid rgba(215, 173, 105, .5);
+  border-radius: 999px;
+  background: rgba(215, 173, 105, .1);
+  color: var(--lantern);
+  font-size: 11px;
+  letter-spacing: .2em;
+  cursor: pointer;
+  transition: all .45s cubic-bezier(.22, 1, .36, 1);
+}
+.pres-deck-btn:hover {
+  background: rgba(215, 173, 105, .22);
+  border-color: var(--lantern);
+  color: var(--warm);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 34px rgba(215, 173, 105, .16);
+}
+.pres-deck-btn:active { transform: translateY(0); }

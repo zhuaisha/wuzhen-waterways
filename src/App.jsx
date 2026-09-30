@@ -10,6 +10,7 @@ import WhyWater from './components/WhyWater.jsx';
 import Timeline from './components/Timeline.jsx';
 import Sources from './components/Sources.jsx';
 import Checklist from './components/Checklist.jsx';
+import Presentation from './components/Presentation.jsx';
 import Team from './components/Team.jsx';
 import Summary from './components/Summary.jsx';
 import Footer from './components/Footer.jsx';
@@ -30,6 +31,7 @@ export default function App() {
         <Timeline />
         <Sources />
         <Checklist />
+        <Presentation />
         <Team />
         <Summary />
       </main>

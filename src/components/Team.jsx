@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionHeader from './SectionHeader.jsx';
+import Reveal from './Reveal.jsx';
 import { GROUP_PHOTO, GROUP_HEADCOUNT, MEMBERS } from '../data/team.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -301,6 +302,41 @@ export default function Team() {
           Each member took the lead on one part of the project. The portraits are shown in
           the order the photos were taken.
         </p>
+
+        {/* show-day role mapping — suggested, confirm with the group lead */}
+        <Reveal className="team-showroles" delay={200}>
+          <div className="team-showroles__head">
+            SHOW-DAY ROLES
+            <span>SUGGESTED — CONFIRM WITH THE GROUP LEAD</span>
+          </div>
+          <div className="team-showroles__grid">
+            <div className="team-showroles__cell">
+              <b>开场负责人</b>
+              <i>Opening — introduce the group &amp; theme</i>
+              <span>蒋盛熠</span>
+            </div>
+            <div className="team-showroles__cell">
+              <b>文化讲解员</b>
+              <i>Culture — findings &amp; the hometown link</i>
+              <span>汪瀚宇 · 沈毅程</span>
+            </div>
+            <div className="team-showroles__cell">
+              <b>英文推荐员</b>
+              <i>English — the 60–90 s live guide</i>
+              <span>沈毅程</span>
+            </div>
+            <div className="team-showroles__cell">
+              <b>PPT操作员</b>
+              <i>Slides — pacing &amp; page control</i>
+              <span>朱钟乐</span>
+            </div>
+            <div className="team-showroles__cell">
+              <b>互动负责人</b>
+              <i>Interaction — the question &amp; the vote</i>
+              <span>沈煜程</span>
+            </div>
+          </div>
+        </Reveal>
       </div>
 
       {/* glass panel — side sheet on desktop, bottom sheet on phone */}

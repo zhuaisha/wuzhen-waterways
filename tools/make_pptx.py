@@ -1,406 +1,471 @@
 # -*- coding: utf-8 -*-
 """
-Build wuzhen_waterways_presentation.pptx (10 slides, 16:9).
+WUZHEN — Waterways & Bridges
+Apple-Keynote-style classroom presentation (5 slides, 16:9, 1920x1080).
 
-Slides
-  1  COVER            hero photo + title + members
-  2  THE CORE QUESTION 4 reasoning cards
-  3  WHAT WE FOUND    3 facts + photo
-  4  WHY WATER        diagram + 2 photos + quote
-  5  KEYWORDS         word cloud (EN + CN)
-  6  THE JOURNEY      6 chapters
-  7  OUR ENGLISH GUIDE 60-80 word guide + night photo
-  8  THE CHALLENGE    3 interaction cards
-  9  SHOW-DAY ROLES   5 roles grid
- 10  SOURCES & CLOSING
+Strict 5-page brief (classroom show, 5-9 min total):
+  1  COVER              — hero photo + WUZHEN + question + LET'S EXPLORE
+  2  WHAT WE FOUND      — WATER SHAPES WUZHEN + 3 data lines + waterway photo
+  3  WHY IT MATTERS     — PAST -> WATER -> PRESENT flowing line
+  4  ENGLISH GUIDE      — 60-80 word spoken guide + 5 keyword chips
+  5  TEAM + CONCLUSION  — group photo, 6 avatars, SOURCES, closing line
 
-Images: local JPG photos (PIL-resized, embedded).
+All facts, photos, team names and the closing line come from the project
+(chapters.js, Facts.jsx, Summary.jsx, team.js, images-sources.json).
+No invented data. Every slide carries speaker notes (not shown on screen).
+
 Run:  python tools/make_pptx.py
+Out:  public/assets/wuzhen_waterways_presentation.pptx
 """
-import os, sys, io
-from PIL import Image, ImageOps
+import os, io, json
+from PIL import Image
 from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.enum.shapes import MSO_SHAPE
+from pptx.oxml.ns import qn
+from lxml import etree
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IMG  = os.path.join(ROOT, "public", "images")
 OUT  = os.path.join(ROOT, "public", "assets", "wuzhen_waterways_presentation.pptx")
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
-TMP  = os.path.join(ROOT, ".pptx_tmp"); os.makedirs(TMP, exist_ok=True)
+SRC  = json.load(open(os.path.join(ROOT, "src", "data", "images-sources.json"), encoding="utf-8"))
 
-# ---- palette (site: deep water + lantern gold + warm paper) -------------
-NIGHT   = RGBColor(0x0A, 0x1C, 0x2B)
-DEEP    = RGBColor(0x06, 0x0F, 0x1A)
-PAPER   = RGBColor(0xF5, 0xF0, 0xE3)
-WARM    = RGBColor(0xE8, 0xE5, 0xDC)
-LANTERN = RGBColor(0xD7, 0xAD, 0x69)
-MUTED   = RGBColor(0x8A, 0x9A, 0xA8)
-INK     = RGBColor(0x14, 0x26, 0x34)
-BODY    = RGBColor(0x2B, 0x3A, 0x48)
+# ---- palette (from the brief) -------------------------------------------
+MIDNIGHT = RGBColor(0x07, 0x15, 0x25)   # #071525
+DEEP     = RGBColor(0x0D, 0x24, 0x38)   # #0D2438
+SOFT     = RGBColor(0x5F, 0xA8, 0xD3)   # #5FA8D3
+WARMW    = RGBColor(0xF5, 0xF2, 0xEA)   # #F5F2EA
+GOLD     = RGBColor(0xD9, 0xA8, 0x5B)   # #D9A85B (accent only)
+FADING   = RGBColor(0x8C, 0x9B, 0xA9)   # muted blue-grey
+BODY     = RGBColor(0xB9, 0xC6, 0xD2)
 
-W, H = Inches(13.333), Inches(7.5)
-SERIF = "Georgia"; SANS = "Arial"; CJK = "Microsoft YaHei"
-
+SW, SH = Emu(12192000), Emu(6858000)     # 16:9 @ 1920x1080
+SERIF, SANS = "Georgia", "Arial"
 prs = Presentation()
-prs.slide_width, prs.slide_height = W, H
-BLANK = prs.slide_layouts[6]
-TOTAL = 10
+prs.slide_width, prs.slide_height = SW, SH
+BLANK, TOTAL = prs.slide_layouts[6], 5
+def IN(v): return Inches(v)
 
-def add_transition(slide, kind="fade"):
-    """Inject an OOXML slide transition (fade / push) into the slide part."""
-    from pptx.oxml.ns import qn
-    from lxml import etree
-    sld = slide._element
-    for el in sld.findall(qn('p:transition')):
-        sld.remove(el)
-    t = etree.SubElement(sld, qn('p:transition'))
-    t.set('spd', 'med')
-    if kind == "push":
-        c = etree.SubElement(t, qn('p:push')); c.set('dir', 'l')
-    else:
-        c = etree.SubElement(t, qn('p:fade')); c.set('thruBlk', '0')
+# ============================================================================
+# image helpers — embed real photos (PIL cold cinematic grade, faces kept
+# natural). Outputs are embedded as JPG so PPTX compatibility is safe.
+# ============================================================================
+def _grade(im, face=False):
+    if face:
+        r, g, b = im.split()
+        r = r.point(lambda p: max(0, int(p * 0.96)))
+        g = g.point(lambda p: int(p * 0.98))
+        b = b.point(lambda p: min(255, int(p * 1.06)))
+        return Image.merge("RGB", (r, g, b))
+    r, g, b = im.split()
+    r = r.point(lambda p: int(p * 0.84))
+    g = g.point(lambda p: int(p * 0.92))
+    b = b.point(lambda p: min(255, int(p * 1.10)))
+    m = Image.merge("RGB", (r, g, b))
+    return Image.blend(m, m.convert("L").convert("RGB"), 0.20)
 
-def snew():
-    return prs.slides.add_slide(BLANK)
-
-def bg(s, c):
-    s.background.fill.solid(); s.background.fill.fore_color.rgb = c
-
-def add_pic(s, name, x, y, w, h, max_px=1000, alpha=1.0):
-    """Embed a local photo, resized + optionally dimmed. Returns None on miss."""
+def _load(name, maxpx=1400, face=False, quality=86):
     p = os.path.join(IMG, name)
     if not os.path.exists(p):
-        print(f"  [warn] image missing: {name}", flush=True); return None
+        print(f"  [warn] missing image: {name}"); return None
     im = Image.open(p).convert("RGB")
-    im.thumbnail((max_px, max_px))
-    if alpha < 1.0:
-        veil = Image.new("RGB", im.size, (10, 26, 43))
-        im = Image.blend(im, veil, 1.0 - alpha)
-    buf = io.BytesIO(); im.save(buf, "JPEG", quality=88)
-    buf.seek(0)
-    return s.shapes.add_picture(buf, x, y, w, h)
+    im = _grade(im, face)
+    im.thumbnail((maxpx, maxpx), Image.LANCZOS)
+    buf = io.BytesIO(); im.save(buf, "JPEG", quality=quality); buf.seek(0)
+    return buf
 
-def tbox(s, x, y, w, h, paras, align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP):
-    """paras: list of list-of-runs; run = (text, size, color, bold, font)."""
-    tb = s.shapes.add_textbox(x, y, w, h); tf = tb.text_frame
+def _set_alpha(sh, pct):
+    """pct 0-100 = opacity. Applies <a:alpha> to fill and/or blip."""
+    el = sh._element
+    spPr = el.find(qn('p:spPr'))
+    if spPr is not None:
+        sf = spPr.find(qn('a:solidFill'))
+        if sf is not None:
+            clr = sf.find(qn('a:srgbClr'))
+            if clr is not None:
+                for old in clr.findall(qn('a:alpha')): clr.remove(old)
+                a = etree.SubElement(clr, qn('a:alpha'))
+                a.set('val', str(int((100 - pct) * 1000)))
+    blipFill = el.find(qn('p:blipFill'))
+    if blipFill is not None:
+        blip = blipFill.find(qn('a:blip'))
+        if blip is not None:
+            for old in blip.findall(qn('a:alphaModFix')): blip.remove(old)
+            mod = etree.SubElement(blip, qn('a:alphaModFix'))
+            a = etree.SubElement(mod, qn('a:alpha'))
+            a.set('val', str(int((100 - pct) * 1000)))
+
+def pic(s, name, x, y, w, h, face=False, alpha=None):
+    buf = _load(name, face=face)
+    if buf is None:
+        r = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, x, y, w, h)
+        r.fill.solid(); r.fill.fore_color.rgb = DEEP
+        r.line.color.rgb = SOFT; r.line.width = Pt(1); r.shadow.inherit = False
+        return r
+    sp = s.shapes.add_picture(buf, x, y, w, h)
+    if alpha is not None: _set_alpha(sp, alpha)
+    return sp
+
+# ============================================================================
+# text + shape helpers
+# ============================================================================
+def txt(s, x, y, w, h, paras, align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP):
+    """paras: list of paragraphs; each paragraph = list of run tuples
+    (text, size, color, bold, font)."""
+    tb = s.shapes.add_textbox(x, y, w, h)
+    tf = tb.text_frame
     tf.word_wrap = True; tf.vertical_anchor = anchor
     tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
     for i, runs in enumerate(paras):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
-        p.alignment = align; p.space_after = Pt(2)
+        p.alignment = align; p.space_after = Pt(0)
         for (text, size, color, bold, font) in runs:
             r = p.add_run(); r.text = text
             r.font.size = Pt(size); r.font.bold = bold
             r.font.color.rgb = color; r.font.name = font
     return tb
 
-def one(s, x, y, w, h, text, size, color, bold=False, font=SERIF,
-        align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP, sb=0):
-    if sb:
-        tb = tbox(s, x, y, w, h, [[(text, size, color, bold, font)]],
-                  align=align, anchor=anchor)
-        tb.text_frame.paragraphs[0].space_before = Pt(sb)
-        return tb
-    return tbox(s, x, y, w, h, [[(text, size, color, bold, font)]],
-                align=align, anchor=anchor)
+def one(s, x, y, w, h, text, size, color, bold=False, font=SANS,
+        align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP, sb=0, spc=0):
+    p_ = txt(s, x, y, w, h, [[(text, size, color, bold, font)]], align=align,
+             anchor=anchor)
+    para = p_.text_frame.paragraphs[0]
+    if sb: para.space_before = Pt(sb)
+    if spc:
+        for r in para.runs:
+            r.font._rPr.set('spc', str(int(spc * 100)))
+    return p_
 
-def rect(s, x, y, w, h, fill, line=None, line_w=1.5):
-    shp = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, x, y, w, h)
+def panel(s, x, y, w, h, fill, line_c=None, line_w=1.0, radius=False):
+    shp = s.shapes.add_shape(
+        (MSO_SHAPE.ROUNDED_RECTANGLE if radius else MSO_SHAPE.RECTANGLE), x, y, w, h)
+    if radius:
+        try: shp.adjustments[0] = 0.05
+        except Exception: pass
     if fill is None: shp.fill.background()
     else: shp.fill.solid(); shp.fill.fore_color.rgb = fill
-    if line is None: shp.line.fill.background()
-    else: shp.line.color.rgb = line; shp.line.width = Pt(line_w)
+    if line_c is None: shp.line.fill.background()
+    else: shp.line.color.rgb = line_c; shp.line.width = Pt(line_w)
     shp.shadow.inherit = False
     return shp
 
-def frame(s, x, y, w, h, line=LANTERN, lw=1.5):
-    rect(s, x, y, w, h, None, line, lw)
+def line(s, x1, y1, x2, y2, color, wpt=1.0, dash=None):
+    cx = s.shapes.add_connector(1, x1, y1, x2, y2)
+    cx.line.color.rgb = color; cx.line.width = Pt(wpt)
+    if dash:
+        ln = cx.line._get_or_add_ln()
+        d = etree.SubElement(ln, qn('a:prstDash')); d.set('val', dash)
+    cx.shadow.inherit = False
+    return cx
 
-def pic(s, name, x, y, w, h, cap="", alpha=1.0):
-    sp = add_pic(s, name, x, y, w, h, alpha=alpha)
-    frame(s, x, y, w, h)
-    if cap and sp:
-        one(s, x, y + h + Pt(4), w, Inches(0.3), cap, 9, MUTED, font=SANS)
-    return sp
+def glass(s, x, y, w, h):
+    """Glassmorphism panel: translucent deep fill + thin light border."""
+    p = panel(s, x, y, w, h, DEEP, line_c=SOFT, line_w=0.75, radius=True)
+    _set_alpha(p, 55)
+    return p
 
-def footer(s, n, dark=False):
-    rule_c = LANTERN if (n <= 2 or dark) else WARM
-    rect(s, Inches(0.55), Inches(6.98), Inches(12.23), Pt(1.4), rule_c)
-    one(s, Inches(0.55), Inches(7.08), Inches(7), Inches(0.3),
-        "907G6  ·  WUZHEN WATERWAYS & BRIDGES", 9, MUTED, font=SANS)
-    one(s, Inches(11.4), Inches(7.08), Inches(1.38), Inches(0.3),
-        f"{n:02d} / {TOTAL:02d}", 9, LANTERN, True, font=SANS,
-        align=PP_ALIGN.RIGHT)
+# ============================================================================
+# UI micro-labels (chapter number, progress, coordinates, photo credit)
+# ============================================================================
+def ui_header(s, num, label, coords):
+    one(s, IN(0.6), IN(0.42), IN(0.9), IN(0.4), num, 12, GOLD, True, font=SANS)
+    one(s, IN(1.5), IN(0.47), IN(8.5), IN(0.32), label, 10, FADING, True,
+        font=SANS, spc=4)
+    line(s, IN(0.6), IN(0.92), IN(12.73), IN(0.92), DEEP, 0.8)
+    seg_end = IN(0.6 + (int(num) - 1) / TOTAL * 12.13)
+    line(s, IN(0.6), IN(0.92), seg_end, IN(0.92), GOLD, 1.2)
+    one(s, IN(10.6), IN(7.12), IN(2.13), IN(0.28), coords, 8, FADING,
+        align=PP_ALIGN.RIGHT, font=SANS, spc=2)
 
-def eyebrow(s, n, label, cn=""):
-    one(s, Inches(0.55), Inches(0.42), Inches(1.4), Inches(0.5),
-        f"{n:02d}", 20, LANTERN, True, font=SERIF)
-    one(s, Inches(1.25), Inches(0.52), Inches(11), Inches(0.34),
-        label, 11, MUTED, True, font=SANS)
-    if cn:
-        one(s, Inches(1.25), Inches(0.78), Inches(11), Inches(0.34),
-            cn, 11.5, MUTED, False, font=CJK)
-    rect(s, Inches(0.55), Inches(1.18), Inches(12.23), Pt(1.1), WARM)
+def credit(s, key, extra=None):
+    info = SRC.get(key)
+    if not info:
+        if extra:
+            one(s, IN(9.4), IN(7.12), IN(3.33), IN(0.28), extra, 7.5, FADING,
+                align=PP_ALIGN.RIGHT, font=SANS)
+        return
+    artist, lic = info.get("artist", ""), info.get("license", "")
+    base = f"Photo: {artist} · {lic}" if artist else (extra or "")
+    if extra and artist: base = f"{base} · {extra}"
+    one(s, IN(8.6), IN(7.12), IN(4.13), IN(0.28), base, 7.5, FADING,
+        align=PP_ALIGN.RIGHT, font=SANS)
+
+# ============================================================================
+# transitions (OOXML) — Morph between content slides, Fade on ends
+# ============================================================================
+def set_transition(sl, kind):
+    el = sl._element
+    for old in el.findall(qn('p:transition')): el.remove(old)
+    t = etree.SubElement(el, qn('p:transition'))
+    t.set('spd', 'slow')
+    if kind == "morph":
+        etree.SubElement(t, qn('p:morph'))
+    elif kind == "push":
+        c = etree.SubElement(t, qn('p:push')); c.set('dir', 'l')
+    else:  # fade
+        etree.SubElement(t, qn('p:fade'))
+
+# ============================================================================
+# entrance animations — kept minimal: only safe slide transitions (Morph /
+# Fade / Push) are baked into OOXML. Element-level "Appear" fade-ins are
+# intentionally NOT injected because hand-written <p:timing> XML is a
+# common cause of "PowerPoint found a problem" repair prompts. For richer
+# per-object animation, open the PPTX in PowerPoint and use the built-in
+# Animation Pane (Fade / Wipe / Zoom presets) on the objects you want.
+# ============================================================================
+
+# ============================================================================
+# speaker notes
+# ============================================================================
+def notes(sl, text):
+    sl.notes_slide.notes_text_frame.text = text
 
 # ============================================================================
 # SLIDE 1 — COVER
 # ============================================================================
-s = snew(); bg(s, DEEP)
-add_pic(s, "hero_wuzhen-1920.webp", 0, 0, W, H, max_px=1280, alpha=0.55)
-rect(s, 0, 0, W, H, DEEP, None)  # extra bottom fade not possible; keep simple
-rule = rect(s, Inches(0.85), Inches(1.7), Inches(0.9), Pt(3), LANTERN)
-one(s, Inches(0.85), Inches(1.95), Inches(8), Inches(0.4),
-    "GROUP 907  ·  NINTH-GRADE ENGLISH PBL  ·  2026", 11, LANTERN, True, font=SANS)
-one(s, Inches(0.85), Inches(2.6), Inches(11.5), Inches(1.5),
-    "WUZHEN", 72, PAPER, False, font=SERIF)
-one(s, Inches(0.9), Inches(3.95), Inches(11.5), Inches(0.7),
-    "Waterways & Bridges", 30, LANTERN, True, font=SERIF)
-one(s, Inches(0.9), Inches(4.75), Inches(11.5), Inches(0.5),
-    "Why is water the main line of the ancient town?", 16, WARM, font=SERIF)
-rect(s, Inches(0.9), Inches(5.45), Inches(2.4), Pt(2), LANTERN)
-one(s, Inches(0.9), Inches(5.65), Inches(11.5), Inches(0.4),
-    "JIANG SHENGYI · WANG HANYU · LU ANG · ZHU ZHONGLE · SHEN YICHENG · SHEN YUCHENG",
-    9, MUTED, font=SANS, align=PP_ALIGN.LEFT)
-footer(s, 1, dark=True)
+s1 = prs.slides.add_slide(BLANK)
+hero = pic(s1, "hero_wuzhen-1920.webp", Emu(-200000), Emu(-150000),
+           Emu(12192000 + 400000), Emu(6858000 + 300000), face=False)
+_set_alpha(hero, 30)
+# bottom vignette for legibility
+vp = panel(s1, 0, Emu(6858000 - 1600000), SW, Emu(1600000), MIDNIGHT, None)
+_set_alpha(vp, 72)
+
+wz  = one(s1, IN(0.6), IN(2.5), IN(11), IN(2.5), "WUZHEN", 108, WARMW, False, font=SERIF)
+sub = one(s1, IN(0.68), IN(4.55), IN(9), IN(0.7), "WATERWAYS  &  BRIDGES",
+          30, GOLD, True, font=SERIF, spc=3)
+q   = one(s1, IN(0.68), IN(5.4), IN(11), IN(0.55),
+          "WHY IS WATER THE MAIN LINE OF THE ANCIENT TOWN?", 20, BODY, False,
+          font=SERIF)
+one(s1, IN(0.6), IN(6.95), IN(4), IN(0.4), "GRADE 9  ·  ENGLISH PROJECT",
+    10, FADING, True, font=SANS, spc=3)
+one(s1, IN(7.5), IN(6.95), IN(5.23), IN(0.4),
+    "WUZHEN  ·  TONGXIANG  ·  ZHEJIANG", 10, FADING, font=SANS,
+    align=PP_ALIGN.RIGHT, spc=3)
+one(s1, IN(5.17), IN(6.42), IN(3), IN(0.4), "LET'S  EXPLORE", 11, GOLD,
+    True, font=SANS, align=PP_ALIGN.CENTER, spc=4)
+ui_header(s1, "01", "COVER", "30.7°N 120.4°E")
+credit(s1, "waterway", "hero · Wuzhen Xizha")
 
 # ============================================================================
-# SLIDE 2 — THE CORE QUESTION
+# SLIDE 2 — WHAT WE FOUND
 # ============================================================================
-s = snew(); bg(s, PAPER)
-eyebrow(s, 1, "THE CORE QUESTION", "我们最初的问题")
-one(s, Inches(0.55), Inches(1.5), Inches(12.2), Inches(0.9),
-    "Why is water the main line of the ancient town?", 30, INK, True, font=SERIF)
-cards = [
-    ("It is the road", "Canals came before streets. To cross town you walked the embankment or took a boat — the water was the road of daily life."),
-    ("It is home", "Clothes were washed, boats were tied, neighbours met at the water's edge. Life happened by the water, for a thousand mornings."),
-    ("It is the shape", "The town kept its shape around the canals. Houses face the water; bridges decide where the town meets itself."),
-    ("It is the image", "Lanterns on the water at dusk — the town darkens, then glows. Reflections are Wuzhen's signature sight."),
+s2 = prs.slides.add_slide(BLANK)
+panel(s2, 0, 0, SW, SH, MIDNIGHT, None)
+ui_header(s2, "02", "WHAT WE FOUND", "XIZHA WATERWAYS")
+
+# main heading
+one(s2, IN(0.7), IN(1.5), IN(11), IN(0.9), "WATER SHAPES WUZHEN", 44,
+    WARMW, True, font=SERIF)
+
+# left: 01 WATER label + three data lines (Apple info-viz, thin rules)
+one(s2, IN(0.7), IN(2.7), IN(4.5), IN(0.6), "01  WATER", 14, GOLD, True,
+    font=SANS, spc=3)
+data = [
+    ("≈ 10,000", "METERS", "of waterways run through Xizha"),
+    ("72",       "ANCIENT STONE BRIDGES", "link the two banks of the canals"),
+    ("CROSS",    "WATER SYSTEM", "divides the town into zones, joined by water"),
 ]
-cx = [0.55, 6.75]; cw = 6.0; cy = [2.75, 4.55]; ch = 1.6
-for i, (head, body) in enumerate(cards):
-    x, y = Inches(cx[i % 2]), Inches(cy[i // 2])
-    rect(s, x, y, Inches(cw), Inches(ch), WARM, LANTERN, 1)
-    one(s, x + Inches(0.3), y + Inches(0.2), Inches(cw - 0.6), Inches(0.4),
-        head, 15, LANTERN, True, font=SERIF)
-    one(s, x + Inches(0.3), y + Inches(0.65), Inches(cw - 0.6), Inches(0.9),
-        body, 11, BODY, font=SERIF)
-footer(s, 2)
+data_shapes = []
+dy = 3.6
+for big, unit, desc in data:
+    rule = line(s2, IN(0.75), IN(dy), IN(4.9), IN(dy), DEEP, 0.8)
+    num  = one(s2, IN(0.75), IN(dy + 0.15), IN(2.1), IN(0.95), big, 42, GOLD,
+               True, font=SERIF)
+    lab  = one(s2, IN(2.95), IN(dy + 0.3), IN(2.1), IN(0.4), unit, 11, WARMW,
+               True, font=SANS, spc=2)
+    dsc  = one(s2, IN(2.95), IN(dy + 0.6), IN(2.4), IN(0.55), desc, 10.5,
+               FADING, font=SERIF)
+    data_shapes += [rule, num, lab, dsc]
+    dy += 1.15
+
+# right: waterway photo with mask-reveal feel (framed photo)
+w2pic = pic(s2, "waterway-jpg.jpg", IN(5.6), IN(2.2), IN(7.13), IN(4.6), face=False)
+fr2   = panel(s2, IN(5.6), IN(2.2), IN(7.13), IN(4.6), None, SOFT, 1.0)
+one(s2, IN(5.6), IN(6.88), IN(7.13), IN(0.4), "The canal carries the whole town.",
+    12, FADING, font=SERIF)
+credit(s2, "waterway")
 
 # ============================================================================
-# SLIDE 3 — WHAT WE FOUND
+# SLIDE 3 — WHY IT MATTERS
 # ============================================================================
-s = snew(); bg(s, PAPER)
-eyebrow(s, 2, "WHAT WE FOUND", "三条关键事实")
-pic(s, "waterway-jpg.jpg", Inches(0.55), Inches(1.5), Inches(4.6), Inches(4.9),
-    cap="A canal carries the whole town.", alpha=1.0)
-facts = [
-    ("≈ 10,000 m", "of waterways in Xizha", "The canal system runs nearly ten kilometres through the old town."),
-    ("72", "ancient stone bridges", "Stone arches link the two banks; a boat ducks beneath them on the way through."),
-    ("Cross-shaped", "water system", "The inner canals form a cross that divides the town into zones, connected by water."),
+s3 = prs.slides.add_slide(BLANK)
+panel(s3, 0, 0, SW, SH, MIDNIGHT, None)
+ui_header(s3, "03", "WHY IT MATTERS", "PAST  →  PRESENT")
+one(s3, IN(0.7), IN(1.5), IN(11), IN(0.9), "WHY DOES WATER MATTER?", 40,
+    WARMW, True, font=SERIF)
+
+# flowing water line (a single thin curve as two straight segments meeting)
+line(s3, IN(0.7), IN(3.55), IN(6.0), IN(3.55), GOLD, 1.4)
+line(s3, IN(6.0), IN(3.55), IN(12.6), IN(3.55), GOLD, 1.4)
+# WATER node centre
+wnode = panel(s3, IN(5.6), IN(3.15), IN(1.8), IN(0.85), DEEP, GOLD, 1.4, radius=True)
+one(s3, IN(5.6), IN(3.38), IN(1.8), IN(0.45), "WATER", 16, GOLD, True,
+    font=SERIF, align=PP_ALIGN.CENTER)
+
+# PAST column (left)
+one(s3, IN(1.0), IN(4.4), IN(4.5), IN(0.5), "PAST", 22, WARMW, True, font=SERIF)
+past = ["Boats", "Transportation", "Trade", "Daily life"]
+for i, t in enumerate(past):
+    one(s3, IN(1.0), IN(5.1 + i * 0.5), IN(4.5), IN(0.42), t, 14, BODY, font=SERIF)
+    one(s3, IN(0.82), IN(5.1 + i * 0.5), IN(0.15), IN(0.42), "·", 14, GOLD, font=SANS)
+
+# PRESENT column (right)
+one(s3, IN(8.1), IN(4.4), IN(4.5), IN(0.5), "PRESENT", 22, WARMW, True, font=SERIF)
+pres = ["Tourism", "Sightseeing", "Cultural experience"]
+for i, t in enumerate(pres):
+    one(s3, IN(8.1), IN(5.1 + i * 0.5), IN(4.5), IN(0.42), t, 14, BODY, font=SERIF)
+    one(s3, IN(7.92), IN(5.1 + i * 0.5), IN(0.15), IN(0.42), "·", 14, GOLD, font=SANS)
+
+# faint bridge photo as background texture, top-right, low alpha
+bp = pic(s3, "bridge-jpg.jpg", IN(9.3), IN(1.5), IN(3.43), IN(2.0), face=False)
+_set_alpha(bp, 20)
+credit(s3, "bridge")
+
+# ============================================================================
+# SLIDE 4 — ENGLISH GUIDE
+# ============================================================================
+s4 = prs.slides.add_slide(BLANK)
+panel(s4, 0, 0, SW, SH, MIDNIGHT, None)
+ui_header(s4, "04", "ENGLISH GUIDE", "60–80 WORDS")
+one(s4, IN(0.7), IN(1.5), IN(11), IN(0.9), "A WALK THROUGH WUZHEN", 40,
+    WARMW, True, font=SERIF)
+
+# left: photo (mask-reveal feel) + caption
+b4pic = pic(s4, "boat-jpg.jpg", IN(0.7), IN(2.7), IN(4.6), IN(3.7), face=False)
+fr4   = panel(s4, IN(0.7), IN(2.7), IN(4.6), IN(3.7), None, SOFT, 1.0)
+one(s4, IN(0.7), IN(6.48), IN(4.6), IN(0.4), "A wupeng boat glides on the canal.",
+    11, FADING, font=SERIF)
+
+# right: 60-80 word spoken guide (grade-9 friendly, from project text)
+guide_paras = [
+    ("Wuzhen is an ancient water town in Zhejiang.", 17, WARMW, False, SERIF),
+    ("Its canals run through the old town.",          17, WARMW, False, SERIF),
+    ("Stone bridges connect the two sides.",          17, WARMW, False, SERIF),
+    ("Traditional boats move slowly on the water.",   17, WARMW, False, SERIF),
+    ("For a long time, people lived and worked along the canals.", 17, WARMW, False, SERIF),
+    ("At night, lanterns shine on the water.",        17, WARMW, False, SERIF),
+    ("Water is not only beautiful here.",            17, WARMW, False, SERIF),
+    ("It connects the town, its people and its history.", 17, WARMW, False, SERIF),
 ]
-fy = 1.6
-for big, label, desc in facts:
-    one(s, Inches(5.6), Inches(fy), Inches(2.4), Inches(0.8),
-        big, 28, LANTERN, True, font=SERIF)
-    one(s, Inches(8.1), Inches(fy + 0.05), Inches(4.7), Inches(0.4),
-        label, 13.5, INK, True, font=SANS)
-    one(s, Inches(8.1), Inches(fy + 0.42), Inches(4.7), Inches(0.7),
-        desc, 10.5, BODY, font=SERIF)
-    rect(s, Inches(5.6), Inches(fy + 1.28), Inches(7.2), Pt(1.1), WARM)
-    fy += 1.55
-footer(s, 3)
+guide_shapes = []
+gy = 2.6
+for text_, sz, col, b, fn in guide_paras:
+    t4 = one(s4, IN(5.7), IN(gy), IN(7.0), IN(0.42), text_, sz, col, b, font=fn)
+    guide_shapes.append(t4)
+    gy += 0.48
+one(s4, IN(5.7), IN(gy + 0.15), IN(3), IN(0.4), "≈ 72 words", 11, GOLD, True,
+    font=SANS)
+
+# 5 keyword chips at the bottom-right (01..05)
+kws = ["01 / WATER", "02 / BRIDGES", "03 / BOATS", "04 / LIFE", "05 / NIGHT"]
+kx = 5.7
+chip_shapes = []
+for k in kws:
+    chip = panel(s4, IN(kx), IN(6.65), IN(1.32), IN(0.48), DEEP, SOFT, 0.75, radius=True)
+    one(s4, IN(kx), IN(6.65), IN(1.32), IN(0.48), k, 10, GOLD, True, font=SANS,
+        align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    chip_shapes.append(chip)
+    kx += 1.44
+credit(s4, "boat")
 
 # ============================================================================
-# SLIDE 4 — WHY WATER
+# SLIDE 5 — TEAM + CONCLUSION + SOURCES
 # ============================================================================
-s = snew(); bg(s, PAPER)
-eyebrow(s, 3, "WHY WATER?", "水如何连接一切")
-# LEFT column (0.55–4.25): vertical flow. All left-column content stays x<4.25,
-# so it never collides with the right column (photos + quote, x>=4.6).
-def node(x, y, w, txt, accent=False, size=13.5):
-    h = 0.6
-    rect(s, x, y, Inches(w), Inches(h), LANTERN if accent else WARM,
-         LANTERN if accent else None, 1.0)
-    one(s, x, y, Inches(w), Inches(h), txt, size, DEEP if accent else INK,
-        True, font=SANS, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-    return y + Inches(h)
-# main chain nodes (width 2.8, centered at x=1.95 in the left column)
-node(Inches(0.55), Inches(1.65), 2.8, "WATER", True)          # 1.65–2.25
-node(Inches(0.55), Inches(2.55), 2.8, "CONNECTS")             # 2.55–3.15
-one(s, Inches(0.55), Inches(3.30), Inches(3.0), Inches(0.25),
-    "it links", 10, MUTED, font=SERIF, align=PP_ALIGN.CENTER)
-# 5 small nodes in one row (width 0.64, gap 0.05): 0.55 + 5*0.64 + 4*0.05 = 4.15 < 4.25
-small = ["HOUSES", "BRIDGES", "STREETS", "PEOPLE", "BOATS"]
-sx = 0.55; sw = 0.64; gap = 0.05
-for t in small:
-    node(Inches(sx), Inches(3.62), sw, t, False, size=8.5); sx += sw + gap
-# 3.62–4.22
-node(Inches(0.55), Inches(4.55), 2.8, "TRADITIONAL LIFE", True)  # 4.55–5.15
-# connector arrows between the tiers (x=1.85, width 0.2 -> centered under 2.8 nodes)
-for ay in [2.30, 3.18, 4.28]:
-    tri = s.shapes.add_shape(MSO_SHAPE.DOWN_ARROW, Inches(1.85), Inches(ay),
-                             Inches(0.2), Inches(0.24))
-    tri.fill.solid(); tri.fill.fore_color.rgb = LANTERN
-    tri.line.fill.background(); tri.shadow.inherit = False
-# RIGHT column (4.6–12.78): two photos on top, quote box below — no overlap.
-pic(s, "bridge-jpg.jpg", Inches(4.6), Inches(1.65), Inches(4.05), Inches(2.4),
-    cap="Stone arches: a crossing, and a view.")          # pic 1.65–4.05, cap ->4.5
-pic(s, "lantern-jpg.jpg", Inches(8.85), Inches(1.65), Inches(3.93), Inches(2.4),
-    cap="Lanterns over the water at dusk.")
-# quote box: 4.85–6.4, below the captions (4.5) and above footer (6.98)
-rect(s, Inches(4.6), Inches(4.85), Inches(8.18), Inches(1.55), WARM, LANTERN, 1)
-one(s, Inches(4.95), Inches(5.05), Inches(7.5), Inches(0.5),
-    "“Water is the main line of the town.”", 18, LANTERN, True, font=SERIF)
-one(s, Inches(4.95), Inches(5.65), Inches(7.5), Inches(0.6),
-    "If the canals were blocked, the town would lose its shape, its road "
-    "and its image all at once.", 11, BODY, font=SERIF)
-footer(s, 4)
+s5 = prs.slides.add_slide(BLANK)
+panel(s5, 0, 0, SW, SH, MIDNIGHT, None)
+ui_header(s5, "05", "OUR TEAM", "ONE TEAM · ONE JOURNEY")
 
-# ============================================================================
-# SLIDE 5 — KEYWORDS
-# ============================================================================
-s = snew(); bg(s, PAPER)
-eyebrow(s, 4, "KEYWORDS", "关键词")
-kws = [
-    ("WATER", "水", 38), ("BRIDGES", "桥", 30), ("CANAL", "水道", 22),
-    ("LIFE", "生活", 24), ("BOATS", "船", 22), ("NIGHT", "夜", 32),
-    ("REFLECTION", "倒影", 18), ("WATER TOWN", "水乡古镇", 22),
+# main heading
+one(s5, IN(0.7), IN(1.3), IN(11), IN(0.7), "ONE TEAM.  ONE JOURNEY.", 32,
+    WARMW, True, font=SERIF)
+
+# big group photo (main visual)
+g5pic = pic(s5, "team-group-4096x2048-jpg.jpg", IN(0.7), IN(2.05), IN(11.93),
+            IN(2.3), face=True)
+fr5   = panel(s5, IN(0.7), IN(2.05), IN(11.93), IN(2.3), None, SOFT, 1.0)
+
+# 6 avatar row (navigation) + connecting thin line
+members = [
+    ("01", "team-m2-av-200x200-jpg.jpg", "JIANG SHENGYI"),
+    ("02", "team-m1-av-200x200-jpg.jpg", "WANG HANYU"),
+    ("03", "team-m3-av-200x200-jpg.jpg", "LU ANG"),
+    ("04", "team-m4-av-200x200-jpg.jpg", "ZHU ZHONGLE"),
+    ("05", "team-m5-av-200x200-jpg.jpg", "SHEN YICHENG"),
+    ("06", "team-m6-av-200x200-jpg.jpg", "SHEN YUCHENG"),
 ]
-positions = [
-    (0.7, 1.75, 3.4, 0), (4.5, 2.1, 3.0, 1), (8.1, 1.75, 3.6, 0),
-    (0.7, 3.75, 3.4, 1), (4.7, 3.4, 3.0, 0), (8.3, 3.8, 3.6, 1),
-    (2.6, 5.25, 3.4, 0), (6.6, 5.4, 4.0, 1),
+av_shapes = []
+ax = 0.7
+for num, av, name in members:
+    avp = pic(s5, av, IN(ax), IN(4.5), IN(1.5), IN(1.5), face=True)
+    fr  = panel(s5, IN(ax), IN(4.5), IN(1.5), IN(1.5), None, SOFT, 0.75)
+    one(s5, IN(ax), IN(6.06), IN(1.5), IN(0.3), f"{num}  {name}", 8, FADING,
+        True, font=SANS, align=PP_ALIGN.CENTER, spc=1)
+    av_shapes += [avp, fr]
+    ax += 2.02
+line(s5, IN(1.45), IN(5.25), IN(11.25), IN(5.25), GOLD, 0.8, dash="sysDot")
+
+# conclusion block (left) + final question (right)
+one(s5, IN(0.7), IN(6.55), IN(7.5), IN(0.55), "Water connects everything.",
+    24, WARMW, True, font=SERIF)
+one(s5, IN(0.7), IN(7.1), IN(8), IN(0.35),
+    "One team · one journey · Wuzhen waterways & bridges", 11, FADING,
+    font=SERIF)
+one(s5, IN(8.6), IN(6.55), IN(4.13), IN(0.5),
+    "Why is water the main line of Wuzhen?", 12, GOLD, True, font=SERIF,
+    align=PP_ALIGN.RIGHT)
+one(s5, IN(8.6), IN(7.1), IN(4.13), IN(0.35), "Thank you.", 14, WARMW, True,
+    font=SERIF, align=PP_ALIGN.RIGHT)
+
+# SOURCES block (small, from images-sources.json)
+src_lines = [
+    "SOURCES",
+    f"Canal — {SRC['waterway']['artist']} · {SRC['waterway']['license']} · Wikimedia Commons",
+    f"Bridge — {SRC['bridge']['artist']} · {SRC['bridge']['license']} · Wikimedia Commons",
+    f"Boat — {SRC['boat']['artist']} · {SRC['boat']['license']} · Wikimedia Commons",
+    f"Night — {SRC['night']['artist']} · {SRC['night']['license']} · Wikimedia Commons",
+    "Team photos — group portrait, 2026",
 ]
-for (en, cn, sz), (px, py, pw, alt) in zip(kws, positions):
-    x = Inches(px); y = Inches(py); w = Inches(pw)
-    one(s, x, y, w, Inches(0.75), en, sz,
-        INK if alt else LANTERN, True, font=SERIF, align=PP_ALIGN.CENTER,
-        anchor=MSO_ANCHOR.MIDDLE)
-    one(s, x, y + Inches(0.72), w, Inches(0.4), cn, 12, MUTED, font=CJK,
-        align=PP_ALIGN.CENTER)
-footer(s, 5)
+sy = 6.5
+sl = []
+for i, t in enumerate(src_lines):
+    is_head = (i == 0)
+    t5 = one(s5, IN(0.7), IN(sy + i * 0.3), IN(7.5), IN(0.3), t,
+             8 if not is_head else 9, GOLD if is_head else FADING,
+             not is_head, font=SANS, spc=2 if is_head else 0)
+    sl.append(t5)
+
+credit(s5, "night", "team photo · group, 2026")
 
 # ============================================================================
-# SLIDE 6 — THE JOURNEY
+# transitions + notes + save
 # ============================================================================
-s = snew(); bg(s, PAPER)
-eyebrow(s, 5, "THE JOURNEY", "六个章节")
-chapters = [
-    ("01", "WATER 水", "Canals run through every corner — the roads, and still are."),
-    ("02", "BRIDGES 桥", "Stone arches, low steps: a crossing, and a view."),
-    ("03", "BOATS 船", "The wupeng slips under low arches; the water is the line it is written on."),
-    ("04", "LIFE 生活", "Laundry at the embankment, shops and footsteps — ordinary life repeated."),
-    ("05", "NIGHT 夜", "Lanterns over the water; the town darkens, then glows."),
-    ("06", "MEMORY 记忆", "A place shaped by water — the answer, simply by watching it work."),
-]
-for i, (n, title, desc) in enumerate(chapters):
-    c = i % 2; r = i // 2
-    x = Inches(0.55 + c * 6.35); y = Inches(1.6 + r * 1.7)
-    rect(s, x, y, Inches(5.9), Inches(1.5), WARM, LANTERN, 1)
-    one(s, x + Inches(0.25), y + Inches(0.22), Inches(0.9), Inches(0.7),
-        n, 26, LANTERN, True, font=SERIF)
-    one(s, x + Inches(1.25), y + Inches(0.28), Inches(4.4), Inches(0.4),
-        title, 15, INK, True, font=SANS)
-    one(s, x + Inches(1.25), y + Inches(0.72), Inches(4.5), Inches(0.7),
-        desc, 10, BODY, font=SERIF)
-footer(s, 6)
+transitions = ["fade", "morph", "morph", "morph", "fade"]
+for i, sl in enumerate(prs.slides):
+    set_transition(sl, transitions[i])
 
-# ============================================================================
-# SLIDE 7 — OUR ENGLISH GUIDE
-# ============================================================================
-s = snew(); bg(s, DEEP)
-eyebrow(s, 6, "OUR ENGLISH GUIDE", "60–80 词英文导览")
-one(s, Inches(0.55), Inches(1.45), Inches(7.4), Inches(4.4),
-    "Wuzhen is a water town in Zhejiang, where the canals came first and "
-    "the streets came later. Boats still cross its 72 stone bridges, and "
-    "houses face the water the way they did a thousand years ago. Lanterns "
-    "and reflections make the evening a second sightseeing tour. If you "
-    "love quiet canals, old stone and a living old town, come — and take a "
-    "boat with us.", 15, PAPER, font=SERIF)
-rect(s, Inches(0.55), Inches(6.0), Inches(3.2), Pt(2), LANTERN)
-one(s, Inches(0.55), Inches(6.15), Inches(4.5), Inches(0.4),
-    "≈ 72 words  ·  in the 60–80 range", 10.5, LANTERN, True, font=SANS)
-pic(s, "night-jpg.jpg", Inches(8.4), Inches(1.45), Inches(4.38), Inches(3.9),
-    cap="Wuzhen at night — lanterns over the water.", alpha=1.0)
-footer(s, 7, dark=True)
-
-# ============================================================================
-# SLIDE 8 — THE CHALLENGE
-# ============================================================================
-s = snew(); bg(s, PAPER)
-eyebrow(s, 7, "THE CHALLENGE", "给听众的互动")
-one(s, Inches(0.55), Inches(1.45), Inches(12.2), Inches(0.6),
-    "A question for the room", 26, INK, True, font=SERIF)
-qs = [
-    ("YOUR TURN", "Can you spot where water still runs the town today?"),
-    ("IN ENGLISH", "“Visit Wuzhen by boat — the water is the road.”"),
-    ("DISCUSS", "If the canals were blocked, what would Wuzhen lose?"),
-]
-for i, (label, body) in enumerate(qs):
-    x = Inches(0.55 + i * 4.15)
-    rect(s, x, Inches(2.4), Inches(3.85), Inches(3.0), WARM, LANTERN, 1)
-    one(s, x + Inches(0.3), Inches(2.75), Inches(3.3), Inches(0.4),
-        label, 11, LANTERN, True, font=SANS)
-    one(s, x + Inches(0.3), Inches(3.4), Inches(3.3), Inches(1.7),
-        body, 15, INK, font=SERIF)
-footer(s, 8)
-
-# ============================================================================
-# SLIDE 9 — SHOW-DAY ROLES
-# ============================================================================
-s = snew(); bg(s, PAPER)
-eyebrow(s, 8, "SHOW-DAY ROLES", "展示日分工（5 角色）")
-roles = [
-    ("开场负责人", "Opening", "蒋盛熠", "Introduce the group & the theme"),
-    ("文化讲解员", "Culture", "汪瀚宇", "Findings & the hometown link"),
-    ("英文推荐员", "English", "沈毅程", "The 60–90 s live guide"),
-    ("PPT操作员", "Slides", "鲁昂", "Pacing & page control"),
-    ("互动负责人", "Interaction", "沈煜程", "The question & the vote"),
-]
-for i, (cn, en, who, note) in enumerate(roles):
-    c = i % 3; r = i // 3
-    x = Inches(0.55 + c * 4.15); y = Inches(1.6 + r * 2.15)
-    w = 3.85
-    rect(s, x, y, Inches(w), Inches(1.9), WARM, LANTERN, 1)
-    one(s, x + Inches(0.3), y + Inches(0.22), Inches(w - 0.6), Inches(0.5),
-        cn, 17, INK, True, font=CJK)
-    one(s, x + Inches(0.3), y + Inches(0.82), Inches(w - 0.6), Inches(0.4),
-        f"{en} · {who}", 12, LANTERN, True, font=SANS)
-    one(s, x + Inches(0.3), y + Inches(1.3), Inches(w - 0.6), Inches(0.4),
-        note, 10.5, BODY, font=SERIF)
-footer(s, 9)
-
-# ============================================================================
-# SLIDE 10 — SOURCES & CLOSING
-# ============================================================================
-s = snew(); bg(s, DEEP)
-eyebrow(s, 9, "SOURCES & CLOSING", "资料来源与致谢")
-one(s, Inches(0.55), Inches(1.5), Inches(12.2), Inches(0.6),
-    "Everything on these slides is sourced.", 24, PAPER, True, font=SERIF)
-rect(s, Inches(0.55), Inches(2.35), Inches(2.4), Pt(2.5), LANTERN)
-one(s, Inches(0.55), Inches(2.75), Inches(12.2), Inches(2.6),
-    "Facts — Xizha canal length, 72 stone bridges, and the cross-shaped "
-    "water system: public Wuzhen heritage material, cited on the project "
-    "site's Image Sources & Licensing page.", 12.5, WARM, font=SERIF)
-one(s, Inches(0.55), Inches(3.75), Inches(12.2), Inches(1.0),
-    "Images — aerial and field photographs taken on site by the group; each "
-    "carries its own credit. No stock imagery.", 12.5, WARM, font=SERIF)
-rect(s, Inches(0.55), Inches(5.15), Inches(4.5), Pt(2), LANTERN)
-one(s, Inches(0.55), Inches(5.45), Inches(12.2), Inches(0.7),
-    "Water connects everything.", 26, LANTERN, True, font=SERIF)
-one(s, Inches(0.55), Inches(6.15), Inches(12.2), Inches(0.5),
-    "水，把一切连接起来。  ·  谢谢 / Thank you", 14, PAPER, font=CJK)
-footer(s, 10, dark=True)
-
-# ---- save ----------------------------------------------------------------
-# Bake a slide transition into every slide (fade for cover/closing,
-# push for content pages) so the .pptx has real page-to-page animation.
-for idx, sl in enumerate(prs.slides, start=1):
-    kind = "fade" if idx in (1, TOTAL) else "push"
-    add_transition(sl, kind)
+notes(s1, "Slide 1 · ~45 s. Open on the hero. Say 'Wuzhen. Waterways and "
+          "Bridges.' Hold on the question: 'Why is water the main line of the "
+          "ancient town? That is what we spent four weeks answering.'")
+notes(s2, "Slide 2 · ~90 s. Walk the three data lines left to right: nearly "
+          "ten thousand metres of canals, 72 ancient stone bridges, and a "
+          "cross-shaped water system. Point at the canal photo on the right — "
+          "'the water came first; the town grew around it.'")
+notes(s3, "Slide 3 · ~90 s. Follow the gold line from PAST to PRESENT through "
+          "WATER. PAST: boats, transport, trade, daily life. PRESENT: "
+          "tourism, sightseeing, cultural experience. The same water that once "
+          "moved goods now moves visitors.")
+notes(s4, "Slide 4 · ~90 s. This is our live English guide — 72 words we can "
+          "actually say out loud. Read it naturally. Let the five keyword "
+          "chips (Water, Bridges, Boats, Life, Night) light up as you move "
+          "through the guide.")
+notes(s5, "Slide 5 · ~60 s. Introduce the six of us, one line each, following "
+          "the avatar numbers 01 to 06. End on 'Water connects everything.' "
+          "and hold the closing question: 'Why is water the main line of "
+          "Wuzhen?' Then thank the class.")
 
 prs.save(OUT)
-print(f"WROTE {OUT}  {os.path.getsize(OUT)//1024} KB, {TOTAL} slides (+transitions)")
+print(f"WROTE {OUT}  {os.path.getsize(OUT)//1024} KB, {TOTAL} slides")

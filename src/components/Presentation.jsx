@@ -82,7 +82,7 @@ export default function Presentation() {
             href={`${import.meta.env.BASE_URL}assets/wuzhen_waterways_presentation.pptx`}
             download
           >
-            DOWNLOAD THE 5-PAGE PPTX
+            DOWNLOAD THE FULL 10-PAGE PPTX
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

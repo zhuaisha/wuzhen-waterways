@@ -403,11 +403,17 @@
 .chapter--clip-bridge .chapter__figure-inner,
 .chapter--clip-lantern .chapter__figure-inner {
   clip-path: inset(0 0 62% 0);
+  filter: blur(14px);
 }
 .chapter.in-view .chapter__figure-inner {
   clip-path: inset(0 0 0 0);
+  filter: blur(0px);
 }
-.chapter__figure-inner { transition: clip-path 0.6s var(--ease-water), transform 1.2s var(--ease-water); }
+.chapter__figure-inner {
+  transition: clip-path 1.2s var(--ease-water),
+              filter 1.6s ease-out,
+              transform 1.2s var(--ease-water);
+}
 
 /* ---------------- motif: ripple ---------------- */
 .ripple {

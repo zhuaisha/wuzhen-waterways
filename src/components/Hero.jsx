@@ -6,7 +6,9 @@ const BASE = import.meta.env.BASE_URL;
 const IMG = {
   // The original opening plate - bright, large, and unmistakably Wuzhen.
   hero: `${BASE}images/hero_wuzhen-1920.webp`,
+  heroFallback: `${BASE}images/hero_wuzhen-1920-jpg.jpg`,
   night: `${BASE}images/night-webp.webp`,
+  nightFallback: `${BASE}images/night-jpg.jpg`,
 };
 
 /* Preload the hero frame before the curtain rises so nothing pops in. */
@@ -169,12 +171,24 @@ export default function Hero() {
           src={IMG.hero}
           alt=""
           fetchPriority="high"
+          onError={(e) => {
+            if (!e.currentTarget.dataset.fallback) {
+              e.currentTarget.dataset.fallback = '1';
+              e.currentTarget.src = IMG.heroFallback;
+            }
+          }}
         />
         <img
           className="hero__img hero__img--front"
           src={IMG.night}
           alt=""
           fetchPriority="high"
+          onError={(e) => {
+            if (!e.currentTarget.dataset.fallback) {
+              e.currentTarget.dataset.fallback = '1';
+              e.currentTarget.src = IMG.nightFallback;
+            }
+          }}
         />
       </div>
 

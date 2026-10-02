@@ -3,12 +3,13 @@
 WUZHEN — Waterways & Bridges
 Apple-Keynote-style classroom presentation (5 slides, 16:9, 1920x1080).
 
-Strict 5-page brief (classroom show, 5-9 min total):
+Strict page brief (classroom show, ~6-9 min total):
   1  COVER              — hero photo + WUZHEN + question + LET'S EXPLORE
   2  WHAT WE FOUND      — WATER SHAPES WUZHEN + 3 data lines + waterway photo
   3  WHY IT MATTERS     — PAST -> WATER -> PRESENT flowing line
   4  ENGLISH GUIDE      — 60-80 word spoken guide + 5 keyword chips
-  5  TEAM + CONCLUSION  — group photo, 6 avatars, SOURCES, closing line
+  5  OUR TEAM           — group photo (true 2:1) + 6 avatars
+  6  CONCLUSION+SOURCES — closing line, question, image sources
 
 All facts, photos, team names and the closing line come from the project
 (chapters.js, Facts.jsx, Summary.jsx, team.js, images-sources.json).
@@ -46,7 +47,10 @@ SW, SH = Emu(12192000), Emu(6858000)     # 16:9 @ 1920x1080
 SERIF, SANS = "Georgia", "Arial"
 prs = Presentation()
 prs.slide_width, prs.slide_height = SW, SH
-BLANK, TOTAL = prs.slide_layouts[6], 5
+BLANK, TOTAL = prs.slide_layouts[6], 6
+# source aspect ratios (w/h) of the embedded photos, used to avoid stretching
+RATIO = {"waterway": 1600/1200, "bridge": 1600/1200, "boat": 1600/1064,
+         "group": 2.0, "hero": 1920/800}
 def IN(v): return Inches(v)
 
 # ============================================================================
@@ -67,15 +71,34 @@ def _grade(im, face=False):
     m = Image.merge("RGB", (r, g, b))
     return Image.blend(m, m.convert("L").convert("RGB"), 0.20)
 
-def _load(name, maxpx=1400, face=False, quality=86):
+def _cover_crop(im, ratio):
+    """Center-crop an image to `ratio` (w/h) so it can be placed full-bleed
+    without stretching (like CSS background cover)."""
+    w, h = im.size; r0 = w / h
+    if r0 > ratio:
+        nw = int(round(h * ratio)); x = (w - nw) // 2
+        im = im.crop((x, 0, x + nw, h))
+    else:
+        nh = int(round(w / ratio)); y = (h - nh) // 2
+        im = im.crop((0, y, w, y + nh))
+    return im
+
+def _load(name, maxpx=1400, face=False, quality=86, cover_ratio=None):
     p = os.path.join(IMG, name)
     if not os.path.exists(p):
         print(f"  [warn] missing image: {name}"); return None
     im = Image.open(p).convert("RGB")
+    if cover_ratio: im = _cover_crop(im, cover_ratio)
     im = _grade(im, face)
     im.thumbnail((maxpx, maxpx), Image.LANCZOS)
     buf = io.BytesIO(); im.save(buf, "JPEG", quality=quality); buf.seek(0)
     return buf
+
+def photo_size(w, h, ratio):
+    """Return (nw, nh) that fits inside (w, h) box preserving source ratio."""
+    if ratio >= w / h:
+        return w, w / ratio
+    return h * ratio, h
 
 def _set_alpha(sh, pct):
     """pct 0-100 = opacity. Applies <a:alpha> to fill and/or blip."""
@@ -98,8 +121,8 @@ def _set_alpha(sh, pct):
             a = etree.SubElement(mod, qn('a:alpha'))
             a.set('val', str(int((100 - pct) * 1000)))
 
-def pic(s, name, x, y, w, h, face=False, alpha=None):
-    buf = _load(name, face=face)
+def pic(s, name, x, y, w, h, face=False, alpha=None, cover_ratio=None):
+    buf = _load(name, face=face, cover_ratio=cover_ratio)
     if buf is None:
         r = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, x, y, w, h)
         r.fill.solid(); r.fill.fore_color.rgb = DEEP
@@ -177,7 +200,9 @@ def ui_header(s, num, label, coords):
     line(s, IN(0.6), IN(0.92), IN(12.73), IN(0.92), DEEP, 0.8)
     seg_end = IN(0.6 + (int(num) - 1) / TOTAL * 12.13)
     line(s, IN(0.6), IN(0.92), seg_end, IN(0.92), GOLD, 1.2)
-    one(s, IN(10.6), IN(7.12), IN(2.13), IN(0.28), coords, 8, FADING,
+    # coords sit top-right in the header, NOT bottom-right — so they never
+    # collide with the per-photo credit line at the foot of the slide
+    one(s, IN(10.2), IN(0.5), IN(2.93), IN(0.28), coords, 7, FADING,
         align=PP_ALIGN.RIGHT, font=SANS, spc=2)
 
 def credit(s, key, extra=None):
@@ -227,8 +252,8 @@ def notes(sl, text):
 # SLIDE 1 — COVER
 # ============================================================================
 s1 = prs.slides.add_slide(BLANK)
-hero = pic(s1, "hero_wuzhen-1920.webp", Emu(-200000), Emu(-150000),
-           Emu(12192000 + 400000), Emu(6858000 + 300000), face=False)
+hero = pic(s1, "hero_wuzhen-1920.webp", 0, 0, SW, SH, face=False,
+           cover_ratio=SW / SH)
 _set_alpha(hero, 30)
 # bottom vignette for legibility
 vp = panel(s1, 0, Emu(6858000 - 1600000), SW, Emu(1600000), MIDNIGHT, None)
@@ -273,7 +298,7 @@ data_shapes = []
 dy = 3.6
 for big, unit, desc in data:
     rule = line(s2, IN(0.75), IN(dy), IN(4.9), IN(dy), DEEP, 0.8)
-    num  = one(s2, IN(0.75), IN(dy + 0.15), IN(2.1), IN(0.95), big, 42, GOLD,
+    num  = one(s2, IN(0.75), IN(dy + 0.15), IN(2.1), IN(0.95), big, 36, GOLD,
                True, font=SERIF)
     lab  = one(s2, IN(2.95), IN(dy + 0.3), IN(2.1), IN(0.4), unit, 11, WARMW,
                True, font=SANS, spc=2)
@@ -282,9 +307,12 @@ for big, unit, desc in data:
     data_shapes += [rule, num, lab, dsc]
     dy += 1.15
 
-# right: waterway photo with mask-reveal feel (framed photo)
-w2pic = pic(s2, "waterway-jpg.jpg", IN(5.6), IN(2.2), IN(7.13), IN(4.6), face=False)
-fr2   = panel(s2, IN(5.6), IN(2.2), IN(7.13), IN(4.6), None, SOFT, 1.0)
+# right: waterway photo kept below the headline, scaled to its 4:3 source
+# ratio and centred inside a framed box so it is never stretched
+_nw, _nh = photo_size(7.13, 4.25, RATIO["waterway"])
+w2pic = pic(s2, "waterway-jpg.jpg", IN(5.6 + (7.13 - _nw) / 2),
+            IN(2.55 + (4.25 - _nh) / 2), IN(_nw), IN(_nh), face=False)
+fr2   = panel(s2, IN(5.6), IN(2.55), IN(7.13), IN(4.25), None, SOFT, 1.0)
 one(s2, IN(5.6), IN(6.88), IN(7.13), IN(0.4), "The canal carries the whole town.",
     12, FADING, font=SERIF)
 credit(s2, "waterway")
@@ -320,11 +348,6 @@ for i, t in enumerate(pres):
     one(s3, IN(8.1), IN(5.1 + i * 0.5), IN(4.5), IN(0.42), t, 14, BODY, font=SERIF)
     one(s3, IN(7.92), IN(5.1 + i * 0.5), IN(0.15), IN(0.42), "·", 14, GOLD, font=SANS)
 
-# faint bridge photo as background texture, top-right, low alpha
-bp = pic(s3, "bridge-jpg.jpg", IN(9.3), IN(1.5), IN(3.43), IN(2.0), face=False)
-_set_alpha(bp, 20)
-credit(s3, "bridge")
-
 # ============================================================================
 # SLIDE 4 — ENGLISH GUIDE
 # ============================================================================
@@ -334,8 +357,10 @@ ui_header(s4, "04", "ENGLISH GUIDE", "60–80 WORDS")
 one(s4, IN(0.7), IN(1.5), IN(11), IN(0.9), "A WALK THROUGH WUZHEN", 40,
     WARMW, True, font=SERIF)
 
-# left: photo (mask-reveal feel) + caption
-b4pic = pic(s4, "boat-jpg.jpg", IN(0.7), IN(2.7), IN(4.6), IN(3.7), face=False)
+# left: photo scaled to its 3:2 source ratio (centred in the frame) + caption
+_nw, _nh = photo_size(4.6, 3.7, RATIO["boat"])
+b4pic = pic(s4, "boat-jpg.jpg", IN(0.7 + (4.6 - _nw) / 2),
+            IN(2.7 + (3.7 - _nh) / 2), IN(_nw), IN(_nh), face=False)
 fr4   = panel(s4, IN(0.7), IN(2.7), IN(4.6), IN(3.7), None, SOFT, 1.0)
 one(s4, IN(0.7), IN(6.48), IN(4.6), IN(0.4), "A wupeng boat glides on the canal.",
     11, FADING, font=SERIF)
@@ -357,93 +382,103 @@ for text_, sz, col, b, fn in guide_paras:
     t4 = one(s4, IN(5.7), IN(gy), IN(7.0), IN(0.42), text_, sz, col, b, font=fn)
     guide_shapes.append(t4)
     gy += 0.48
-one(s4, IN(5.7), IN(gy + 0.15), IN(3), IN(0.4), "≈ 72 words", 11, GOLD, True,
-    font=SANS)
 
-# 5 keyword chips at the bottom-right (01..05)
+# 5 keyword chips at the bottom-right (01..05) — raised clear of the credit line
 kws = ["01 / WATER", "02 / BRIDGES", "03 / BOATS", "04 / LIFE", "05 / NIGHT"]
 kx = 5.7
 chip_shapes = []
 for k in kws:
-    chip = panel(s4, IN(kx), IN(6.65), IN(1.32), IN(0.48), DEEP, SOFT, 0.75, radius=True)
-    one(s4, IN(kx), IN(6.65), IN(1.32), IN(0.48), k, 10, GOLD, True, font=SANS,
+    chip = panel(s4, IN(kx), IN(6.5), IN(1.32), IN(0.48), DEEP, SOFT, 0.75, radius=True)
+    one(s4, IN(kx), IN(6.5), IN(1.32), IN(0.48), k, 10, GOLD, True, font=SANS,
         align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
     chip_shapes.append(chip)
     kx += 1.44
+# word count sits bottom-left, away from the chips
+one(s4, IN(5.7), IN(7.12), IN(3), IN(0.28), "≈ 72 words", 11, GOLD, True,
+    font=SANS)
 credit(s4, "boat")
 
 # ============================================================================
-# SLIDE 5 — TEAM + CONCLUSION + SOURCES
+# SLIDE 5 — OUR TEAM (group photo at true 2:1 + six avatars)
 # ============================================================================
 s5 = prs.slides.add_slide(BLANK)
 panel(s5, 0, 0, SW, SH, MIDNIGHT, None)
 ui_header(s5, "05", "OUR TEAM", "ONE TEAM · ONE JOURNEY")
-
-# main heading
-one(s5, IN(0.7), IN(1.3), IN(11), IN(0.7), "ONE TEAM.  ONE JOURNEY.", 32,
+one(s5, IN(0.7), IN(1.15), IN(11.9), IN(0.6), "ONE TEAM.  ONE JOURNEY.", 32,
     WARMW, True, font=SERIF)
 
-# big group photo (main visual)
-g5pic = pic(s5, "team-group-4096x2048-jpg.jpg", IN(0.7), IN(2.05), IN(11.93),
-            IN(2.3), face=True)
-fr5   = panel(s5, IN(0.7), IN(2.05), IN(11.93), IN(2.3), None, SOFT, 1.0)
+# --- one shared grid: banner and the 6 avatars occupy the exact same column ---
+_aw, _gap = 1.0, 0.6
+_n_av = 6
+_grid = _n_av * _aw + (_n_av - 1) * _gap      # total grid width (9.0")
+_gx = (13.33 - _grid) / 2                     # exact shared left edge
+_gh = _grid / 2                               # banner height keeps true 2:1
+gw, gh = photo_size(_grid, _gh, RATIO["group"])
 
-# 6 avatar row (navigation) + connecting thin line
+# group photo: dominant banner, pinned to the avatar grid's exact column
+g5pic = pic(s5, "team-group-4096x2048-jpg.jpg", IN(_gx), IN(1.62), IN(gw),
+            IN(gh), face=True)
+fr5   = panel(s5, IN(_gx), IN(1.62), IN(_grid), IN(_gh), None, SOFT, 1.0)
+
 members = [
-    ("01", "team-m2-av-200x200-jpg.jpg", "JIANG SHENGYI"),
-    ("02", "team-m1-av-200x200-jpg.jpg", "WANG HANYU"),
-    ("03", "team-m3-av-200x200-jpg.jpg", "LU ANG"),
-    ("04", "team-m4-av-200x200-jpg.jpg", "ZHU ZHONGLE"),
-    ("05", "team-m5-av-200x200-jpg.jpg", "SHEN YICHENG"),
-    ("06", "team-m6-av-200x200-jpg.jpg", "SHEN YUCHENG"),
+    ("01", "team-m2-av-200x200-jpg.jpg", "蒋盛熠"),
+    ("02", "team-m1-av-200x200-jpg.jpg", "汪瀚宇"),
+    ("03", "team-m3-av-200x200-jpg.jpg", "鲁昂"),
+    ("04", "team-m4-av-200x200-jpg.jpg", "朱钟乐"),
+    ("05", "team-m5-av-200x200-jpg.jpg", "沈毅程"),
+    ("06", "team-m6-av-200x200-jpg.jpg", "沈煜辰"),
 ]
 av_shapes = []
-ax = 0.7
+ax = _gx
 for num, av, name in members:
-    avp = pic(s5, av, IN(ax), IN(4.5), IN(1.5), IN(1.5), face=True)
-    fr  = panel(s5, IN(ax), IN(4.5), IN(1.5), IN(1.5), None, SOFT, 0.75)
-    one(s5, IN(ax), IN(6.06), IN(1.5), IN(0.3), f"{num}  {name}", 8, FADING,
-        True, font=SANS, align=PP_ALIGN.CENTER, spc=1)
+    avp = pic(s5, av, IN(ax), IN(6.22), IN(_aw), IN(_aw), face=True)
+    fr  = panel(s5, IN(ax), IN(6.22), IN(_aw), IN(_aw), None, SOFT, 0.75)
+    one(s5, IN(ax), IN(7.25), IN(_aw), IN(0.25), f"{num}  {name}", 10, FADING,
+        True, font=SANS, align=PP_ALIGN.CENTER)
     av_shapes += [avp, fr]
-    ax += 2.02
-line(s5, IN(1.45), IN(5.25), IN(11.25), IN(5.25), GOLD, 0.8, dash="sysDot")
+    ax += _aw + _gap
 
-# conclusion block (left) + final question (right)
-one(s5, IN(0.7), IN(6.55), IN(7.5), IN(0.55), "Water connects everything.",
-    24, WARMW, True, font=SERIF)
-one(s5, IN(0.7), IN(7.1), IN(8), IN(0.35),
-    "One team · one journey · Wuzhen waterways & bridges", 11, FADING,
+# ============================================================================
+# SLIDE 6 — CONCLUSION + SOURCES (easy on the eye, nothing overflows)
+# ============================================================================
+s6 = prs.slides.add_slide(BLANK)
+panel(s6, 0, 0, SW, SH, MIDNIGHT, None)
+ui_header(s6, "06", "CONCLUSION", "WATER CONNECTS EVERYTHING")
+
+one(s6, IN(0.7), IN(1.55), IN(4.5), IN(0.5), "SO WHAT?", 14, GOLD, True,
+    font=SANS, spc=4)
+one(s6, IN(0.7), IN(2.25), IN(11.9), IN(1.1), "WATER CONNECTS EVERYTHING.",
+    40, WARMW, True, font=SERIF)
+one(s6, IN(0.7), IN(3.4), IN(11.9), IN(0.5),
+    "One team · one journey · Wuzhen waterways & bridges.", 15, FADING,
     font=SERIF)
-one(s5, IN(8.6), IN(6.55), IN(4.13), IN(0.5),
-    "Why is water the main line of Wuzhen?", 12, GOLD, True, font=SERIF,
-    align=PP_ALIGN.RIGHT)
-one(s5, IN(8.6), IN(7.1), IN(4.13), IN(0.35), "Thank you.", 14, WARMW, True,
-    font=SERIF, align=PP_ALIGN.RIGHT)
+one(s6, IN(0.7), IN(4.05), IN(11.9), IN(0.5),
+    "Why is water the main line of Wuzhen?", 20, GOLD, True, font=SERIF)
+one(s6, IN(0.7), IN(4.7), IN(4), IN(0.6), "Thank you.", 26, WARMW, True,
+    font=SERIF)
 
-# SOURCES block (small, from images-sources.json)
+# SOURCES block (from images-sources.json), left column, clear of the credit
 src_lines = [
     "SOURCES",
     f"Canal — {SRC['waterway']['artist']} · {SRC['waterway']['license']} · Wikimedia Commons",
     f"Bridge — {SRC['bridge']['artist']} · {SRC['bridge']['license']} · Wikimedia Commons",
     f"Boat — {SRC['boat']['artist']} · {SRC['boat']['license']} · Wikimedia Commons",
     f"Night — {SRC['night']['artist']} · {SRC['night']['license']} · Wikimedia Commons",
-    "Team photos — group portrait, 2026",
+    "Team photo — group portrait, 2026",
 ]
-sy = 6.5
-sl = []
+sy = 5.5
 for i, t in enumerate(src_lines):
     is_head = (i == 0)
-    t5 = one(s5, IN(0.7), IN(sy + i * 0.3), IN(7.5), IN(0.3), t,
-             8 if not is_head else 9, GOLD if is_head else FADING,
-             not is_head, font=SANS, spc=2 if is_head else 0)
-    sl.append(t5)
+    one(s6, IN(0.7), IN(sy + i * 0.33), IN(7.5), IN(0.3), t,
+        9 if not is_head else 10, GOLD if is_head else FADING,
+        not is_head, font=SANS, spc=2 if is_head else 0)
 
-credit(s5, "night", "team photo · group, 2026")
+credit(s6, "night", "team photo · group, 2026")
 
 # ============================================================================
 # transitions + notes + save
 # ============================================================================
-transitions = ["fade", "morph", "morph", "morph", "fade"]
+transitions = ["fade", "morph", "morph", "morph", "morph", "fade"]
 for i, sl in enumerate(prs.slides):
     set_transition(sl, transitions[i])
 
@@ -463,9 +498,10 @@ notes(s4, "Slide 4 · ~90 s. This is our live English guide — 72 words we can 
           "chips (Water, Bridges, Boats, Life, Night) light up as you move "
           "through the guide.")
 notes(s5, "Slide 5 · ~60 s. Introduce the six of us, one line each, following "
-          "the avatar numbers 01 to 06. End on 'Water connects everything.' "
-          "and hold the closing question: 'Why is water the main line of "
-          "Wuzhen?' Then thank the class.")
+          "the avatar numbers 01 to 06 above the group photo.")
+notes(s6, "Slide 6 · ~30 s. End on 'Water connects everything.' and hold the "
+          "closing question: 'Why is water the main line of Wuzhen?' Then "
+          "thank the class. Sources are listed at the bottom.")
 
 prs.save(OUT)
 print(f"WROTE {OUT}  {os.path.getsize(OUT)//1024} KB, {TOTAL} slides")

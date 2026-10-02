@@ -24,6 +24,13 @@ node_modules/
 # PPTX build helpers (the .pptx itself in public/assets/ IS committed)
 /make_pptx.py
 /.pptx_tmp/
+/tools/make_pptx.py
+/tools/make_pptx_v2.py
+/tools/png3/
+/tools/venv/
+/tools/pptx_render/
+/tools/*.pptx
+/tools/*.bak
 
 # Misc
 .DS_Store

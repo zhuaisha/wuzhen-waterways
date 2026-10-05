@@ -9,24 +9,21 @@ const prefersReduced = () =>
 /**
  * Reveal — the project's universal scroll-entrance wrapper.
  *
- * Upgraded with a cinematic blur→sharp focal pull so every element
- * emerges into focus like a lens rack-focusing: it starts soft and
- * translucent, then snaps to full clarity as it crosses the viewport
- * threshold.  The depth-of-field effect gives the whole site a
- * cohesive "camera operator" feel that a plain fade+slide cannot match.
+ * 极简淡入：只用 opacity + y 位移，去掉 blur（GPU 密集，感觉拖）。
+ * 触发点设在视口顶部 78%——元素一进入视口就立即播放，不等待。
  *
  * @param {number} delay    – stagger offset in ms
- * @param {number} y        – vertical travel distance in px (default 30)
- * @param {number} blur     – starting blur in px (default 10)
- * @param {number} duration – tween duration in seconds (default 0.9)
+ * @param {number} y        – vertical travel distance in px (default 18)
+ * @param {number} blur     – starting blur in px (default 0，默认关闭)
+ * @param {number} duration – tween duration in seconds (default 0.35)
  */
 export default function Reveal({
   children,
   className = '',
   delay = 0,
-  y = 30,
-  blur = 10,
-  duration = 0.9,
+  y = 18,
+  blur = 0,
+  duration = 0.35,
   ...props
 }) {
   const ref = useRef(null);
@@ -40,18 +37,17 @@ export default function Reveal({
     const ctx = gsap.context(() => {
       gsap.fromTo(
         el,
-        { opacity: 0, y, filter: `blur(${blur}px)` },
+        { opacity: 0, y, filter: 'blur(0px)' },
         {
           opacity: 1,
           y: 0,
           filter: 'blur(0px)',
           duration,
-          ease: 'power3.out',
+          ease: 'power2.out',
           delay: delay / 1000,
           scrollTrigger: {
             trigger: el,
-            start: 'top 85%',
-            end: 'top 40%',
+            start: 'top 82%',
             toggleActions: 'play none none reverse',
           },
         }

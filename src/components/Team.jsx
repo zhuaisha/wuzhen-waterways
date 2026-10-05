@@ -3,41 +3,23 @@ import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionHeader from './SectionHeader.jsx';
-import Reveal from './Reveal.jsx';
 import { GROUP_PHOTO, GROUP_HEADCOUNT, MEMBERS } from '../data/team.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
-/*
- * OUR TEAM — an editorial spread: one group plate as the section's anchor,
- * six portraits beneath it as entry points into a glass detail panel.
- *
- * Nothing here pairs a portrait with a person inside the group photo. The six
- * uniformed boys are too similar to match up by eye, and a wrong mapping would
- * be worse than none, so hovering a member only brightens the group plate as a
- * whole rather than spotlighting a guessed spot.
- */
 const prefersReduced = () =>
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* Pointer work is desktop-only; touch devices get none of the follow. */
 const canHover = () =>
   typeof window !== 'undefined' &&
   !window.matchMedia('(hover: none)').matches;
 
-/*
- * One entrance tween. `gsap.context()` runs its callback synchronously while
- * the context variable is still unassigned, so the callback may only call
- * `gsap` directly — context() tracks those tweens and reverts them. Same
- * pattern as Reveal.jsx. Reduced motion leaves elements at their natural
- * visible state; no fade, no movement.
- */
-function addReveal(el, { at = 0, duration = 0.85, y = 34, blur = 8 } = {}) {
+function addReveal(el, { at = 0, duration = 0.55, y = 34, blur = 6 } = {}) {
   if (!el || prefersReduced()) return;
   gsap.fromTo(
     el,
-    { opacity: 0, y, filter: `blur(${blur}px)` },
+    { opacity: 0, y, filter: 'blur(0px)' },
     {
       opacity: 1,
       y: 0,
@@ -47,19 +29,13 @@ function addReveal(el, { at = 0, duration = 0.85, y = 34, blur = 8 } = {}) {
       ease: 'power3.out',
       scrollTrigger: {
         trigger: document.querySelector('#team'),
-        start: 'top 74%',
-        end: 'top 28%',
+        start: 'top 68%',
         toggleActions: 'play none none reverse',
       },
     }
   );
 }
 
-/* AVIF -> WebP -> JPG, so a browser that cannot decode AVIF still gets a file.
- * `src` is always a plain-URL map; `srcSet` (optional) is a srcset string map
- * that only belongs on <source>. The <img src> must stay a single URL —
- * feeding it a srcset string ("a.avif 4096w, b.avif 1120w") makes the browser
- * request a nonsense URL and the image 404s. */
 function Picture({ src, alt, className, sizes, srcSet, width, height, ...rest }) {
   return (
     <picture>
@@ -101,11 +77,11 @@ export default function Team() {
     const root = rootRef.current;
     if (!root) return;
     const ctx = gsap.context(() => {
-      addReveal(root.querySelector('.section-header'), { at: 0, duration: 0.8, y: 26, blur: 6 });
-      addReveal(root.querySelector('.team__lede'), { at: 0.18, duration: 0.8, y: 22, blur: 6 });
-      addReveal(root.querySelector('.team__group'), { at: 0.36, duration: 1.15, y: 52, blur: 10 });
+      addReveal(root.querySelector('.section-header'), { at: 0, duration: 0.5, y: 22, blur: 5 });
+      addReveal(root.querySelector('.team__lede'), { at: 0.08, duration: 0.5, y: 20, blur: 5 });
+      addReveal(root.querySelector('.team__group'), { at: 0.16, duration: 0.75, y: 42, blur: 8 });
       [...root.querySelectorAll('.team-member')].forEach((btn, i) =>
-        addReveal(btn, { at: 0.72 + i * 0.08, duration: 0.75, y: 26, blur: 7 })
+        addReveal(btn, { at: 0.36 + i * 0.05, duration: 0.55, y: 22, blur: 5 })
       );
     }, root);
     return () => ctx.revert();
@@ -223,7 +199,7 @@ export default function Team() {
       </div>
 
       <div className="container team__grid">
-        <SectionHeader number="08" en="OUR TEAM" />
+        <SectionHeader number="07" en="OUR TEAM" />
         <p className="team__lede">
           Six people. One journey through Wuzhen.
           <span>六个人，一段乌镇。</span>
@@ -298,65 +274,6 @@ export default function Team() {
           ))}
         </div>
 
-        <p className="team__note">
-          Each member took the lead on one part of the project. The portraits are shown in
-          the order the photos were taken.
-        </p>
-
-        {/* show-day role mapping — suggested, confirm with the group lead */}
-        <Reveal className="team-showroles" delay={200}>
-          <div className="team-showroles__head">
-            SHOW-DAY ROLES
-            <span>SUGGESTED — CONFIRM WITH THE GROUP LEAD</span>
-          </div>
-          <div className="team-showroles__grid">
-            <div className="team-showroles__cell">
-              <b>开场负责人</b>
-              <i>Opening — introduce the group &amp; theme</i>
-              <span>蒋盛熠</span>
-            </div>
-            <div className="team-showroles__cell">
-              <b>文化讲解员</b>
-              <i>Culture — the canals, bridges &amp; the hometown link</i>
-              <span>汪瀚宇</span>
-            </div>
-            <div className="team-showroles__cell">
-              <b>英文推荐员</b>
-              <i>English — the 60–90 s live guide</i>
-              <span>沈毅程</span>
-            </div>
-            <div className="team-showroles__cell">
-              <b>PPT操作员</b>
-              <i>Slides — pacing &amp; page control</i>
-              <span>鲁昂</span>
-            </div>
-            <div className="team-showroles__cell">
-              <b>互动负责人</b>
-              <i>Interaction — the question &amp; the vote</i>
-              <span>沈煜程</span>
-            </div>
-            <div className="team-showroles__cell team-showroles__cell--lead">
-              <b>组长统筹</b>
-              <i>Project lead — schedule &amp; final presentation</i>
-              <span>蒋盛熠</span>
-            </div>
-            <div className="team-showroles__cell team-showroles__cell--lead">
-              <b>网站与展示制作</b>
-              <i>Web &amp; presentation production</i>
-              <span>鲁昂 · 沈煜程</span>
-            </div>
-            <div className="team-showroles__cell team-showroles__cell--lead">
-              <b>摄影与图片</b>
-              <i>Photography &amp; image credits</i>
-              <span>朱钟乐</span>
-            </div>
-            <div className="team-showroles__cell team-showroles__cell--lead">
-              <b>文案与史实</b>
-              <i>Copy &amp; fact-checking</i>
-              <span>沈毅程</span>
-            </div>
-          </div>
-        </Reveal>
       </div>
 
       {/* glass panel — side sheet on desktop, bottom sheet on phone */}
@@ -412,7 +329,7 @@ export default function Team() {
                     MEMBER <b>{member.n}</b>
                     <span>{GROUP_HEADCOUNT} MEMBERS</span>
                   </p>
-                  <h3 id={`team-panel-name-${member.n}`}>
+                  <h3 id={member ? `team-panel-name-${member.n}` : undefined}>
                     <span className="team-panel__name-cn">{member.name}</span>
                     <span className="team-panel__name-pinyin">{member.pinyin}</span>
                   </h3>

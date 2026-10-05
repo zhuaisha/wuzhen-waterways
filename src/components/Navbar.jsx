@@ -2,17 +2,18 @@ import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
 const navLinks = [
-  { label: 'Facts', href: '#facts', section: 'facts', journey: 0.14 },
-  { label: 'Gallery', href: '#gallery', section: 'gallery', journey: 0.3 },
-  { label: 'Keywords', href: '#keywords', section: 'keywords', journey: 0.42 },
-  { label: 'Sources', href: '#sources', section: 'sources', journey: 0.86 },
+  { label: 'Story', href: '#chapter-water', section: 'story', journey: 0.06 },
+  { label: 'Water', href: '#atlas', section: 'water', journey: 0.1 },
+  { label: 'Bridges', href: '#chapter-bridges', section: 'bridges', journey: 0.18 },
+  { label: 'Facts', href: '#facts', section: 'facts', journey: 0.3 },
+  { label: 'Gallery', href: '#gallery', section: 'gallery', journey: 0.42 },
+  { label: 'History', href: '#timeline', section: 'history', journey: 0.72 },
   { label: 'Team', href: '#team', section: 'team', journey: 0.94 },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('facts');
   const lenisRef = useRef(null);
 
   // 获取 Lenis 实例
@@ -26,24 +27,6 @@ export default function Navbar() {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 40);
-      
-      // 使用 IntersectionObserver 检测活动 Section
-      const scrollPos = window.scrollY;
-      let current = 'focus';
-      
-      // 从下往上检查，确保找到最接近视口中心的 section
-      for (const link of navLinks) {
-        const el = document.querySelector(link.href);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          // 如果 section 的顶部已经进入视口，或者当前在 section 范围内
-          if (rect.top <= window.innerHeight * 0.5) {
-            current = link.section;
-          }
-        }
-      }
-      
-      setActiveSection(current);
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -106,9 +89,9 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
+    <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`} aria-label="Main navigation">
       <div className="navbar__container">
-        <a href="#" className="navbar__brand">
+        <a href="#hero" className="navbar__brand">
           <img src={`${import.meta.env.BASE_URL}assets/wuzhen-icon.png`} alt="Wuzhen" className="navbar__brand-icon" />
           <span className="navbar__brand-text">WUZHEN</span>
         </a>
@@ -118,19 +101,28 @@ export default function Navbar() {
             <li key={link.href} className="navbar__link-item">
               <a
                 href={link.href}
-                className={`navbar__link ${activeSection === link.section ? 'navbar__link--active' : ''}`}
+                className="navbar__link"
                 onClick={(e) => {
                   e.preventDefault();
                   smoothScrollTo(link.href, e);
                 }}
               >
                 {link.label}
-                {activeSection === link.section && (
-                  <span className="navbar__link-indicator" />
-                )}
               </a>
             </li>
           ))}
+          <li className="navbar__link-item navbar__link-item--explore">
+            <a
+              href="#hero"
+              className="navbar__explore"
+              onClick={(e) => {
+                e.preventDefault();
+                smoothScrollTo('#hero', e);
+              }}
+            >
+              Explore <span aria-hidden="true">↓</span>
+            </a>
+          </li>
         </ul>
 
         <button

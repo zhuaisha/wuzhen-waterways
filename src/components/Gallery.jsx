@@ -118,7 +118,7 @@ export default function Gallery() {
           {images.map((img, i) => {
             const src = p(img.key);
             return (
-              <Reveal key={img.id} className={`gallery-card gallery-card--${img.id}`} delay={i * 100}>
+              <Reveal key={img.id} className={`gallery-card gallery-card--${img.id}`} delay={i * 50}>
                 <button
                   className="gallery-card__btn"
                   onClick={() => setSelected(img)}

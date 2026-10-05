@@ -106,12 +106,9 @@ function Chapter({ c, i }) {
 
     ctx = gsap.context(() => {
       // Image: scale 1.05 -> 1, blur in, travelling slowly through the frame.
-      // Blur was scrubbed across the whole chapter (top 82% -> center 65%), so a
-      // plate sitting ~1500px into a 1953px chapter stayed fully smudged at
-      // 6px while it was already well inside the viewport. Blur now plays once
-      // the plate is on screen and settles in 0.45s; the slow motion stays on
-      // scale and travel, which is what the "traveling through the frame" look
-      // actually comes from.
+      // Blur now plays once the plate is on screen and settles in 0.25s; the
+      // slow motion stays on scale and travel — that's what the "traveling
+      // through the frame" look actually comes from.
       const plate = root.querySelector('.chapter__plate');
       if (plate) {
         gsap.fromTo(
@@ -122,22 +119,22 @@ function Chapter({ c, i }) {
             ease: 'none',
             scrollTrigger: {
               trigger: root,
-              start: 'top 82%',
-              end: 'center 65%',
+              start: 'top 68%',
+              end: 'center 50%',
               scrub: true,
             },
           }
         );
         gsap.fromTo(
           plate,
-          { filter: 'blur(6px)' },
+          { filter: 'blur(0px)' },
           {
             filter: 'blur(0px)',
-            duration: 0.45,
+            duration: 0.25,
             ease: 'power2.out',
             scrollTrigger: {
               trigger: root,
-              start: 'top 74%',
+              start: 'top 58%',
               toggleActions: 'play none none reverse',
             },
           }
@@ -157,33 +154,33 @@ function Chapter({ c, i }) {
       // Copy: rises out of the page, line by line.
       gsap.fromTo(
         root.querySelectorAll('.chapter__lede-line'),
-        { opacity: 0, y: 34, filter: 'blur(4px)' },
+        { opacity: 0, y: 30, filter: 'blur(0px)' },
         {
           opacity: 1,
           y: 0,
           filter: 'blur(0px)',
-          duration: 0.5,
-          stagger: 0.1,
+          duration: 0.32,
+          stagger: 0.04,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: root,
-            start: 'top 60%',
+            start: 'top 46%',
             toggleActions: 'play none none reverse',
           },
         }
       );
       gsap.fromTo(
         root.querySelectorAll('.chapter__rise'),
-        { opacity: 0, y: 26 },
+        { opacity: 0, y: 22 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.75,
-          stagger: 0.12,
+          duration: 0.42,
+          stagger: 0.05,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: root,
-            start: 'top 55%',
+            start: 'top 44%',
             toggleActions: 'play none none reverse',
           },
         }
@@ -345,7 +342,7 @@ function Outro({ c }) {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         root.querySelectorAll('.outro__rise'),
-        { opacity: 0, y: 30, filter: 'blur(5px)' },
+        { opacity: 0, y: 30, filter: 'blur(0px)' },
         {
           opacity: 1,
           y: 0,

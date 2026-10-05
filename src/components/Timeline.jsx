@@ -32,7 +32,7 @@ export default function Timeline() {
             </div>
           </div>
 
-          <Reveal className="timeline-side timeline-side--present" delay={150}>
+          <Reveal className="timeline-side timeline-side--present" delay={80}>
             <div className="timeline-side__label">PRESENT</div>
             <h3 className="timeline-side__title">现在</h3>
             <ul className="timeline-side__list">

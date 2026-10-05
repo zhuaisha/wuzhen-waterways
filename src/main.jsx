@@ -11,8 +11,10 @@ import './styles/team.css';
 gsap.registerPlugin(ScrollTrigger);
 
 // Lenis with GSAP ticker sync
+// 保持 smoothWheel 开启给滚动一些流畅感，但 lerp 调到 0.4 让滚动跟手不拖尾。
 const lenis = new Lenis({
-  duration: 1.0,
+  duration: 0.5,
+  lerp: 0.4,
   easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   smoothWheel: true,
   wheelMultiplier: 1,

@@ -40,9 +40,20 @@ export default function CountUp({ to = 0, duration = 1.6, suffix = '', className
   );
 
   return (
-    <span ref={ref} className={className}>
-      {val.toLocaleString('en-US')}
-      {suffix}
+    <span
+      ref={ref}
+      className={className}
+      style={{ position: 'relative', display: 'inline-block', whiteSpace: 'nowrap' }}
+    >
+      {/* 占位符：用最终值撑起容器宽度，避免 9,999→10,000 时宽度跳变把整块推抖 */}
+      <span aria-hidden="true" style={{ visibility: 'hidden' }}>
+        {to.toLocaleString('en-US')}
+        {suffix}
+      </span>
+      <span style={{ position: 'absolute', top: 0, left: 0 }}>
+        {val.toLocaleString('en-US')}
+        {suffix}
+      </span>
     </span>
   );
 }

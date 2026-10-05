@@ -4,9 +4,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const BASE = import.meta.env.BASE_URL;
 const IMG = {
-  // The original opening plate - bright, large, and unmistakably Wuzhen.
+  // The original opening plate — bright, large, unmistakably Wuzhen.
   hero: `${BASE}images/hero_wuzhen-1920.webp`,
   heroFallback: `${BASE}images/hero_wuzhen-1920-jpg.jpg`,
+  // Original cinematic overlay — the night layer that gives the plate depth.
   night: `${BASE}images/night-webp.webp`,
   nightFallback: `${BASE}images/night-jpg.jpg`,
 };
@@ -22,8 +23,8 @@ function preload(src) {
 }
 
 /* Same, but never blocks the reveal past `ms` — a slow network must not leave
-   the hero sitting blurred for seconds. */
-function preloadFast(src, ms = 900) {
+   the hero sitting dark for seconds. */
+function preloadFast(src, ms = 150) {
   return Promise.race([
     preload(src),
     new Promise((res) => setTimeout(() => res(false), ms)),
@@ -38,10 +39,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
   const rootRef = useRef(null);
-  const bgRef = useRef(null);      // layer 1 — deep blue background
-  const plateRef = useRef(null);    // layer 2 — the photographic plate
-  const frameRef = useRef(null);    // layer 3 — scrim / grain / edge
-  const copyRef = useRef(null);     // layer 3 — the type
+  const bgRef = useRef(null);      // layer 1 — deep blue ground
+  const plateRef = useRef(null);   // layer 2 — the photographic plate
+  const frameRef = useRef(null);   // layer 3a — scrim / grain / edge
+  const copyRef = useRef(null);    // layer 3b — the type
   const titleRef = useRef(null);
   const [ready, setReady] = useState(false);
 
@@ -53,60 +54,62 @@ export default function Hero() {
     let ctx = null;
 
     const finish = () => {
-      // Curtain call: the plate emerges from darkness and blur. Kept short and
-      // tightly staggered so the frame reads as sharp almost immediately.
+      // Curtain call: the plate emerges from darkness and blur — short, one cut.
       if (plateRef.current) {
         gsap.to(plateRef.current, {
           opacity: 1,
           filter: 'blur(0px)',
           scale: 1,
-          duration: 0.7,
+          duration: 0.55,
           ease: 'power3.out',
         });
       }
       gsap.fromTo(
         titleRef.current,
-        { opacity: 0, scale: 1.05, filter: 'blur(5px)' },
+        { opacity: 0, y: 18 },
         {
           opacity: 1,
-          scale: 1,
-          filter: 'blur(0px)',
-          duration: 0.7,
-          delay: 0.15,
+          y: 0,
+          duration: 0.5,
+          delay: 0.12,
           ease: 'power3.out',
         }
       );
       gsap.fromTo(
-        copyRef.current,
-        { opacity: 0, y: 26 },
-        { opacity: 1, y: 0, duration: 0.7, delay: 0.35, ease: 'power3.out' }
-      );
-      gsap.fromTo(
-        root.querySelectorAll('.hero__chrome-in'),
-        { opacity: 0, y: 12 },
-        { opacity: 1, y: 0, duration: 0.6, delay: 0.55, stagger: 0.07, ease: 'power3.out' }
+        copyRef.current.querySelectorAll('.hero__chrome-in'),
+        { opacity: 0, y: 14 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.45,
+          delay: 0.22,
+          stagger: 0.06,
+          ease: 'power3.out',
+        }
       );
       setReady(true);
     };
 
     if (prefersReduced()) {
       if (plateRef.current) gsap.set(plateRef.current, { opacity: 1, filter: 'blur(0px)', scale: 1 });
-      gsap.set(titleRef.current, { opacity: 1, scale: 1, filter: 'blur(0px)' });
-      gsap.set(copyRef.current, { opacity: 1, y: 0 });
-      gsap.set(root.querySelectorAll('.hero__chrome-in'), { opacity: 1, y: 0 });
+      gsap.set(titleRef.current, { opacity: 1, y: 0 });
+      gsap.set(copyRef.current.querySelectorAll('.hero__chrome-in'), { opacity: 1, y: 0 });
       setReady(true);
       return;
     }
 
-    // Wait for the plate so the reveal reads as an intentional cut, not a lag —
-    // but never longer than the timeout, so a slow network can't hold the screen
-    // blurred indefinitely.
     Promise.all([preloadFast(IMG.night), preloadFast(IMG.hero)])
       .then(() => {
         if (!live) return;
         ctx = gsap.context(() => {
-          // Three-layer parallax, moving in the SAME direction at different speeds
-          // so the eye reads depth: background fastest, image mid, type slowest.
+          /* ---- Original three-layer parallax + Apple scroll spec ----
+             Layers move in the SAME direction at different speeds so the eye
+             reads depth: background fastest, photo mid, type slowest.
+             Apple type spec on top:
+               image scale 1.06 → 1.00, brightness 0.94 → 1
+               title opacity 1 → 0, y 0 → -60px
+               sub/cn fade slightly later
+             The photo feels "opened slowly", not "the page is flying".   */
           gsap.to(bgRef.current, {
             yPercent: -22,
             ease: 'none',
@@ -137,14 +140,44 @@ export default function Hero() {
               scrub: true,
             },
           });
-          gsap.to(copyRef.current, {
-            yPercent: 9,
-            opacity: 0.35,
+          // The photo gently settles from 1.06 → 1.00 and brightens 0.94 → 1.
+          const photo = plateRef.current && plateRef.current.querySelector('.hero__img--original');
+          if (photo) {
+            gsap.fromTo(
+              photo,
+              { scale: 1.06, filter: 'saturate(0.92) contrast(1.02) brightness(0.94)' },
+              {
+                scale: 1,
+                filter: 'saturate(0.96) contrast(1.02) brightness(1)',
+                ease: 'none',
+                scrollTrigger: {
+                  trigger: root,
+                  start: 'top top',
+                  end: 'bottom top',
+                  scrub: true,
+                },
+              }
+            );
+          }
+          gsap.to(titleRef.current, {
+            y: -60,
+            opacity: 0,
             ease: 'none',
             scrollTrigger: {
               trigger: root,
               start: 'top top',
-              end: '55% top',
+              end: '30% top',
+              scrub: true,
+            },
+          });
+          gsap.to(copyRef.current, {
+            y: -34,
+            opacity: 0,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: root,
+              start: 'top top',
+              end: '42% top',
               scrub: true,
             },
           });
@@ -160,16 +193,16 @@ export default function Hero() {
   }, []);
 
   return (
-    <header className="hero" ref={rootRef} id="top">
+    <header className="hero" ref={rootRef} id="hero">
       {/* layer 1 — the deep blue ground */}
       <div className="hero__bg" ref={bgRef} aria-hidden="true" />
 
-      {/* layer 2 — the photographic plate */}
+      {/* layer 2 — the photographic plate (hero photo + cinematic night overlay) */}
       <div className="hero__plate" ref={plateRef} aria-hidden="true">
         <img
           className="hero__img hero__img--original"
           src={IMG.hero}
-          alt=""
+          alt="Wuzhen water town at dusk — stone bridges spanning a broad canal, stilted houses with white walls and dark tile roofs, boats moored along the waterway"
           fetchPriority="high"
           onError={(e) => {
             if (!e.currentTarget.dataset.fallback) {
@@ -209,21 +242,11 @@ export default function Hero() {
 
       {/* layer 3b — the type */}
       <div className="hero__copy" ref={copyRef}>
-        <div className="hero__eyebrow hero__chrome-in">
-          <span className="hero__dot" />
-          <span>WUZHEN · ZHEJIANG · 30°42′N 120°26′E</span>
-        </div>
-
         <h1 className="hero__title" ref={titleRef}>
           WUZHEN
         </h1>
-        <p className="hero__sub hero__chrome-in">WATERWAYS &amp; BRIDGES</p>
-        <p className="hero__tag hero__chrome-in">A DIGITAL JOURNEY THROUGH WUZHEN</p>
-      </div>
-
-      <div className="hero__meta">
-        <span className="hero__chrome-in">CHAPTERS 08</span>
-        <span className="hero__chrome-in">2026</span>
+        <p className="hero__sub hero__chrome-in">Waterways &amp; Bridges</p>
+        <p className="hero__tag hero__chrome-in">水乡乌镇 · 水，是这座古镇的主线</p>
       </div>
 
       <a
@@ -235,14 +258,14 @@ export default function Hero() {
           const t = document.querySelector('#chapter-water');
           if (!t) return;
           if (window.__lenis) {
-            window.__lenis.scrollTo(t, { duration: 1.15, offset: -40 });
+            window.__lenis.scrollTo(t, { duration: 0.45, offset: -40 });
           } else {
             t.scrollIntoView({ behavior: 'smooth' });
           }
         }}
       >
-        <span className="hero__scroll-text">SCROLL TO EXPLORE</span>
-        <span className="hero__scroll-line" />
+        <span className="hero__scroll-text">Scroll to explore</span>
+        <span className="hero__scroll-line" aria-hidden="true" />
       </a>
     </header>
   );

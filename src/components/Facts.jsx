@@ -17,7 +17,7 @@ export default function Facts() {
             <p className="fact-card__summary">Water divides the town into zones, and the town is also connected by water.</p>
           </Reveal>
 
-          <Reveal className="fact-card fact-card--big" delay={100}>
+          <Reveal className="fact-card fact-card--big" delay={40}>
             <div className="fact-card__tag">Fact 02</div>
             <div className="fact-card__big-num">
               <CountUp to={72} className="fact-card__count" />
@@ -48,7 +48,7 @@ export default function Facts() {
             <p className="fact-card__summary">Bridges connect the banks, making water accessible to everyone.</p>
           </Reveal>
 
-          <Reveal className="fact-card" delay={200}>
+          <Reveal className="fact-card" delay={80}>
             <div className="fact-card__tag">Fact 03</div>
             <h3 className="fact-card__en">Water &amp; Everyday Life</h3>
             <p className="fact-card__en">

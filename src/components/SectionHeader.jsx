@@ -24,13 +24,13 @@ export default function SectionHeader({ number, en, cn, dark = false, week }) {
       // Number — blur-focus from the left
       gsap.fromTo(
         el.querySelector('.section-header__num'),
-        { opacity: 0, x: -24, filter: 'blur(8px)' },
+        { opacity: 0, x: -24, filter: 'blur(0px)' },
         {
           opacity: 1, x: 0, filter: 'blur(0px)',
-          duration: 0.7, ease: 'power3.out',
+          duration: 0.5, ease: 'power3.out',
           scrollTrigger: {
             trigger: el,
-            start: 'top 85%',
+            start: 'top 78%',
             toggleActions: 'play none none reverse',
           },
         }
@@ -41,10 +41,10 @@ export default function SectionHeader({ number, en, cn, dark = false, week }) {
         el.querySelector('.section-header__slash'),
         { opacity: 0 },
         {
-          opacity: 1, duration: 0.5, delay: 0.25, ease: 'power2.out',
+          opacity: 1, duration: 0.35, delay: 0.12, ease: 'power2.out',
           scrollTrigger: {
             trigger: el,
-            start: 'top 85%',
+            start: 'top 78%',
             toggleActions: 'play none none reverse',
           },
         }
@@ -53,13 +53,13 @@ export default function SectionHeader({ number, en, cn, dark = false, week }) {
       // English title — slide up with blur-focus
       gsap.fromTo(
         el.querySelector('.section-header__label > span:nth-child(3)'),
-        { opacity: 0, y: 14, filter: 'blur(6px)' },
+        { opacity: 0, y: 14, filter: 'blur(0px)' },
         {
           opacity: 1, y: 0, filter: 'blur(0px)',
-          duration: 0.7, delay: 0.15, ease: 'power3.out',
+          duration: 0.5, delay: 0.08, ease: 'power3.out',
           scrollTrigger: {
             trigger: el,
-            start: 'top 85%',
+            start: 'top 78%',
             toggleActions: 'play none none reverse',
           },
         }
@@ -72,10 +72,10 @@ export default function SectionHeader({ number, en, cn, dark = false, week }) {
           weekEl,
           { opacity: 0 },
           {
-            opacity: 1, duration: 0.5, delay: 0.4, ease: 'power2.out',
+            opacity: 1, duration: 0.35, delay: 0.2, ease: 'power2.out',
             scrollTrigger: {
               trigger: el,
-              start: 'top 85%',
+              start: 'top 78%',
               toggleActions: 'play none none reverse',
             },
           }
@@ -87,13 +87,13 @@ export default function SectionHeader({ number, en, cn, dark = false, week }) {
       if (cnEl) {
         gsap.fromTo(
           cnEl,
-          { opacity: 0, y: 18, filter: 'blur(8px)' },
+          { opacity: 0, y: 18, filter: 'blur(0px)' },
           {
             opacity: 1, y: 0, filter: 'blur(0px)',
-            duration: 0.8, delay: 0.3, ease: 'power3.out',
+            duration: 0.55, delay: 0.15, ease: 'power3.out',
             scrollTrigger: {
               trigger: el,
-              start: 'top 85%',
+              start: 'top 78%',
               toggleActions: 'play none none reverse',
             },
           }

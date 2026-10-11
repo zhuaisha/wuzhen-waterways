@@ -1,0 +1,318 @@
+/* ================================================================== */
+/* LanguageToggle — quiet two-option EN | 中文 switch.                 */
+/* + AudioButton — compact speech control (icon + state label).        */
+/* ================================================================== */
+
+/* ---------------- LangToggle ---------------- */
+/* A whisper-quiet two-option switch at the far right of the nav.
+   Text-only, no flags, no glow. Active option reads full strength;
+   inactive reads at 45% opacity with a subtle tracking shift.        */
+
+/* Navbar controls group — far-right language + menu toggle */
+.navbar__controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Keep the toggle at a natural size next to the controls */
+.navbar__controls .navbar__toggle {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* On desktop the toggle is meaningless (links are already inline) — hide it.
+   Without this it re-appears on every viewport and does nothing when tapped. */
+@media (min-width: 641px) {
+  .navbar__toggle { display: none !important; }
+}
+
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: transparent;
+  transition: background 0.25s ease;
+  flex-shrink: 0;
+}
+
+/* Base palette = the SCROLLED navbar, whose background is a light
+   translucent grey. Text has to be dark here, otherwise the toggle reads
+   as white-on-white and disappears (the bug this rule fixes).            */
+.lang-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.lang-toggle__opt {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.42);
+  padding: 4px 6px;
+  border-radius: 999px;
+  line-height: 1.2;
+  transition: color 0.25s ease, background 0.25s ease;
+  min-width: 32px;
+  text-align: center;
+}
+
+.lang-toggle__opt--zh {
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+  min-width: 36px;
+}
+
+/* Active language — brand blue, unmistakable on the light bar */
+.lang-toggle__opt.is-active {
+  color: var(--accent, #0071e3);
+  background: rgba(0, 113, 227, 0.10);
+  font-weight: 600;
+}
+
+.lang-toggle__opt:not(.is-active):hover {
+  color: rgba(0, 0, 0, 0.75);
+}
+
+/* Focus ring — keyboard users */
+.lang-toggle__opt:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.4);
+  outline-offset: 2px;
+}
+
+.lang-toggle__divider {
+  width: 1px;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.18);
+  flex-shrink: 0;
+}
+
+/* Un-scrolled: the navbar sits over the dark Hero photo → light text. */
+.navbar:not(.navbar--scrolled) .lang-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.navbar:not(.navbar--scrolled) .lang-toggle__opt {
+  color: rgba(255, 255, 255, 0.62);
+}
+.navbar:not(.navbar--scrolled) .lang-toggle__opt.is-active {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.18);
+}
+.navbar:not(.navbar--scrolled) .lang-toggle__opt:not(.is-active):hover {
+  color: rgba(255, 255, 255, 0.92);
+}
+.navbar:not(.navbar--scrolled) .lang-toggle__opt:focus-visible {
+  outline-color: rgba(255, 255, 255, 0.5);
+}
+.navbar:not(.navbar--scrolled) .lang-toggle__divider {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* Compact variant used in the mobile menu sheet */
+.lang-toggle--compact .lang-toggle__opt {
+  font-size: 10px;
+  min-width: 28px;
+}
+
+/* ---------------- AudioButton ---------------- */
+/* Compact speech control: 18px icon inside a 44px tap target,
+   transparent background, matching the module's text color.        */
+
+.audio-btn {
+  --icon-color: var(--ink, #f5f2ee);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--icon-color);
+  padding: 4px 6px;
+  border-radius: 8px;
+  position: relative;
+  min-width: 44px;
+  min-height: 44px;
+  transition: background 0.25s ease;
+}
+
+/* Default tone — dark icon for the light (white) chapter copy areas */
+.audio-btn {
+  --icon-color: rgba(20, 20, 20, 0.85);
+}
+
+/* Invisible hit-bleed that widens the tap target without visual noise */
+.audio-btn__hit {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.audio-btn--dark {
+  --icon-color: rgba(18, 18, 18, 0.92);
+}
+
+.audio-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.audio-btn--dark:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.audio-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 2px;
+}
+
+.audio-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.25s ease;
+  opacity: 1;
+}
+
+.audio-btn:hover .audio-btn__icon {
+  transform: scale(1.04);
+  opacity: 1;
+}
+
+/* Playing — icon brightens, hairline pulse to say "alive" */
+.audio-btn.is-playing .audio-btn__icon {
+  opacity: 1;
+  animation: audio-btn-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes audio-btn-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+/* "Listen" / "播放" label next to the icon */
+.audio-btn__label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--icon-color);
+  opacity: 0.85;
+  white-space: nowrap;
+  transition: opacity 0.25s ease;
+}
+
+.audio-btn:hover .audio-btn__label {
+  opacity: 1;
+}
+
+/* Error: label is replaced by the unavailable hint */
+.audio-btn.is-error .audio-btn__label {
+  opacity: 0;
+}
+
+/* "Playing" / "Paused" state label — tiny, quiet */
+.audio-btn__state {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--icon-color);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+}
+
+.audio-btn.is-playing .audio-btn__state,
+.audio-btn.is-error .audio-btn__state {
+  opacity: 0.55;
+}
+
+.audio-btn.is-error {
+  cursor: default;
+}
+
+.audio-btn.is-error .audio-btn__icon {
+  opacity: 0.4;
+}
+
+/* Audio player row in Story chapters — the player is a full-width card,
+   so the row just provides margin rhythm above the caption. */
+.chapter__audio-row {
+  margin: 4px 0 18px;
+}
+
+@media (max-width: 640px) {
+  .chapter__audio-row {
+    margin: 4px 0 14px;
+  }
+}
+
+/* ================================================================
+   PHONE TOUCH TARGETS  (<=640px)
+   The navbar controls and the open menu rows were sized for a mouse;
+   on a phone they need thumb-sized hit areas. These sit at the end of
+   the LAST-loaded stylesheet so they win over the base rules above —
+   including the higher-specificity `.navbar__controls .navbar__toggle`
+   size rule that previously held the hamburger at 36x36.
+   The desktop bar is untouched.
+   ================================================================ */
+@media (max-width: 640px) {
+  .navbar__brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* hamburger — was 36x36 */
+  .navbar__controls .navbar__toggle {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* EN / 中文 — was 32x21 / 36x22 */
+  .lang-toggle { padding: 2px 6px; }
+  .lang-toggle__opt {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 46px;
+    min-height: 40px;
+    padding: 9px 10px;
+  }
+  .lang-toggle__opt--zh { min-width: 52px; }
+
+  /* menu rows: the whole row is tappable, not just the text */
+  .navbar__links a {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    padding: 14px 0;
+    line-height: 20px;
+  }
+  .navbar__link-item,
+  .navbar__link-item--explore {
+    width: 100%;
+  }
+}

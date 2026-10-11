@@ -4,6 +4,9 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionHeader from './SectionHeader.jsx';
 import { GROUP_PHOTO, GROUP_HEADCOUNT, MEMBERS } from '../data/team.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
+import { AudioPlayer } from './AudioPlayer.jsx';
+import { preloadDurations } from '../lib/audioDurations.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -64,6 +67,8 @@ function Picture({ src, alt, className, sizes, srcSet, width, height, ...rest })
 }
 
 export default function Team() {
+  const { t } = useLang();
+  const team = t('team');
   const rootRef = useRef(null);
   const panelRef = useRef(null);
   const photoWrapRef = useRef(null);
@@ -71,6 +76,13 @@ export default function Team() {
   const [hovered, setHovered] = useState(null);
   const [groupReady, setGroupReady] = useState(false);
   const [avReady, setAvReady] = useState(() => new Set());
+
+  /* Warm the duration cache so the member panel can show the real audio
+     length the moment it opens (metadata only — the audio itself is not
+     downloaded). */
+  useEffect(() => {
+    preloadDurations(MEMBERS.map((m) => m.audio).filter(Boolean));
+  }, []);
 
   /* Entrance: header -> lede -> group plate -> 01..06. */
   useEffect(() => {
@@ -189,21 +201,24 @@ export default function Team() {
 
   const closePanel = () => setSelected(null);
   const member = selected == null ? null : MEMBERS[selected];
+  const memberRole = member ? team.roles[member.roleKey] : '';
+  const memberContribution = member ? team.contributions[member.roleKey] : '';
   const pad2 = (n) => String(n).padStart(2, '0');
 
   return (
     <section id="team" className="team" ref={rootRef}>
       <div className="team__chrome" aria-hidden="true">
-        <span>WUZHEN / 2026</span>
-        <span>{pad2(GROUP_HEADCOUNT)} MEMBERS</span>
+        <span>{team.chrome1}</span>
+        <span>{team.chrome2(GROUP_HEADCOUNT)}</span>
       </div>
 
       <div className="container team__grid">
-        <SectionHeader number="07" en="OUR TEAM" />
+        <SectionHeader number="01" en="MEET OUR TEAM" cn={team.headerCn} />
         <p className="team__lede">
-          Six people. One journey through Wuzhen.
-          <span>六个人，一段乌镇。</span>
+          {team.lede1}
+          <span>{team.lede2}</span>
         </p>
+        {team.intro && <p className="team__intro">{team.intro}</p>}
 
         {/* the group plate — the team as a single image */}
         <figure className="team__group" aria-label="Group photograph">
@@ -224,7 +239,7 @@ export default function Team() {
           </div>
           <div className="team__group-veil" aria-hidden="true" />
           <figcaption className="team__group-cap">
-            <span>GROUP PHOTO</span>
+            <span>{team.groupCap}</span>
             <span className="team__group-cap-num">
               {pad2(GROUP_HEADCOUNT)}
               <small>/ {pad2(GROUP_HEADCOUNT)}</small>
@@ -295,7 +310,7 @@ export default function Team() {
               type="button"
               className="team-panel__close"
               onClick={closePanel}
-              aria-label="Close member details"
+              aria-label={team.panel.close}
               tabIndex={selected != null ? 0 : -1}
             >
               <svg
@@ -325,27 +340,46 @@ export default function Team() {
                   />
                 </div>
                 <div className="team-panel__meta">
-                  <p className="team-panel__index">
-                    MEMBER <b>{member.n}</b>
-                    <span>{GROUP_HEADCOUNT} MEMBERS</span>
-                  </p>
                   <h3 id={member ? `team-panel-name-${member.n}` : undefined}>
                     <span className="team-panel__name-cn">{member.name}</span>
                     <span className="team-panel__name-pinyin">{member.pinyin}</span>
                   </h3>
+                  {member.audio && (
+                    <AudioPlayer key={member.n} src={member.audio} label={team.panel.voice} subtitle={`${member.name} ${member.pinyin}`} />
+                  )}
                   <dl>
                     <div>
-                      <dt>ROLE</dt>
-                      <dd>{member.role}</dd>
+                      <dt>{team.panel.role}</dt>
+                      <dd>{memberRole}</dd>
                     </div>
                     <div>
-                      <dt>CONTRIBUTION</dt>
-                      <dd>{member.contribution}</dd>
+                      <dt>{team.panel.contribution}</dt>
+                      <dd>{memberContribution}</dd>
                     </div>
                   </dl>
                 </div>
+                <div className="team-panel__nav">
+                  <button
+                    type="button"
+                    className="team-panel__nav-btn"
+                    onClick={() => setSelected((s) => (s - 1 + MEMBERS.length) % MEMBERS.length)}
+                    aria-label={team.panel.prev}
+                  >
+                    <span aria-hidden="true">←</span>
+                    <span>{team.panel.prev}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="team-panel__nav-btn"
+                    onClick={() => setSelected((s) => (s + 1) % MEMBERS.length)}
+                    aria-label={team.panel.next}
+                  >
+                    <span>{team.panel.next}</span>
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </div>
                 <div className="team-panel__foot" aria-hidden="true">
-                  <span>WUZHEN / 2026</span>
+                  <span>{team.chrome1}</span>
                   <span>
                     {member.n} / {pad2(GROUP_HEADCOUNT)}
                   </span>

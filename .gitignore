@@ -10,6 +10,20 @@ node_modules/
 /dist
 /build
 
+# Build output for the double-click / portable variant.
+# Rebuild with `npm run build:local`. Contains an inlined copy of the whole
+# bundle plus a duplicate of the video, so it must never be committed.
+/dist-local
+/dist-single
+
+# Local backup snapshots of the project (not part of the site).
+/.backups/
+
+# Large local media masters. The web delivery copy that the site actually
+# loads lives in public/videos/ and IS committed — keep it under 100 MB,
+# which is GitHub's hard per-file limit.
+/media-masters/
+
 # Local dev artifacts — raw downloads and Python caches are not for the site.
 # The processed AVIF/WebP/JPG assets in public/images/ are tracked on purpose.
 /tools/raw/
@@ -31,6 +45,8 @@ node_modules/
 /tools/pptx_render/
 /tools/*.pptx
 /tools/*.bak
+# transient render output from the PPTX build (regenerable)
+/tools/_pptx_*/
 
 # Misc
 .DS_Store

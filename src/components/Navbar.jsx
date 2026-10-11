@@ -1,17 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { assetUrl } from '../lib/assets.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
+import LanguageToggle from './LanguageToggle.jsx';
 
 const navLinks = [
-  { label: 'Story', href: '#chapter-water', section: 'story', journey: 0.06 },
-  { label: 'Water', href: '#atlas', section: 'water', journey: 0.1 },
-  { label: 'Bridges', href: '#chapter-bridges', section: 'bridges', journey: 0.18 },
-  { label: 'Facts', href: '#facts', section: 'facts', journey: 0.3 },
-  { label: 'Gallery', href: '#gallery', section: 'gallery', journey: 0.42 },
-  { label: 'History', href: '#timeline', section: 'history', journey: 0.72 },
-  { label: 'Team', href: '#team', section: 'team', journey: 0.94 },
+  { key: 'team', href: '#team', section: 'team', journey: 0.06 },
+  { key: 'story', href: '#chapter-water', section: 'story', journey: 0.16 },
+  { key: 'water', href: '#atlas', section: 'water', journey: 0.3 },
+  { key: 'bridges', href: '#chapter-bridges', section: 'bridges', journey: 0.42 },
+  { key: 'facts', href: '#facts', section: 'facts', journey: 0.52 },
+  { key: 'gallery', href: '#gallery', section: 'gallery', journey: 0.64 },
+  { key: 'history', href: '#timeline', section: 'history', journey: 0.84 },
 ];
 
 export default function Navbar() {
+  const { t } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const lenisRef = useRef(null);
@@ -92,13 +96,13 @@ export default function Navbar() {
     <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`} aria-label="Main navigation">
       <div className="navbar__container">
         <a href="#hero" className="navbar__brand">
-          <img src={`${import.meta.env.BASE_URL}assets/wuzhen-icon.png`} alt="Wuzhen" className="navbar__brand-icon" />
+          <img src={assetUrl(`${import.meta.env.BASE_URL}assets/wuzhen-icon.png`)} alt="Wuzhen" className="navbar__brand-icon" />
           <span className="navbar__brand-text">WUZHEN</span>
         </a>
 
         <ul className={`navbar__links ${open ? 'navbar__links--open' : ''}`}>
           {navLinks.map((link) => (
-            <li key={link.href} className="navbar__link-item">
+            <li key={link.key} className="navbar__link-item">
               <a
                 href={link.href}
                 className="navbar__link"
@@ -107,7 +111,7 @@ export default function Navbar() {
                   smoothScrollTo(link.href, e);
                 }}
               >
-                {link.label}
+                {t(`nav.${link.key}`)}
               </a>
             </li>
           ))}
@@ -120,21 +124,25 @@ export default function Navbar() {
                 smoothScrollTo('#hero', e);
               }}
             >
-              Explore <span aria-hidden="true">↓</span>
+              {t('nav.explore')} <span aria-hidden="true">↓</span>
             </a>
           </li>
         </ul>
 
-        <button
-          className={`navbar__toggle ${open ? 'navbar__toggle--active' : ''}`}
-          aria-label="Toggle menu"
-          aria-expanded={open}
-          onClick={() => setOpen(!open)}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+        {/* Far-right controls: language switch + mobile menu toggle */}
+        <div className="navbar__controls">
+          <LanguageToggle />
+          <button
+            className={`navbar__toggle ${open ? 'navbar__toggle--active' : ''}`}
+            aria-label={t('nav.menu')}
+            aria-expanded={open}
+            onClick={() => setOpen(!open)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        </div>
       </div>
     </nav>
   );

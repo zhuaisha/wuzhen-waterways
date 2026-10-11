@@ -7,6 +7,9 @@ import App from './App.jsx';
 import './styles/global.css';
 import './styles/cinematic.css';
 import './styles/team.css';
+import './styles/culture-film.css';
+import './styles/our-video.css';
+import './styles/i18n.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -40,5 +43,32 @@ lenis.on('scroll', ScrollTrigger.update);
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
+
+// Remove the portable-build loading screen once React has rendered.
+// The loader div is injected by scripts/inject-embedded-assets.js;
+// in normal HTTP builds it doesn't exist, so this is a no-op there.
+requestAnimationFrame(() => {
+  const loader = document.getElementById('__loader__');
+  if (loader) {
+    // trigger the CSS transition, then remove from DOM
+    loader.style.opacity = '0';
+    loader.style.visibility = 'hidden';
+    setTimeout(() => loader.remove(), 600);
+  }
+});
+
+// Expose a refresh hook for the language switcher.
+// After EN↔ZH the DOM reflows (CN lines are shorter or longer than EN, so
+// every section's offset changes by tens to hundreds of pixels). ScrollTrigger
+// caches those offsets at register time and won't know about the change; Lenis
+// caches its scrollLength the same way. Without a refresh, the user can't
+// scroll past the switch point — the sections are still in the DOM but the
+// virtual scroll never reaches them. This is the bug behind "below Atlas is
+// blank after switching to Chinese".
+window.__refreshScroll = () => {
+  lenis.resize();
+  lenis.scrollTo(window.scrollY, { immediate: true });
+  ScrollTrigger.refresh();
+};

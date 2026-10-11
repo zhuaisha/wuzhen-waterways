@@ -1,26 +1,31 @@
+import { useLang } from '../i18n/LanguageContext.jsx';
+
 export default function Footer() {
+  const { t } = useLang();
+  const f = t('footer');
+
   return (
     <footer className="footer">
       <div className="container">
         <div className="footer__content">
           <div className="footer__brand">
             <span className="footer__brand-main">WUZHEN</span>
-            <span className="footer__brand-sub">Waterways &amp; Bridges</span>
+            <span className="footer__brand-sub">{f.sub}</span>
           </div>
           <div className="footer__info">
-            <p>Grade 9 English Project · Week One</p>
-            <p>907班 · 90706</p>
-            <p>小组长：蒋盛熠</p>
+            <p>{f.line1}</p>
+            <p>{f.line2}</p>
+            <p>{f.line3}</p>
           </div>
         </div>
         <div className="footer__members">
-          <p className="footer__members-title">小组成员与分工</p>
+          <p className="footer__members-title">{f.membersTitle}</p>
           <p className="footer__members-text">
-            蒋盛熠（资料收集） · 汪瀚宇（图片整理） · 沈毅程（英文写作） · 鲁昂（网页设计） · 沈煜辰（内容校对） · 朱钟乐（项目协调）
+            {f.membersText}
           </p>
         </div>
         <div className="footer__bottom">
-          <p>© 2026 Wuzhen Waterways &amp; Bridges · Grade 9 English PBL Project</p>
+          <p>{f.bottom}</p>
         </div>
       </div>
     </footer>

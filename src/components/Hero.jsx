@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { assetUrl } from '../lib/assets.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
 
 const BASE = import.meta.env.BASE_URL;
 const IMG = {
   // The original opening plate — bright, large, unmistakably Wuzhen.
-  hero: `${BASE}images/hero_wuzhen-1920.webp`,
-  heroFallback: `${BASE}images/hero_wuzhen-1920-jpg.jpg`,
+  hero: assetUrl(`${BASE}images/hero_wuzhen-1920.webp`),
+  heroFallback: assetUrl(`${BASE}images/hero_wuzhen-1920-jpg.jpg`),
   // Original cinematic overlay — the night layer that gives the plate depth.
-  night: `${BASE}images/night-webp.webp`,
-  nightFallback: `${BASE}images/night-jpg.jpg`,
+  night: assetUrl(`${BASE}images/night-webp.webp`),
+  nightFallback: assetUrl(`${BASE}images/night-jpg.jpg`),
 };
 
 /* Preload the hero frame before the curtain rises so nothing pops in. */
@@ -38,6 +40,8 @@ const prefersReduced = () =>
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
+  const { t } = useLang();
+  const h = t('hero');
   const rootRef = useRef(null);
   const bgRef = useRef(null);      // layer 1 — deep blue ground
   const plateRef = useRef(null);   // layer 2 — the photographic plate
@@ -245,17 +249,36 @@ export default function Hero() {
         <h1 className="hero__title" ref={titleRef}>
           WUZHEN
         </h1>
-        <p className="hero__sub hero__chrome-in">Waterways &amp; Bridges</p>
-        <p className="hero__tag hero__chrome-in">水乡乌镇 · 水，是这座古镇的主线</p>
+        <p className="hero__sub hero__chrome-in">{h.sub}</p>
+        <p className="hero__tag hero__chrome-in">{h.tag}</p>
+        <a
+          href="#team"
+          className="hero__meet hero__chrome-in"
+          onClick={(e) => {
+            e.preventDefault();
+            const el = document.querySelector('#team');
+            if (!el) return;
+            if (window.__lenis) {
+              window.__lenis.scrollTo(el, { duration: 0.6, offset: -60 });
+            } else {
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }}
+        >
+          <span>{h.meetTeam}</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </a>
       </div>
 
       <a
-        href="#chapter-water"
+        href="#team"
         className={`hero__scroll ${ready ? 'is-ready' : ''}`}
-        aria-label="Scroll to explore"
+        aria-label={h.scroll}
         onClick={(e) => {
           e.preventDefault();
-          const t = document.querySelector('#chapter-water');
+          const t = document.querySelector('#team');
           if (!t) return;
           if (window.__lenis) {
             window.__lenis.scrollTo(t, { duration: 0.45, offset: -40 });
@@ -264,7 +287,7 @@ export default function Hero() {
           }
         }}
       >
-        <span className="hero__scroll-text">Scroll to explore</span>
+        <span className="hero__scroll-text">{h.scroll}</span>
         <span className="hero__scroll-line" aria-hidden="true" />
       </a>
     </header>

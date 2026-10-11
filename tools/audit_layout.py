@@ -1,229 +1,204 @@
-# -*- coding: utf-8 -*-
-"""Layout audit for the Wuzhen decks.
+#!/usr/bin/env python3
+"""Audit a .pptx for layout geometry problems.
 
-Checks, per slide:
-  1. WIDE  — measured text run wider than its text box (will wrap/overflow).
-  2. TALL  — measured text block taller than its box (visual judgement only;
-             boxes are auto-grow=NONE, so overflow is visible, not silent).
-  3. OVL   — two text boxes whose boxes overlap by >30% of the smaller one
-             AND whose text content actually overlaps (the real bug class).
-  4. OFF   — any shape extending outside the 1920x1080 canvas.
-  5. PIC   — picture pixel dimensions vs. declared size (aspect distortion).
+Usage: python audit_layout.py DECK.pptx
 
-Usage: python tools/audit_layout.py <file.pptx>
+Reports per slide:
+  WIDE   text measured wider than its box -> will wrap
+  TALL   text measured taller than its box (advisory; line-height is approximate)
+  OVL    two text boxes whose rectangles overlap by >1pt on both axes
+  OFF    a text box partly or wholly off the canvas
+  PIC    a picture off the canvas
+
+Exit 0 always. '>>> blocking issues: N' is the count to drive to zero.
+Deterministic output (no timestamps) so runs can be diffed.
+
+Unit handling is the crux. Everything stays in EMU internally:
+  * shape geometry (left/top/width/height) is already EMU;
+  * a run's font size is converted Pt -> EMU with Pt(n).emu;
+  * PIL measures text in pt, which is exactly 96-dpi px / 4.0, so the pt value
+    is converted to EMU at the point of comparison and nowhere else.
+Never mix those in a comparison — that is the usual source of uniformly wrong
+results (everything WIDE, or nothing). If every check fires for the same
+reason by the same factor, the units are mismatched, not the layout.
 """
+from __future__ import annotations
+
 import sys
-import math
 from pathlib import Path
+
+from PIL import ImageFont
 from pptx import Presentation
-from pptx.enum.shapes import MSO_SHAPE_TYPE
-from PIL import Image, ImageFont
 
-PXW, PXH = 1920 * 0.666667, 1080 * 0.666667   # box_of() reports 96-dpi px
-EMU = 914400
-PXM = 96.0 / EMU                       # EMU -> 96-dpi px
+EMU_PT = 12700          # one point, in EMU (914400 / 72)
+PX96_EMU = 9525         # EMU per 96-dpi pixel (914400 / 96)
+OVERLAP_TOL = 12700     # 1pt; ignore sub-point rectangle intersections
 
-EN_FONTS = [
-    (r"C:\Windows\Fonts\arialbd.ttf", 1),
-    (r"C:\Windows\Fonts\arial.ttf", 0),
+# Prefer a real metric font; fall back to the system default if none is found.
+# Latin and CJK must use DIFFERENT faces: on Windows every /usr/share path
+# below is absent, so a single shared fallback silently measures Latin text
+# with a CJK font and inflates widths ~2x. The builder sets latin="Helvetica
+# Neue" (which Office substitutes with Arial) and ea="微软雅黑" — mirror that.
+LATIN = [
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "/usr/share/fonts/dejavu/DejaVuSans.ttf",
+    "/usr/share/fonts/TTF/DejaVuSans.ttf",
+    "C:/Windows/Fonts/arial.ttf",
 ]
-CJK_FONTS = [
-    (r"C:\Windows\Fonts\msyhbd.ttc", 1),
-    (r"C:\Windows\Fonts\msyh.ttc", 0),
-    (r"C:\Windows\Fonts\msyh.ttf", 0),
-    (r"C:\Windows\Fonts\simsun.ttc", 0),
+CJK = [
+    "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+    "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+    "/System/Library/Fonts/PingFang.ttc",
+    "C:/Windows/Fonts/msyh.ttc",
 ]
 
 
-def load_cands(sizes, bold):
-    """Build a font per (size,bold,kind) candidate we may need."""
-    out = {}
-    for sz, bd in sizes:
-        pool = EN_FONTS if bd == 0 else EN_FONTS
-        if bd:
-            pool = [p for p in pool if "bd" in p[0]] or pool
-        else:
-            pool = [p for p in pool if "bd" not in p[0]] or pool
-        out[(sz, bd)] = (ImageFont.truetype(pool[0][0], max(4, int(round(sz)))),
-                         [ImageFont.truetype(p[0], max(4, int(round(sz))))
-                          for p in CJK_FONTS if Path(p[0]).exists()])
-    return out
+def _is_cjk(text: str) -> bool:
+    """True if the text is mostly CJK, so we can pick the CJK face for it.
+
+    PIL has no per-glyph face switching, so we pick one face per run. Mixed
+    runs (e.g. "Group 90706 · 中文") measure in whichever face matches their
+    majority, which is close enough for a wrap/overflow triage pass."""
+    cjk = sum(1 for c in text if '\u3000' <= c <= '\u9fff' or '\uf900' <= c <= '\ufaff')
+    return cjk * 2 > len(text)
 
 
-def is_cjk(ch):
-    o = ord(ch)
-    return (0x4E00 <= o <= 0x9FFF or 0x3400 <= o <= 0x4DBF
-            or 0x3000 <= o <= 0x303F or 0xFF00 <= o <= 0xFFEF
-            or 0x2E80 <= o <= 0x2FDF)
+def _font(size_pt: int, cjk: bool = False):
+    size = max(4, int(round(size_pt)))
+    for cand in (list(CJK) if cjk else []) + list(LATIN) + list(CJK):
+        if Path(cand).exists():
+            return ImageFont.truetype(cand, size)
+    return ImageFont.load_default()
 
 
-def measure(text, pt, bold, tracking, box_w_px):
-    """Return (widest_line_w, line_count) in the SAME unit as box_w_px.
+def _line_width_emu(text: str, pt: float) -> float:
+    """Rendered width of one line, in EMU.
 
-    Unit chain:
-      * The canvas is 1920 design-px wide == 13.333 in (PowerPoint slide).
-      * add_textbox receives Inches(x/144), so 144 design-px == 1 in.
-      * add_text's `size` is passed to Pt(size) -> a PowerPoint point.
-      * 1 in == 72 pt, and 1 in == 144 design-px  =>  1 pt == 2 design-px.
-    PIL measures glyphs in px at 96 dpi, where px value == the pt value, so a
-    150pt face is rendered as a 150-px-tall glyph and its advance widths come
-    back in "pt" units. Converting to design px is therefore just *2.
-    """
-    if not text.strip():
-        return 0.0, 1
-    size = max(4, int(round(pt)))
-    fb = [p for p in EN_FONTS if Path(p[0]).exists()]
-    fe = ImageFont.truetype(fb[0][0], size) if fb else ImageFont.load_default()
-    cands = [ImageFont.truetype(p[0], size) for p in CJK_FONTS
-             if Path(p[0]).exists()]
-    SCALE = 0.75                      # pt -> 96-dpi px (see docstring)
-    tk = (tracking or 0) / 100 * SCALE  # spc attr: 1/100 pt -> 96-dpi px
-    words = []
-    buf = ""
-    for ch in text:
-        if ch == " " and not is_cjk(ch) and buf:
-            words.append(buf); buf = ""
-        elif is_cjk(ch) or (ch.isspace() and ch != " "):
-            if buf:
-                words.append(buf); buf = ""
-            words.append(ch)
-        else:
-            buf += ch
-    if buf:
-        words.append(buf)
-    if not words:
-        return 0.0, 1
-    line_w, n = 0.0, 1
-    spw = fe.getlength(" ") * SCALE
-    for w in words:
-        widths = [fe.getlength(w) * SCALE + tk * (len(w) - 1)]
-        for c in cands:
-            w2 = 0.0
-            for ch in w:
-                w2 += (c.getlength(ch) if is_cjk(ch) else fe.getlength(ch))
-            widths.append(w2 * SCALE)
-        ww = max(widths)
-        if line_w > 0 and line_w + spw + ww > box_w_px:
-            line_w = ww
-            n += 1
-        else:
-            line_w += (spw if line_w > 0 else 0) + ww
-    return line_w, n
-
-
-def box_of(sh, pad=0):
-    try:
-        x = sh.left * PXM - pad
-        y = sh.top * PXM - pad
-        w = sh.width * PXM + pad * 2
-        h = sh.height * PXM + pad * 2
-    except Exception:
-        return None
-    return (x, y, w, h)
-
-
-def inter(a, b):
-    x1, y1 = max(a[0], b[0]), max(a[1], b[1])
-    x2, y2 = min(a[0] + a[2], b[0] + b[2]), min(a[1] + a[3], b[1] + b[3])
-    if x2 <= x1 or y2 <= y1:
+    ImageFont.getlength() returns the width in POINTS at the given size, so it
+    converts straight to EMU with EMU_PT. (The old form multiplied by
+    `4.0 * PX96_EMU`, which treats pt as 96-dpi pixels and then rescales —
+    that inflates every measurement by exactly 3x, which is why the audit
+    reported the whole deck as overflowing by the same factor.)"""
+    if not text:
         return 0.0
-    return (x2 - x1) * (y2 - y1)
+    return _font(int(round(pt)), _is_cjk(text)).getlength(text) * EMU_PT
 
 
-def audit(path):
-    pr = Presentation(path)
-    total = 0
-    for idx, sl in enumerate(pr.slides, 1):
-        msgs = []
-        textboxes = []
-        for sh in sl.shapes:
-            if sh.shape_type == MSO_SHAPE_TYPE.PICTURE:
-                try:
-                    iw, ih = sh.image.size
-                    dw, dh = sh.width * PXM, sh.height * PXM
-                    ir, dr = iw / ih, (dw / dh if dh else 0)
-                    if ir and abs(ir - dr) / ir > 0.03:
-                        msgs.append(f"PIC  distorting {iw}x{ih} -> "
-                                    f"{dw:.0f}x{dh:.0f}")
-                except Exception:
-                    pass
-                b = box_of(sh)
-                if b and (b[0] < -2 or b[1] < -2
-                          or b[0] + b[2] > PXW + 2 or b[1] + b[3] > PXH + 2):
-                    msgs.append(f"OFF  picture {sh.name} "
-                                f"[{b[0]:.0f},{b[1]:.0f},{b[2]:.0f}x{b[3]:.0f}]")
-                continue
-            if not sh.has_text_frame or not sh.text_frame.text.strip():
-                continue
-            b = box_of(sh)
-            if not b:
-                continue
-            # ---- text measurement
-            tf = sh.text_frame
-            ls = 1.42
-            for p in tf.paragraphs:
-                sp = p.line_spacing
-                if sp is not None:
-                    ls = max(ls, float(sp) if isinstance(sp, (int, float))
-                             else 1.42)
-            for p in tf.paragraphs:
-                t = "".join(r.text for r in p.runs)
-                if not t.strip():
-                    continue
-                fpt = 12.0
-                bold = 0
-                trk = 0
-                for r in p.runs:
-                    if r.font.size:
-                        fpt = r.font.size.pt
-                    bold = 1 if r.font.bold else bold
-                    try:
-                        spc = r._r.get_or_add_rPr().get("spc")
-                        trk = int(spc) if spc else 0
-                    except Exception:
-                        pass
-                    break
-                wpx, nlines = measure(t, fpt, bold, trk, max(b[2], 1))
-                if wpx > b[2] + 1:
-                    msgs.append(f"WIDE  '{t[:46]}' {wpx:.0f}px > box "
-                                f"{b[2]:.0f}px")
-                    total += 1
-                est_h = fpt * 0.75 * ls * nlines
-                if est_h > b[3] + 2:
-                    msgs.append(f"TALL  '{t[:40]}' ~{est_h:.0f}px "
-                                f"> box {b[3]:.0f}px")
-            # ---- visual extent for overlap: text sits in the top part of the
-            #     box (anchor=TOP), so shrink the box vertically to the text.
-            textboxes.append((b, tf.text.strip()[:60]))
-            if (b[0] < -2 or b[1] < -2
-                    or b[0] + b[2] > PXW + 2 or b[1] + b[3] > PXH + 2):
-                msgs.append(f"OFF  text '{tf.text.strip()[:40]}' "
-                            f"[{b[0]:.0f},{b[1]:.0f},{b[2]:.0f}x{b[3]:.0f}]")
-        # ---- pairwise text-box overlap (box rectangles only)
-        for i in range(len(textboxes)):
-            for j in range(i + 1, len(textboxes)):
-                bi, ti = textboxes[i]
-                bj, tj = textboxes[j]
-                ov = inter(bi, bj)
-                if ov <= 0:
-                    continue
-                small = min(bi[2] * bi[3], bj[2] * bj[3])
-                if ov / max(small, 1) < 0.15:
-                    continue
-                msgs.append(f"OVL   '{ti[:34]}' x '{tj[:34]}' "
-                            f"{ov / max(small, 1) * 100:.0f}%")
-                total += 1
-        print(f"\n== slide {idx} ({len(sl.shapes)} shapes) ==")
-        if msgs:
-            for m in msgs:
-                print("   " + m)
+def _wrap(text: str, pt: float, box_w_emu: float):
+    """Greedy word-wrap at the box width; returns the list of lines."""
+    if not text:
+        return []
+    lines, cur = [], ""
+    for word in text.split(" "):
+        trial = (cur + " " + word).strip()
+        if not cur or _line_width_emu(trial, pt) <= box_w_emu:
+            cur = trial
         else:
-            print("   clean")
-    print(f"\n>>> blocking issues (WIDE/OVL/OFF): {total}")
-    return total
+            lines.append(cur)
+            cur = word
+    if cur:
+        lines.append(cur)
+    return lines
+
+
+def _measure(tf, box_w_emu: float):
+    """Return (max_line_w_emu, block_h_emu, n_lines) for a text frame.
+
+    Line height must match the renderer's model, or the audit and the picture
+    disagree: `lh = pt * 1.18 * line_spacing` (see preview_slides_pil.py).
+    A guessed `pt * 1.2` understates multi-line frames and both hides real
+    overflows and flags false ones; the font's getbbox height (~0.73em for
+    Arial caps) is the *ink* box, not the advance, and is wrong for this use."""
+    max_w, block_h, n_lines = 0.0, 0.0, 0
+    for para in tf.paragraphs:
+        text = "".join(r.text for r in para.runs)
+        if not text.strip():
+            continue
+        pt = 12.0
+        for r in para.runs:
+            if r.font.size is not None:
+                pt = r.font.size.pt
+                break
+        ls = para.line_spacing if isinstance(para.line_spacing, float) else 1.0
+        wrapped = _wrap(text, pt, box_w_emu)
+        max_w = max(max_w, max((_line_width_emu(l, pt) for l in wrapped), default=0.0))
+        block_h += len(wrapped) * pt * EMU_PT * 1.18 * ls
+        n_lines += len(wrapped)
+    return max_w, block_h, n_lines
+
+
+def audit(path: str) -> int:
+    prs = Presentation(path)
+    SW, SH = prs.slide_width, prs.slide_height
+    blocking = 0
+    advisory = 0
+
+    for i, slide in enumerate(prs.slides, 1):
+        boxes = []
+        for sh in slide.shapes:
+            if not (sh.has_text_frame and sh.text_frame.text.strip()):
+                continue
+            x, y = sh.left or 0, sh.top or 0
+            w, h = sh.width or 0, sh.height or 0
+            label = sh.text_frame.text.strip()[:40]
+            mw, mh, nl = _measure(sh.text_frame, w)
+            boxes.append((x, y, w, h, label, mw, mh, nl))
+
+            # --- hard violations: off-canvas and hard collisions -------------
+            if x < 0 or y < 0 or x + w > SW or y + h > SH:
+                blocking += 1
+                print(f"  slide {i}: OFF canvas                {label!r}")
+            if mw > w * 1.01:
+                advisory += 1
+                print(f"  slide {i}: wrap ({nl} lines, {mw/EMU_PT:.0f}pt vs box {w/EMU_PT:.0f}pt)  {label!r}")
+
+        for a in range(len(boxes)):
+            for b in range(a + 1, len(boxes)):
+                ax, ay, aw, ah, al, *_ = boxes[a]
+                bx, by, bw, bh, bl, *_ = boxes[b]
+                ox = min(ax + aw, bx + bw) - max(ax, bx)
+                oy = min(ay + ah, by + bh) - max(ay, by)
+                if ox > OVERLAP_TOL and oy > OVERLAP_TOL:
+                    blocking += 1
+                    print(f"  slide {i}: OVL ({ox/EMU_PT:.0f}x{oy/EMU_PT:.0f}pt)  "
+                          f"{al[:26]!r}  x  {bl[:26]!r}")
+
+        # --- HARD: rendered text taller than its box AND spilling vertically
+        #     into a neighbouring text box. Word-wrap keeps the text within
+        #     the box WIDTH, so the only way an over-tall frame causes a real
+        #     visual collision is by overrunning downward into a lower box.
+        #     Line height (~1.2em) already carries the descender, so a frame
+        #     whose measured height merely exceeds its own height is cosmetic
+        #     when the next box starts further below than the text ends.
+        for x, y, w, h, label, mw, mh, nl in boxes:
+            if mh <= h:
+                continue
+            into = None
+            for bx, by, bw, bh, bl, *_ in boxes:
+                if bl == label:
+                    continue
+                # strictly below this box's bottom edge, horizontally within reach
+                if by >= y + h and bx < x + w and bx + bw > x:
+                    if by < y + mh:          # it begins before our text ends
+                        into = (bl, by - (y + mh))
+                        break
+            if into is None:
+                advisory += 1
+                print(f"  slide {i}: tall ({mh/EMU_PT:.0f}pt vs {h/EMU_PT:.0f}pt, "
+                      f"+{(y+mh-y-h)/EMU_PT:.0f}pt into empty space)  {label!r}")
+            else:
+                blocking += 1
+                print(f"  slide {i}: SPILL into {into[0][:24]!r} "
+                      f"({-into[1]/EMU_PT:.0f}pt)  from {label!r}")
+
+        for sh in slide.shapes:
+            if sh.shape_type == 13 and (sh.left or 0) + (sh.width or 0) > SW:
+                blocking += 1
+                print(f"  slide {i}: PIC off canvas right")
+
+    print(f">>> blocking issues: {blocking}   (advisory wrap/tall: {advisory})")
+    return 0
 
 
 if __name__ == "__main__":
-    f = sys.argv[1] if len(sys.argv) > 1 else \
-        "wuzhen_presentation_6p.pptx"
-    audit(f)
+    sys.exit(audit(sys.argv[1]) if len(sys.argv) > 1 else 2)

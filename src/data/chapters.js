@@ -1,27 +1,51 @@
-// Six chapters of the scroll narrative. Everything here is factual copy for a
-// ninth-grade English PBL project — short, readable, and true to Wuzhen.
+// Six chapters of the scroll narrative.
+// Simplified for 9th-grade (初三) English reading level.
+// Chinese translations are pulled from i18n/translations.js — components
+// switch via useT(); the `bodyZh`/`linesZh` fields below are kept here as
+// the single source of truth for the speech layer so the UI and audio
+// always read the same text.
 const BASE = import.meta.env.BASE_URL;
+import { assetUrl, assetSrcSet } from '../lib/assets.js';
+import translations from '../i18n/translations.js';
+
 const img = (key) => ({
-  webp: `${BASE}images/${key}-webp.webp`,
-  avif: `${BASE}images/${key}-avif.avif`,
-  jpg: `${BASE}images/${key}-jpg.jpg`,
+  webp: assetUrl(`${BASE}images/${key}-webp.webp`),
+  avif: assetUrl(`${BASE}images/${key}-avif.avif`),
+  jpg: assetUrl(`${BASE}images/${key}-jpg.jpg`),
 });
+
+const zh = {
+  water: translations.chapters.water.zh,
+  bridges: translations.chapters.bridges.zh,
+  boats: translations.chapters.boats.zh,
+  life: translations.chapters.life.zh,
+  night: translations.chapters.night.zh,
+  memory: translations.chapters.memory.zh,
+};
 
 export const CHAPTERS = [
   {
     id: 'chapter-water',
+    key: 'water',
     n: '01',
     en: 'WATER',
     cn: '水',
     lede: 'WATER SHAPES WUZHEN',
+    ledeZh: '水塑造乌镇',
     lines: [
-      'Canals run through every corner of the town.',
-      'They were the roads, and still are.',
+      'Water runs through every part of the town.',
+      'The canals were the first roads, and still are.',
     ],
+    linesZh: zh.water.lines,
     body:
-      'In Wuzhen the water came first. The canals were dug long before the streets were paved, and the houses were built facing them. To move from one side of town to the other, a family might walk along a stone embankment, or take a boat.',
+      'In Wuzhen, water came before everything else. The canals were dug long before the streets were built. Houses were built facing the water, not the road. To go from one side of town to the other, a family could walk along the stone canal edge, or take a small boat. The water was not just for drinking or washing — it was the way people moved through their town, and it still is.',
+    bodyZh: zh.water.body,
     image: img('waterway'),
     caption: 'The canal carries the whole town.',
+    captionZh: zh.water.caption,
+    audio: `${BASE}audio/ch1-water-wang.m4a`,
+    speaker: '汪瀚宇',
+    speakerPinyin: 'WANG HANYU',
     source: '01',
     mask: 'clip-expand',
     bg: 'deep',
@@ -29,15 +53,23 @@ export const CHAPTERS = [
   },
   {
     id: 'chapter-bridges',
+    key: 'bridges',
     n: '02',
     en: 'BRIDGES',
     cn: '桥',
     lede: 'BRIDGES LINK TWO BANKS',
+    ledeZh: '桥连接两岸',
     lines: ['Stone arches. Low steps.', 'A crossing, and a view.'],
+    linesZh: zh.bridges.lines,
     body:
-      'Wuzhen is criss-crossed by stone bridges. Many are old enough to remember the shape of a different town. A boat must duck beneath them, and a person climbing the steps looks down onto still water. The bridge is the one place where the town has to decide how to meet itself.',
+      'Wuzhen is full of stone bridges. Many of them are very old — older than most of the houses around them. A boat has to bend low to go under them. When you climb the steps, you can look down at the still water below and see the sky reflected on the surface. The bridge is where the two sides of town meet, and the best place to watch boats pass by.',
+    bodyZh: zh.bridges.body,
     image: img('bridge'),
     caption: 'A stone arch bridges two banks.',
+    captionZh: zh.bridges.caption,
+    audio: `${BASE}audio/ch2-bridges-lu.mp3`,
+    speaker: '鲁昂',
+    speakerPinyin: 'LU ANG',
     source: '02',
     mask: 'clip-bridge',
     bg: 'dark',
@@ -45,15 +77,23 @@ export const CHAPTERS = [
   },
   {
     id: 'chapter-boats',
+    key: 'boats',
     n: '03',
     en: 'BOATS',
     cn: '船',
     lede: 'THE BOAT MOVES FORWARD',
+    ledeZh: '船缓缓前行',
     lines: ['A pole pushes against mud.', 'The water answers.'],
+    linesZh: zh.boats.lines,
     body:
-      'The black-canopied boat — a wupeng — is the slowest and most patient way to travel here. It slips under the low arches, turns a corner, and keeps going. Watching a boat read the town like a sentence: the water is the line it is written on.',
+      'The black-covered boat — called a wupeng — is the slowest way to travel here, and maybe the best. It goes under the low bridges, turns a corner, and keeps moving at a peaceful pace. The boat person uses a long pole to push against the bottom of the canal. Watching a boat is like reading the town: the water is the line, and the boat is the word. There is no hurry — you just sit and enjoy the ride.',
+    bodyZh: zh.boats.body,
     image: img('boat'),
     caption: 'A boat moves with the current.',
+    captionZh: zh.boats.caption,
+    audio: `${BASE}audio/ch3-boats-zhu.m4a`,
+    speaker: '朱钟乐',
+    speakerPinyin: 'ZHU ZHONGLE',
     source: '03',
     mask: 'clip-slide',
     bg: 'image',
@@ -61,15 +101,23 @@ export const CHAPTERS = [
   },
   {
     id: 'chapter-life',
+    key: 'life',
     n: '04',
     en: 'LIFE',
     cn: '生活',
     lede: 'LIFE HAPPENS BY WATER',
+    ledeZh: '生活就在水边',
     lines: ['Laundry at the embankment.', 'Shops, doors, footsteps.'],
+    linesZh: zh.life.lines,
     body:
-      'People did not build a water town and then move in. They were already there, and the water became the place of daily work — where clothes were washed, where boats were tied up, where neighbours met. The street is the story of that ordinary life, repeated for a thousand mornings.',
+      'People did not build a water town and then move in. They were already living there, and the water became part of daily life — where clothes were washed, where boats were tied up, where neighbors met and talked. Shops opened their doors toward the canal, and children played on the stone steps beside the water. The street tells the story of that ordinary life, repeated every single morning for a thousand years.',
+    bodyZh: zh.life.body,
     image: img('street'),
     caption: "Daily life happens at the water's edge.",
+    captionZh: zh.life.caption,
+    audio: `${BASE}audio/ch4-life-shenyi.m4a`,
+    speaker: '沈毅程',
+    speakerPinyin: 'SHEN YICHENG',
     source: '04',
     mask: 'clip-rise',
     bg: 'deep',
@@ -77,15 +125,23 @@ export const CHAPTERS = [
   },
   {
     id: 'chapter-night',
+    key: 'night',
     n: '05',
     en: 'NIGHT',
     cn: '夜',
     lede: 'THE LIGHTS COME ON',
+    ledeZh: '灯亮了',
     lines: ['Lanterns over the water.', 'The town darkens, then glows.'],
+    linesZh: zh.night.lines,
     body:
-      'When evening falls, Wuzhen changes its colour. The stone cools to blue and the lanterns take over, pouring warm light onto the water and then off it again into reflections. Standing on a bridge at night, it is hard to tell where the town ends and its image begins.',
+      'When evening comes, Wuzhen changes color. The stone turns blue, and lanterns fill the air with warm light. The light falls onto the water and then bounces back up as reflections. Standing on a bridge at night, it is hard to tell where the real town ends and its mirror begins. The quiet water, the glowing lights, and the dark sky all come together to make Wuzhen feel like a different place after dark.',
+    bodyZh: zh.night.body,
     image: img('night'),
     caption: 'The town darkens, lights come on.',
+    captionZh: zh.night.caption,
+    audio: `${BASE}audio/ch5-night-shenyu.m4a`,
+    speaker: '沈煜辰',
+    speakerPinyin: 'SHEN YUCHEN',
     source: '05',
     mask: 'clip-lantern',
     bg: 'near-black',
@@ -93,15 +149,20 @@ export const CHAPTERS = [
   },
   {
     id: 'chapter-memory',
+    key: 'memory',
     n: '06',
     en: 'MEMORY',
     cn: '记忆',
     lede: 'A PLACE SHAPED BY WATER',
+    ledeZh: '被水塑造的地方',
     lines: ['bridges, and time.', ''],
+    linesZh: zh.memory.lines,
     body:
-      'The question this project began with — why is water the main line of the ancient town? — is answered by simply watching it work. Water carried the people, the boats, the light and the evening. A town built around water keeps its shape around water, for as long as the canals stay open.',
+      'Our question was: why is water the main line of the ancient town? The answer is simple — just watch how it works. Water carried the people, the boats, the light, and the evening. It connected the houses, the bridges, and the streets. A town built around water keeps its shape around water, as long as the canals stay open. That is why Wuzhen still looks the same today.',
+    bodyZh: zh.memory.body,
     image: null,
     caption: '',
+    captionZh: '',
     source: '',
     mask: 'none',
     bg: 'deep',

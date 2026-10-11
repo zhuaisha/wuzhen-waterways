@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { CHAPTERS } from '../data/chapters.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
+import { AudioPlayer } from './AudioPlayer.jsx';
 
 const prefersReduced = () =>
   typeof window !== 'undefined' &&
@@ -74,6 +76,14 @@ function LanternGlow({ active }) {
 
 function Chapter({ c, i }) {
   const rootRef = useRef(null);
+  const { t, lang } = useLang();
+  const chap = t(`chapters.${c.key}`);
+  const lines = lang === 'zh' ? c.linesZh : c.lines;
+  const body = lang === 'zh' ? c.bodyZh : c.body;
+  const caption = lang === 'zh' ? c.captionZh : c.caption;
+  const lede = lang === 'zh' ? c.ledeZh : c.lede;
+  // Every chapter uses `--bg-white`, so the player always reads dark-on-light.
+  const audioTone = 'dark';
 
   useEffect(() => {
     const root = rootRef.current;
@@ -284,15 +294,27 @@ function Chapter({ c, i }) {
             <span className="chapter__cn chapter__rise">{c.cn}</span>
           </div>
           <h2 className="chapter__lede">
-            {c.lines.filter(Boolean).map((l, j) => (
+            {lines.filter(Boolean).map((l, j) => (
               <span className="chapter__lede-line" key={j}>{l}</span>
             ))}
           </h2>
-          <p className="chapter__body chapter__rise">{c.body}</p>
+          <p className="chapter__body chapter__rise">{body}</p>
+          {/* Audio narration — only for chapters 01–05 */}
+          {i < 5 && c.audio && (
+            <div className="chapter__audio-row">
+              <AudioPlayer
+                src={c.audio}
+                title={`${c.en} · ${c.cn}`}
+                label={t('audio.voice')}
+                subtitle={`${c.speaker} ${c.speakerPinyin}`}
+                tone={audioTone}
+              />
+            </div>
+          )}
           {hasImage && (
             <p className="chapter__caption chapter__rise">
               <span className="chapter__caption-dot" />
-              {c.caption}
+              {caption}
             </p>
           )}
         </div>
@@ -334,6 +356,8 @@ function Chapter({ c, i }) {
 
 function Outro({ c }) {
   const rootRef = useRef(null);
+  const { t, lang } = useLang();
+  const mem = t('chapters.memory');
 
   useEffect(() => {
     const root = rootRef.current;
@@ -371,15 +395,18 @@ function Outro({ c }) {
     >
       <div className="chapter__ghost" aria-hidden="true">{c.n}</div>
       <div className="outro">
-        <div className="outro__eyebrow outro__rise">06 — MEMORY · 记忆</div>
+        <div className="outro__eyebrow outro__rise">06 — {lang === 'zh' ? '记忆' : 'MEMORY'}</div>
         <h2 className="outro__title">
           <span className="outro__rise">WUZHEN</span>
         </h2>
-        <p className="outro__sub outro__rise">Waterways &amp; Bridges</p>
+        <p className="outro__sub outro__rise">{lang === 'zh' ? '水道与桥' : 'Waterways &amp; Bridges'}</p>
         <p className="outro__closing outro__rise">
-          A place shaped by water,
-          <br />
-          bridges, and time.
+          {mem.closing.split('\n').map((l, j, arr) => (
+            <span key={j}>
+              {l}
+              {j < arr.length - 1 && <br />}
+            </span>
+          ))}
         </p>
         <div className="outro__thread" aria-hidden="true">
           <svg viewBox="0 0 200 6" preserveAspectRatio="none">

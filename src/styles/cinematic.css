@@ -217,6 +217,39 @@
 }
 .hero__scroll:hover .hero__scroll-text { color: #FFFFFF; }
 
+/* "Meet Our Team" CTA — the primary entry into the team module */
+.hero__meet {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 30px;
+  padding: 13px 26px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.10);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  color: #FFFFFF;
+  font-family: var(--font-en);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background .35s var(--ease), border-color .35s var(--ease), transform .35s var(--ease);
+}
+.hero__meet svg { transition: transform .35s var(--ease); }
+.hero__meet:hover {
+  background: rgba(255, 255, 255, 0.20);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-1px);
+}
+.hero__meet:hover svg { transform: translateX(3px); }
+.hero__meet:focus-visible {
+  outline: 2px solid #FFFFFF;
+  outline-offset: 3px;
+}
+
 
 /* ==================================================================
    SCROLL STORYTELLING — six chapters, Apple editorial rhythm
@@ -762,109 +795,6 @@
     justify-content: flex-start;
   }
   .keyword-tag--xl .keyword-tag__en { font-size: clamp(2.1rem, 12vw, 3rem); }
-}
-
-/* ==================================================================
-   SOURCES — grouped manifest, small and quiet
-   ================================================================== */
-.sources-intro {
-  max-width: 70ch;
-  font-size: 0.88rem;
-  line-height: 1.8;
-  color: var(--text-secondary);
-  margin: -34px 0 44px;
-}
-.sources-group + .sources-group { margin-top: 40px; }
-.sources-group__head {
-  display: flex; align-items: baseline; gap: 12px;
-  padding-bottom: 12px;
-  margin-bottom: 18px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-.sources-group__section {
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  color: var(--accent);
-  text-transform: uppercase;
-}
-.sources-group__count {
-  font-size: 9px;
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.16em;
-}
-.sources-group__items {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 18px;
-}
-.source-card {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 16px;
-  padding: 18px 18px;
-  border: 1px solid var(--border);
-  background: var(--bg-white);
-  border-radius: var(--radius);
-  transition: border-color 0.4s var(--ease), background 0.4s var(--ease);
-}
-.source-card:hover {
-  border-color: var(--border-strong);
-  background: var(--bg-light-alt);
-}
-.source-card__num {
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-  padding-top: 2px;
-  font-weight: 600;
-  font-family: var(--font-en);
-}
-.source-card__title { margin: 0 0 6px; }
-.source-card__title a {
-  color: var(--text-dark);
-  text-decoration: none;
-  font-size: 14px;
-  line-height: 1.35;
-  word-break: break-word;
-  font-weight: 500;
-  font-family: var(--font-en);
-  transition: color 0.35s var(--ease);
-}
-.source-card__title a:hover { color: var(--accent); text-decoration: underline; }
-.source-card__cn {
-  font-family: var(--font-cn);
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin: 0 0 8px;
-}
-.source-card__meta {
-  display: flex; flex-wrap: wrap; gap: 8px;
-  margin: 0 0 10px;
-  font-size: 12px;
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-  font-family: var(--font-en);
-}
-.source-card__uses {
-  display: flex; flex-wrap: wrap; gap: 6px;
-  margin: 0;
-}
-.source-card__tag {
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  padding: 3px 10px;
-  border: 1px solid var(--border);
-  border-radius: 980px;
-  background: var(--bg-light);
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
-  font-family: var(--font-en);
-}
-
-@media (max-width: 720px) {
-  .sources-group__items { grid-template-columns: 1fr; }
 }
 
 /* ==================================================================

@@ -46,6 +46,39 @@ def font(pt):
     return f
 
 
+def is_cjk(ch):
+    o = ord(ch)
+    return (0x4E00 <= o <= 0x9FFF or 0x3400 <= o <= 0x4DBF
+            or 0x3000 <= o <= 0x303F or 0xFF00 <= o <= 0xFFEF)
+
+
+FCACHE = {}
+
+
+def _bold_font(pt):
+    """Bold latin face at the same pixel height font() uses."""
+    key = int(round(pt))
+    if key not in FCACHE:
+        try:
+            FCACHE[key] = ImageFont.truetype(r"C:\Windows\Fonts\arialbd.ttf",
+                                             max(7, int(pt * PX / 72)))
+        except Exception:
+            FCACHE[key] = None
+    return FCACHE[key]
+
+
+def text_w(s, pt, bold):
+    """Advance width of `s` in design px, honouring the CJK fallback and bold."""
+    f = _bold_font(pt) if bold else font(pt)
+    w = 0.0
+    for ch in s:
+        if CJK is not None and is_cjk(ch):
+            w += CJK.font_variant(size=f.size).getlength(ch)
+        else:
+            w += f.getlength(ch)
+    return w
+
+
 def solid_fill(shape):
     """-> (r,g,b,alpha) or None"""
     try:
@@ -131,7 +164,10 @@ for idx, slide in enumerate(prs.slides, 1):
             if lc:
                 d.line([int(X), int(Y), int(X + Wd), int(Y + Ht)], fill=lc, width=2)
 
-        # 4. text
+        # 4. text — greedy wrap inside the box, matching PowerPoint's
+        #    word_wrap behaviour. The preview used to paint each paragraph as
+        #    ONE line, which made every wrapped block look "clipped" and made
+        #    genuine layout overlap impossible to tell apart from the bug.
         if not (sh.has_text_frame and sh.text_frame.text.strip()):
             continue
         anchor = str(sh.text_frame.vertical_anchor)
@@ -149,26 +185,70 @@ for idx, slide in enumerate(prs.slides, 1):
             except Exception:
                 pass
             f = font(pt)
-            tw = d.textlength(txt, font=f)
             al = str(p.alignment)
-            if "CENTER" in al:
-                tx = X + (Wd - tw) / 2
-            elif "RIGHT" in al:
-                tx = X + Wd - tw
-            else:
-                tx = X
-            # draw glyph by glyph, swapping in the CJK face for 中文 — arial
-            # has no CJK shapes and would otherwise print tofu boxes.
-            cx = tx
+            ls = 1.0
+            if p.line_spacing:
+                try:
+                    ls = float(p.line_spacing)
+                except Exception:
+                    pass
+            lh = pt * PX / 72 * 1.18 * ls
+            # CJK breaks anywhere, latin breaks on spaces -> tokenise both.
+            toks, buf = [], ""
             for ch in txt:
-                cf = f
-                if CJK is not None and ord(ch) > 0x2000:
-                    cf = CJK.font_variant(size=f.size)
-                d.text((cx, cursor), ch, font=cf, fill=col)
-                cx += d.textlength(ch, font=cf)
-            cursor += pt * PX / 72 * 1.42
-            if cursor > Y + Ht:
-                break
+                if ch == " " and buf:
+                    toks.append(buf); buf = ""
+                elif is_cjk(ch) or ch == "\n":
+                    if buf:
+                        toks.append(buf); buf = ""
+                    if ch == "\n":
+                        toks.append("\n")
+                    else:
+                        toks.append(ch)
+                else:
+                    buf += ch
+            if buf:
+                toks.append(buf)
+
+            lines, cur = [], []
+            for tk in toks:
+                if tk == "\n":
+                    lines.append(" ".join(cur)); cur = []
+                    continue
+                w = text_w(tk, pt, run.font.bold if run.font.bold else False)
+                if not cur:
+                    cur.append(tk)
+                elif text_w(" ".join(cur) + " " + tk, pt,
+                            bool(run.font.bold)) <= Wd:
+                    cur.append(tk)
+                else:
+                    lines.append(" ".join(cur)); cur = [tk]
+            if cur:
+                lines.append(" ".join(cur))
+
+            for line in lines:
+                if not line:
+                    cursor += lh
+                    continue
+                tw = text_w(line, pt, bool(run.font.bold))
+                if "CENTER" in al:
+                    tx = X + (Wd - tw) / 2
+                elif "RIGHT" in al:
+                    tx = X + Wd - tw
+                else:
+                    tx = X
+                # draw glyph by glyph, swapping in the CJK face for 中文 — arial
+                # has no CJK shapes and would otherwise print tofu boxes.
+                cx = tx
+                for ch in line:
+                    cf = f
+                    if CJK is not None and is_cjk(ch):
+                        cf = CJK.font_variant(size=f.size)
+                    d.text((cx, cursor), ch, font=cf, fill=col)
+                    cx += d.textlength(ch, font=cf)
+                cursor += lh
+                if cursor > Y + Ht + Ht * 0.6:
+                    break
 
     p = os.path.join(OUT, f"slide_{idx:02d}.png")
     img.save(p, "PNG")

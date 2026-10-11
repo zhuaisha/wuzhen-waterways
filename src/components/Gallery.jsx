@@ -1,48 +1,61 @@
 import { useEffect, useState } from 'react';
 import SectionHeader from './SectionHeader.jsx';
 import Reveal from './Reveal.jsx';
+import { assetUrl } from '../lib/assets.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
 
 const BASE = import.meta.env.BASE_URL;
 const pic = (key, w = 1600) => ({
-  avif: `${BASE}images/${key}-avif.avif`,
-  webp: `${BASE}images/${key}-webp.webp`,
-  jpg: `${BASE}images/${key}-jpg.jpg`,
+  avif: assetUrl(`${BASE}images/${key}-avif.avif`),
+  webp: assetUrl(`${BASE}images/${key}-webp.webp`),
+  jpg: assetUrl(`${BASE}images/${key}-jpg.jpg`),
 });
+
+/* Local fallback so a missing translation key can never crash the render. */
+const FALLBACK_INFO = {
+  waterway: {
+    title: 'The Canal',
+    chapter: '01 — WATER',
+    desc: '',
+    observation: '',
+    alt: 'Wuzhen waterway',
+  },
+  bridge: {
+    title: 'Stone Arch',
+    chapter: '02 — BRIDGES',
+    desc: '',
+    observation: '',
+    alt: 'Wuzhen stone arch bridge',
+  },
+  boat: {
+    title: 'On the Water',
+    chapter: '03 — BOATS',
+    desc: '',
+    observation: '',
+    alt: 'Wuzhen canal boat',
+  },
+};
 
 const images = [
   {
     id: 1,
     key: 'waterway',
-    title: 'The Canal',
     num: '01',
-    chapter: '01 — WATER',
-    descCn: '水道贯穿乌镇，两岸白墙黛瓦与倒映在水面的建筑构成典型的江南水乡景观。',
-    observation: 'We noticed that the white walls and dark tiles of the buildings along the canal create a beautiful reflection on the water surface.',
-    alt: '乌镇水道与沿岸传统建筑',
   },
   {
     id: 2,
     key: 'bridge',
-    title: 'Stone Arch',
     num: '02',
-    chapter: '02 — BRIDGES',
-    descCn: '古桥连接水道两岸，是乌镇传统空间结构和水乡生活的重要组成部分。',
-    observation: 'We saw that the stone bridges connect both sides of the waterway, making them an essential part of daily life in the water town.',
-    alt: '乌镇古石拱桥',
   },
   {
     id: 3,
     key: 'boat',
-    title: 'On the Water',
     num: '03',
-    chapter: '03 — BOATS',
-    descCn: '乘坐传统游船沿着水道前行，可以从水上感受乌镇的街巷、桥梁和传统生活。',
-    observation: 'We noticed that taking a boat along the canal is the best way to experience the water town, seeing bridges, streets and daily life from the water.',
-    alt: '乌镇运河与传统游船',
   },
 ];
 
 function Lightbox({ img, onClose }) {
+  const { t } = useLang();
   useEffect(() => {
     if (!img) return undefined;
     const handleEsc = (e) => {
@@ -54,6 +67,7 @@ function Lightbox({ img, onClose }) {
 
   if (!img) return null;
   const p = pic(img.key);
+  const info = t(`gallery.images.${img.key}`) || FALLBACK_INFO[img.key] || FALLBACK_INFO.waterway;
 
   return (
     <div
@@ -61,9 +75,9 @@ function Lightbox({ img, onClose }) {
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label={`Image: ${img.title}`}
+      aria-label={`Image: ${info.title}`}
     >
-      <button className="lightbox__close" onClick={onClose} aria-label="Close lightbox">
+      <button className="lightbox__close" onClick={onClose} aria-label={t('gallery.close')}>
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M18 6L6 18M6 6l12 12" />
         </svg>
@@ -71,7 +85,7 @@ function Lightbox({ img, onClose }) {
       <div className="lightbox__content" onClick={(e) => e.stopPropagation()}>
         <img
           src={p.webp}
-          alt={img.alt}
+          alt={info.alt}
           className="lightbox__img"
           loading="eager"
           decoding="async"
@@ -84,18 +98,18 @@ function Lightbox({ img, onClose }) {
           }}
         />
         <div className="lightbox__info">
-          <div className="lightbox__num">{img.chapter}</div>
-          <h3 className="lightbox__title">{img.title}</h3>
-          <p className="lightbox__desc">{img.descCn}</p>
-          <p className="lightbox__observation">{img.observation}</p>
+          <div className="lightbox__num">{info.chapter}</div>
+          <h3 className="lightbox__title">{info.title}</h3>
+          <p className="lightbox__desc">{info.desc}</p>
+          <p className="lightbox__observation">{info.observation}</p>
           <p className="lightbox__source">
-            Source:{' '}
+            {t('gallery.source')}:{' '}
             <a
               href={`https://commons.wikimedia.org/wiki/File:${img.key}`}
               target="_blank"
               rel="noreferrer"
             >
-              Wikimedia Commons
+              {t('gallery.wikimedia')}
             </a>
           </p>
         </div>
@@ -105,6 +119,7 @@ function Lightbox({ img, onClose }) {
 }
 
 export default function Gallery() {
+  const { t } = useLang();
   const [selected, setSelected] = useState(null);
   const [loadedIds, setLoadedIds] = useState(new Set());
   const p = (k) => pic(k);
@@ -112,17 +127,18 @@ export default function Gallery() {
   return (
     <section id="gallery" className="section gallery-section">
       <div className="container">
-        <SectionHeader number="02" en="VISUAL RESEARCH" cn="Visual Research — Wuzhen Waterways" week="Week 1" />
-        <p className="gallery-intro">Feel the canals, old bridges, and traditional life through photographs</p>
+        <SectionHeader number="02" en="VISUAL RESEARCH" cn={t('gallery.headerCn')} week={t('gallery.week')} />
+        <p className="gallery-intro">{t('gallery.intro')}</p>
         <div className="gallery-grid">
           {images.map((img, i) => {
             const src = p(img.key);
+            const info = t(`gallery.images.${img.key}`) || FALLBACK_INFO[img.key] || FALLBACK_INFO.waterway;
             return (
               <Reveal key={img.id} className={`gallery-card gallery-card--${img.id}`} delay={i * 50}>
                 <button
                   className="gallery-card__btn"
                   onClick={() => setSelected(img)}
-                  aria-label={`View ${img.title}`}
+                  aria-label={t('gallery.view')}
                 >
                   <div className="gallery-card__img-wrap">
                     {!loadedIds.has(img.id) && (
@@ -138,7 +154,7 @@ export default function Gallery() {
                       />
                       <img
                         src={src.webp}
-                        alt={img.alt}
+                        alt={info.alt}
                         className={`gallery-card__img ${loadedIds.has(img.id) ? '--loaded' : ''}`}
                         loading="lazy"
                         decoding="async"
@@ -155,26 +171,26 @@ export default function Gallery() {
                     </picture>
                     {/* hover reveal: a small quiet "VIEW" marker */}
                     <span className="gallery-card__view" aria-hidden="true">
-                      <span>VIEW</span>
+                      <span>{t('gallery.view').toUpperCase()}</span>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path d="M7 17L17 7M9 7h8v8" />
                       </svg>
                     </span>
                   </div>
                   <div className="gallery-card__body">
-                    <div className="gallery-card__num">{img.num} · {img.chapter}</div>
-                    <h3 className="gallery-card__title">{img.title}</h3>
-                    <p className="gallery-card__desc">{img.descCn}</p>
-                    <p className="gallery-card__observation">{img.observation}</p>
+                    <div className="gallery-card__num">{img.num} · {info.chapter}</div>
+                    <h3 className="gallery-card__title">{info.title}</h3>
+                    <p className="gallery-card__desc">{info.desc}</p>
+                    <p className="gallery-card__observation">{info.observation}</p>
                     <p className="gallery-card__source">
-                      Source:{' '}
+                      {t('gallery.source')}:{' '}
                       <a
                         href="https://commons.wikimedia.org"
                         target="_blank"
                         rel="noreferrer"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        Wikimedia Commons
+                        {t('gallery.wikimedia')}
                       </a>
                     </p>
                   </div>

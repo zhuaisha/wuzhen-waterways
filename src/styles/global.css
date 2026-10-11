@@ -238,10 +238,13 @@ ul, ol { list-style: none; }
   color: rgba(255, 255, 255, 0.85);
 }
 
+/* Push the first nav link away from the brand so "WUZHEN" and "Story"
+   don't read as one word.  */
 .navbar__links {
   display: flex;
-  gap: clamp(24px, 3vw, 40px);
+  gap: clamp(26px, 3vw, 44px);
   align-items: center;
+  margin-left: 46px;
 }
 
 .navbar__links a {
@@ -1729,101 +1732,6 @@ button.ww-keyword:focus-visible {
   .tp-side__media { aspect-ratio: 16 / 10; }
 }
 
-/* ============================================
-   SOURCES — Apple-style clean list
-   ============================================ */
-.sources-section { background: var(--bg-white); }
-
-.sources-list {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-.source-card {
-  display: flex;
-  gap: 20px;
-  background: var(--bg-white);
-  border-radius: var(--radius);
-  padding: 24px 28px;
-  border: 1px solid var(--border-strong);
-  position: relative;
-  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease);
-}
-
-.source-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0) 44%);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0.68;
-  pointer-events: none;
-}
-
-.source-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  border-color: rgba(255, 255, 255, 0.82);
-}
-
-.source-card__index {
-  font-size: 0.66rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  flex-shrink: 0;
-  padding-top: 2px;
-}
-
-.source-card__body { flex: 1; }
-
-.source-card__name {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-dark);
-  letter-spacing: -0.01em;
-  margin-bottom: 2px;
-}
-
-.source-card__cn {
-  font-family: var(--font-cn);
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  margin-bottom: 12px;
-}
-
-.source-card__uses-label {
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
-.source-card__uses ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.source-card__uses li {
-  font-family: var(--font-cn);
-  font-size: 0.74rem;
-  color: var(--text-dark);
-  background: var(--bg-white);
-  border-radius: var(--radius-pill);
-  padding: 4px 10px;
-  box-shadow: var(--shadow-sm);
-}
-
 /* ==================================================================
    WEEKLY TASK REPORTS — centered title + 2-col tasks + right badge
    ================================================================== */
@@ -2257,11 +2165,6 @@ button.ww-keyword:focus-visible {
 
   .keyword-tag__en { font-size: 0.68rem; }
   .keyword-tag__cn { font-size: 0.62rem; }
-
-  .source-card {
-    flex-direction: column;
-    gap: 10px;
-  }
 
   .section-header__cn { font-size: 1.2rem; }
 
@@ -2743,15 +2646,6 @@ body { background: var(--bg-light); color: var(--text-dark); }
 .keyword-tag:hover .keyword-tag__en { color: var(--accent); }
 .keyword-tag:hover { background: none; box-shadow: none; }
 
-/* Sources — white scene, minimal list */
-.sources-section { background: var(--bg-white); color: var(--text-dark); border-top: 1px solid var(--border); }
-.sources-list { border-top: 1px solid var(--border); }
-.source-card { background: none; border: 0; border-radius: 0; box-shadow: none; border-bottom: 1px solid var(--border); padding: 22px 0; }
-.source-card:hover { transform: none; box-shadow: none; }
-.source-card__num, .source-card__cn, .source-card__meta { color: var(--text-muted); font-size: 12px; }
-.source-card__title a { color: var(--text-dark); font-weight: 400; font-size: 15px; }
-.source-card__title a:hover { color: var(--accent); }
-.source-card__tag { background: none; border: 1px solid var(--border-strong); border-radius: 980px; color: var(--text-muted); font-size: 11px; padding: 2px 10px; }
 
 /* Summary — Apple keynote closing: full-viewport, centered, huge */
 .summary-section { background: var(--bg-white); color: var(--text-dark); padding: 0; min-height: 100svh; display: flex; align-items: center; }
@@ -2857,15 +2751,13 @@ body { background: var(--bg-light); color: var(--text-dark); }
 
 /* Image attribution links */
 .gallery-card__source a,
-.lightbox__source a,
-.source-card__name a {
+.lightbox__source a {
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-color: currentColor;
 }
 .gallery-card__source a:hover,
-.lightbox__source a:hover,
-.source-card__name a:hover {
+.lightbox__source a:hover {
   opacity: 0.72;
 }
 

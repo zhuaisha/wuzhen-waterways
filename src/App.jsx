@@ -1,7 +1,6 @@
 import Navbar from './components/Navbar.jsx';
 import ChapterRail from './components/ChapterRail.jsx';
 import Hero from './components/Hero.jsx';
-import CultureFilm from './components/CultureFilm.jsx';
 import OurProjectVideo from './components/OurProjectVideo.jsx';
 import Atlas from './components/Atlas.jsx';
 import Story from './components/Story.jsx';
@@ -24,7 +23,6 @@ export default function App() {
         <main>
           <Hero />
           <Team />
-          <CultureFilm />
           <OurProjectVideo />
           <Story />
           <Atlas />

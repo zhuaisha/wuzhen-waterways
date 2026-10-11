@@ -24,6 +24,13 @@ node_modules/
 # which is GitHub's hard per-file limit.
 /media-masters/
 
+# EdgeOne CLI state. .edgeone/anonymous.json holds a live deploy TOKEN and
+# must never be committed. Written by `edgeone makers deploy`.
+/.edgeone/
+
+# Hand-rolled project archives (also far over GitHub's 100 MiB file limit).
+/*.zip
+
 # Local dev artifacts — raw downloads and Python caches are not for the site.
 # The processed AVIF/WebP/JPG assets in public/images/ are tracked on purpose.
 /tools/raw/

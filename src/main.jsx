@@ -7,7 +7,6 @@ import App from './App.jsx';
 import './styles/global.css';
 import './styles/cinematic.css';
 import './styles/team.css';
-import './styles/culture-film.css';
 import './styles/our-video.css';
 import './styles/i18n.css';
 
